@@ -164,3 +164,4 @@ You can now go to server_domain_or_IP and see the website
 ## Credit
 1. Thank you to digitalocean for [tutorial on flask auth](https://www.digitalocean.com/community/tutorials/how-to-add-authentication-to-your-app-with-flask-login)
 2. [SamuelSacco](https://github.com/SamuelSacco) for creating the frontend
+3. Thank you to Kim Huiyeon for their [tutorial on nginx](https://medium.com/techfront/step-by-step-visual-guide-on-deploying-a-flask-application-on-aws-ec2-8e3e8b82c4f7)
