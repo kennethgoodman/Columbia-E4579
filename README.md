@@ -1,10 +1,10 @@
 # Columbia-E4579
 Fall 2022 Class At Columbia. Modern Recommendation Systems
 
-## Dev Setup
+## Local Dev Setup
 
 ### Set Up Python Env
-First open a terminal and create a virtual environement
+First open a terminal and create a virtual environment
 ```bash
 $ python3 -m venv E4579
 $ source E4579/bin/activate
@@ -53,6 +53,105 @@ pip uninstall flask
 2. install flask-sqlalchemy and flask-login globally, quit your local venv by running `deactivate` or opening a new shell
 ```bash
 pip install flask-sqlalchemy flask-login
+```
+
+## EC2 Ubuntu Production Server Setup
+
+### Installing python3-venv, npm and nginx
+
+```bash
+$ sudo apt-get update
+$ sudo apt-get install python3-venv npm nginx
+```
+
+### Set Up Python Env
+Create a virtual environment
+```bash
+$ python3 -m venv E4579
+$ source E4579/bin/activate
+```
+
+Then install flask dependencies and set two bash variables
+```bash
+$ pip install flask flask-sqlalchemy flask-login gunicorn
+$ export FLASK_APP=project
+$ export FLASK_DEBUG=1
+```
+
+### Build react
+```bash
+$ npm install i
+$ npm run build
+```
+
+### Run gunicorn 
+
+To test, you can run:
+```bash
+gunicorn -b 0.0.0.0:8000 project:__init__
+```
+
+and then in another terminal to test that it is working:
+```bash
+$ curl localhost:8000/ping
+```
+Now you should see "pong"
+
+You can close gunicorn terminal as we start to run this in the background:
+```bash
+$ sudo nano /etc/systemd/system/E4579.service
+```
+
+and add:
+```text
+[Unit]
+Description=Gunicorn instance for Columbia-E4579
+After=network.target
+[Service]
+User=ubuntu
+Group=www-data
+WorkingDirectory=/home/ubuntu/Columbia-E4579
+ExecStart=/home/ubuntu/Columbia-E4579/E4579/bin/gunicorn --workers=2 --bind=0.0.0.0:8000 --log-level=info 'project.__init__:create_app()'
+Restart=always
+[Install]
+WantedBy=multi-user.target
+```
+
+Then start systemctl so that on reload and restart the server will always be up
+```bash
+$ sudo systemctl daemon-reload
+$ sudo systemctl start E4579
+$ sudo systemctl enable E4579
+```
+
+Finally we use nginx
+```bash
+$ sudo systemctl start nginx
+$ sudo systemctl enable nginx
+```
+
+```bash
+sudo nano /etc/nginx/sites-available/default
+```
+
+And add:
+```text
+upstream flaskE4579 {
+    server 127.0.0.1:8000;
+}
+
+...
+
+location / {
+    proxy_pass http://flaskE4579;
+}
+
+...
+```
+
+And restart:
+```bash
+$ sudo systemctl restart nginx
 ```
 
 
