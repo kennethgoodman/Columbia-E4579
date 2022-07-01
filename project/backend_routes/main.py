@@ -5,6 +5,7 @@ from flask_login import login_required, current_user
 
 main = Blueprint('main', __name__, static_folder='../frontend/build')
 
+
 @main.route('/profile')
 @login_required
 def profile():

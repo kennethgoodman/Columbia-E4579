@@ -30,11 +30,11 @@ def create_app():
 
     # blueprint for auth routes in our app
     from project.backend_routes.auth import auth as auth_blueprint
-    app.register_blueprint(auth_blueprint)
-
-    # blueprint for non-auth parts of app
     from project.backend_routes.main import main as main_blueprint
-    app.register_blueprint(main_blueprint)
+    from project.backend_routes.data_api import data_api
+    blueprints = [auth_blueprint, main_blueprint, data_api]
+    for blueprint in blueprints:
+        app.register_blueprint(blueprint)
 
     return app
 
