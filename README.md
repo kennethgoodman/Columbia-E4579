@@ -3,6 +3,7 @@ Fall 2022 Class At Columbia. Modern Recommendation Systems
 
 ## Dev Setup
 
+### Set Up Python Env
 First open a terminal and create a virtual environement
 ```bash
 $ python3 -m venv E4579
@@ -15,6 +16,8 @@ $ pip install flask flask-sqlalchemy flask-login
 $ export FLASK_APP=project
 $ export FLASK_DEBUG=1
 ```
+
+### Init SQLite
 
 We will not open up a python shell and create the database locally
 ```bash
@@ -29,6 +32,14 @@ db.create_all(app=create_app())
 ```
 You should see a db.sqlite file
 
+### Building ReactJS
+```bash
+$ cd frontend
+$ npm install i
+$ npm run build
+```
+
+### Running app
 We can now run flask with:
 ```bash
 $ flask run
