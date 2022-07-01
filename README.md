@@ -34,3 +34,7 @@ pip uninstall flask
 ```bash
 pip install flask-sqlalchemy flask-login
 ```
+
+
+## Credit
+1. Thank you to digitalocean for [tutorial on flask auth](https://www.digitalocean.com/community/tutorials/how-to-add-authentication-to-your-app-with-flask-login)
