@@ -91,7 +91,7 @@ To test, you can run:
 gunicorn -b 0.0.0.0:8000 project:__init__
 ```
 
-and then in another terminal to test that it is working:
+Then in another terminal to test that it is working:
 ```bash
 $ curl localhost:8000/ping
 ```
@@ -102,7 +102,7 @@ You can close gunicorn terminal as we start to run this in the background:
 $ sudo nano /etc/systemd/system/E4579.service
 ```
 
-and add:
+Write to the file:
 ```text
 [Unit]
 Description=Gunicorn instance for Columbia-E4579
