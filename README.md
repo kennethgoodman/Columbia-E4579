@@ -79,6 +79,7 @@ $ export FLASK_DEBUG=1
 ```
 
 ### Build react
+Run these npm commands to install packages and build react
 ```bash
 $ npm install i
 $ npm run build
@@ -86,7 +87,7 @@ $ npm run build
 
 ### Run gunicorn 
 
-To test, you can run:
+To test that we've set up everything correctly, you can run:
 ```bash
 gunicorn -b 0.0.0.0:8000 project:__init__
 ```
@@ -130,6 +131,7 @@ $ sudo systemctl start nginx
 $ sudo systemctl enable nginx
 ```
 
+Now we write to the nginx file:
 ```bash
 sudo nano /etc/nginx/sites-available/E4579
 ```
@@ -157,6 +159,7 @@ Then restart nginx
 $ sudo systemctl restart nginx
 ```
 
+You can now go to server_domain_or_IP and see the website
 
 ## Credit
 1. Thank you to digitalocean for [tutorial on flask auth](https://www.digitalocean.com/community/tutorials/how-to-add-authentication-to-your-app-with-flask-login)
