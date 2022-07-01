@@ -111,7 +111,7 @@ After=network.target
 User=ubuntu
 Group=www-data
 WorkingDirectory=/home/ubuntu/Columbia-E4579
-ExecStart=/home/ubuntu/Columbia-E4579/E4579/bin/gunicorn --workers=2 --bind=0.0.0.0:8000 --log-level=info 'project.__init__:create_app()'
+ExecStart=/home/ubuntu/Columbia-E4579/E4579/bin/gunicorn --workers=3 --bind=0.0.0.0:8000 --log-level=info 'project.__init__:create_app()'
 Restart=always
 [Install]
 WantedBy=multi-user.target
@@ -124,32 +124,35 @@ $ sudo systemctl start E4579
 $ sudo systemctl enable E4579
 ```
 
-Finally we use nginx
+Finally, we use nginx
 ```bash
 $ sudo systemctl start nginx
 $ sudo systemctl enable nginx
 ```
 
 ```bash
-sudo nano /etc/nginx/sites-available/default
+sudo nano /etc/nginx/sites-available/E4579
 ```
 
-And add:
+You should write to the file: (where server_domain_or_IP = IP address)
 ```text
-upstream flaskE4579 {
-    server 127.0.0.1:8000;
+server {
+    listen 80;
+    server_name server_domain_or_IP;
+
+    location / {
+        include proxy_params;
+        proxy_pass proxy_pass http://127.0.0.1:8000;
+   }
 }
-
-...
-
-location / {
-    proxy_pass http://flaskE4579;
-}
-
-...
 ```
 
-And restart:
+ln the file:
+```bash
+$ sudo ln -s /etc/nginx/sites-available/E4579 /etc/nginx/sites-enabled
+```
+
+Then restart nginx
 ```bash
 $ sudo systemctl restart nginx
 ```
