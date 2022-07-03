@@ -11,6 +11,17 @@ from dotenv import dotenv_values
 db = SQLAlchemy()
 
 
+def get_sqlalchemy_database_uri():
+    config = dotenv_values(".env")
+    if int(config.get('use_aws_db', 0)) == 1:
+        # all must exist or will throw exception
+        username, password = config['aws_db_username'], config['aws_db_password']
+        databaseurl, schema = config['aws_db_endpoint'], config['aws_db_schema']
+        return f'mysql://{username}:{password}@{databaseurl}/{schema}'
+    # if don't use AWS, then use SQLite
+    return 'sqlite:///db.sqlite'
+
+
 def create_app():
     if not os.path.isdir('logs_folder'):
         os.mkdir('logs_folder')
@@ -28,15 +39,7 @@ def create_app():
 
     app.config['SECRET_KEY'] = '9OLWxND4o83j4K4iuopO'
 
-    config = dotenv_values(".env")
-    if int(config.get('use_aws_db', 0)) == 1:
-        # all must exist or will throw exception
-        username, password = config['aws_db_username'], config['aws_db_password']
-        databaseurl, schema = config['aws_db_endpoint'], config['aws_db_schema']
-        app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql://{username}:{password}@{databaseurl}/{schema}'
-    else:
-        # if don't use AWS, then use SQLite
-        app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
+    app.config['SQLALCHEMY_DATABASE_URI'] = get_sqlalchemy_database_uri()
 
     db.init_app(app)
 
