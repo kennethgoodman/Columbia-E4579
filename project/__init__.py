@@ -5,6 +5,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from project.logging_utils.config import configure_logging
+from dotenv import dotenv_values
 
 # init SQLAlchemy so we can use it later in our models
 db = SQLAlchemy()
@@ -26,7 +27,16 @@ def create_app():
     app.logger.setLevel(min(map(lambda x: x.level, loggers)))
 
     app.config['SECRET_KEY'] = '9OLWxND4o83j4K4iuopO'
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
+
+    config = dotenv_values(".env")
+    if int(config.get('use_aws_db', 0)) == 1:
+        # all must exist or will throw exception
+        username, password = config['aws_db_username'], config['aws_db_password']
+        databaseurl, schema = config['aws_db_endpoint'], config['aws_db_schema']
+        app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql://{username}:{password}@{databaseurl}/{schema}'
+    else:
+        # if don't use AWS, then use SQLite
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
 
     db.init_app(app)
 
