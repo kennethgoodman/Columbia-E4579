@@ -59,11 +59,16 @@ pip install flask-sqlalchemy flask-login
 
 ## EC2 Ubuntu Production Server Setup
 
-### Installing python3-venv, npm, nginx and psql
+### Installing python3-venv, npm, nginx and mysql
 
 ```bash
 $ sudo apt-get update
-$ sudo apt-get install python3-venv npm nginx mysql-server
+$ sudo apt-get install python3-venv npm nginx mysql-server 
+```
+
+Install what is necessary for mysql:
+```bash
+$ sudo apt-get install python3-dev default-libmysqlclient-dev build-essential
 ```
 
 ### Set Up Python Env
