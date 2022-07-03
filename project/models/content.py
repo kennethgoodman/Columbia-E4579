@@ -8,6 +8,10 @@ from sqlalchemy.orm import relationship
 from enum import Enum
 
 
+def get_url(content):
+    return f"https://{content.s3_bucket}.s3.amazonaws.com/{content.s3_id}"
+
+
 class MediaType(Enum):
     Image = 1
     Text = 2
