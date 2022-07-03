@@ -5,5 +5,5 @@ from sqlalchemy.sql.expression import func
 
 class RandomGenerator(AbstractGenerator):
     def get_content_ids(self):
-        results = Content.query.order_by(func.rand()).limit(100).all()
-        return list(map(lambda x: x.id, results))
+        results = Content.query.with_entities(Content.id).order_by(func.rand()).limit(100).all()
+        return list(map(lambda x: x[0], results))
