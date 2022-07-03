@@ -12,7 +12,7 @@ $ source E4579/bin/activate
 
 Then install flask dependencies and set two bash variables
 ```bash
-$ pip install flask flask-sqlalchemy flask-login mysqlclient python-dotenv
+$ pip install -r requirements.txt
 $ export FLASK_APP=project
 $ export FLASK_DEBUG=1
 ```
@@ -75,9 +75,25 @@ $ source E4579/bin/activate
 
 Then install flask dependencies and set two bash variables
 ```bash
-$ pip install flask flask-sqlalchemy flask-login gunicorn
+$ pip install -r requirements.txt
 $ export FLASK_APP=project
 $ export FLASK_DEBUG=1
+```
+
+### Create the .env file
+You should create a .env file and add the necessary variables:
+```bash
+$ sudo vim .env
+```
+
+and put the values:
+```text
+aws_db_password=
+aws_db_endpoint=
+aws_db_username=
+aws_db_port=
+aws_db_schema
+use_aws_db=1
 ```
 
 ### Build react
