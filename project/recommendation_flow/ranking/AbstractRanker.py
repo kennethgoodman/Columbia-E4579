@@ -1,3 +1,3 @@
 class AbstractRanker:
-    def rank_ids(self):
+    def rank_ids(self, probabilities):
         pass
