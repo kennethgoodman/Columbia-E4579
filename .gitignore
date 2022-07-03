@@ -134,6 +134,7 @@ dmypy.json
 project/db.sqlite
 E4579
 logs_folder
+.env
 
 
 
