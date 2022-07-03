@@ -12,7 +12,7 @@ $ source E4579/bin/activate
 
 Then install flask dependencies and set two bash variables
 ```bash
-$ pip install flask flask-sqlalchemy flask-login
+$ pip install flask flask-sqlalchemy flask-login mysqlclient python-dotenv
 $ export FLASK_APP=project
 $ export FLASK_DEBUG=1
 ```
@@ -57,11 +57,11 @@ pip install flask-sqlalchemy flask-login
 
 ## EC2 Ubuntu Production Server Setup
 
-### Installing python3-venv, npm and nginx
+### Installing python3-venv, npm, nginx and psql
 
 ```bash
 $ sudo apt-get update
-$ sudo apt-get install python3-venv npm nginx
+$ sudo apt-get install python3-venv npm nginx mysql-server
 ```
 
 ### Set Up Python Env
