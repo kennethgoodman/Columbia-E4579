@@ -1,4 +1,4 @@
-from . import AbstractFilter
+from .AbstractFilter import AbstractFilter
 import random
 
 

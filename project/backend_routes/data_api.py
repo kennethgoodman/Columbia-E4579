@@ -15,6 +15,23 @@ def get_images():
     }
 
 
+@data_api.route('/random_photos')
+def random_photo():
+    urls = get_content_data(ControllerEnum.RANDOM)
+    url_html = lambda idx_and_url: f"""<h1> Image {idx_and_url[0]} </h1> <img src="{idx_and_url[1]}">"""
+    html = '<br>\n'.join(list(map(url_html, enumerate(urls))))
+    return """
+        <!DOCTYPE html>
+        <html>
+        <body>
+
+        <h1>The img element</h1>
+    """ + html + """
+        </body>
+        </html>
+    """
+
+
 @data_api.route('/ping', methods=['GET'])
 def ping():
     return 'pong'

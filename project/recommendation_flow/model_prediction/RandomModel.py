@@ -1,4 +1,4 @@
-from . import AbstractModel
+from .AbstractModel import AbstractModel
 import random
 
 

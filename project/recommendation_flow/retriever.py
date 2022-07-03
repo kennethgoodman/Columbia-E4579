@@ -12,6 +12,6 @@ def get_content_data(controller):
         content_ids = ControllerEnum.RANDOM.value().get_content_ids()
     else:
         raise ValueError(f"don't support that controller: {controller}")
-    all_content = Content.query.filter(Content.id.in_([content_ids])).all()
+    all_content = Content.query.filter(Content.id.in_(content_ids)).all()
     urls = map(get_url, all_content)
     return list(urls)

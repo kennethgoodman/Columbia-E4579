@@ -1,4 +1,4 @@
-from . import AbstractRanker
+from .AbstractRanker import AbstractRanker
 import heapq
 import random
 
