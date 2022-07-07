@@ -7,7 +7,7 @@ data_api = Blueprint('data_api', __name__, static_folder='../frontend/build', st
 
 @data_api.route('/api/get_images', methods=['GET'])
 def get_images():
-    urls = get_content_data(ControllerEnum.RANDOM)
+    urls = get_content_data(ControllerEnum.RANDOM, 0)  # logged out user is 0
     return {
         "images": [urls],
     }
@@ -22,8 +22,9 @@ def joke():
 
 
 @data_api.route('/random_photos')
+@login_required
 def random_photo():
-    urls = get_content_data(ControllerEnum.RANDOM)
+    urls = get_content_data(ControllerEnum.RANDOM, current_user.id)
     url_html = lambda idx_and_url: f"""<h1> Image {idx_and_url[0]} </h1> <img src="{idx_and_url[1]}">"""
     html = '<br>\n'.join(list(map(url_html, enumerate(urls))))
     return """

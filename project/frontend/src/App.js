@@ -13,7 +13,7 @@ function App() {
   return (
     <div className="App">
       <h1>
-        {joke?.setup} - {joke?.delivery}
+        {joke?.setup} : {joke?.delivery}
       </h1>
 
       <button onClick={refetch}> Refetch</button>

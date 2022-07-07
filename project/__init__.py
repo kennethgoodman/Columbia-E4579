@@ -62,6 +62,7 @@ def create_app():
     app.config['SECRET_KEY'] = '9OLWxND4o83j4K4iuopO'
     app.config['FLASK_DEBUG'] = int(environ.get("FLASK_DEBUG", 0))
     app.config['SQLALCHEMY_DATABASE_URI'] = get_sqlalchemy_database_uri()
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.proxy = proxy
 
     db.init_app(app)

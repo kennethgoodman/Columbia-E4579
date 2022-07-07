@@ -5,14 +5,36 @@ Fall 2022 Class At Columbia. Modern Recommendation Systems
 
 ### Set Up Python Env
 First open a terminal and create a virtual environment
+
+#### WARNING IF USING M1
+If using M1, create virtual env with https://caffeinedev.medium.com/how-to-install-tensorflow-on-m1-mac-8e9b91d93706. 
+You will also need to update to 12.2+
+
+If not in Conda:
+
 ```bash
-$ python3 -m venv E4579
+$ python3 -m venv E4579  
 $ source E4579/bin/activate
 ```
+
+If in Conda:
+```bash
+$ conda create --name E4579 python=3.8
+$ conda activate E4579
+$ conda install -c apple tensorflow-deps
+$ conda install -c conda-forge mysql
+```
+
 
 Then install flask dependencies and set two bash variables
 ```bash
 $ pip install -r requirements.txt
+```
+
+### Setup flask:
+
+You can also add these to an .env file at the top of the repo
+```bash
 $ export FLASK_APP=project
 $ export FLASK_DEBUG=1
 ```
@@ -37,14 +59,16 @@ db.create_all(app=app)
 You should see a db.sqlite file
 
 ### Building ReactJS
+This will run a react server. In production, we will use a static build, but for development we
+want to have a separate server, so we can have hot loading of dev files with auto-reloading.
 ```bash
 $ cd frontend
 $ npm install i
-$ npm run build
+$ yarn start
 ```
 
 ### Running app
-We can now run flask with:
+We can now run flask in another terminal with:
 ```bash
 $ flask run
 ```
@@ -190,3 +214,4 @@ You can now go to server_domain_or_IP and see the website
 1. Thank you to digitalocean for [tutorial on flask auth](https://www.digitalocean.com/community/tutorials/how-to-add-authentication-to-your-app-with-flask-login)
 2. [SamuelSacco](https://github.com/SamuelSacco) for creating the frontend
 3. Thank you to Kim Huiyeon for their [tutorial on nginx](https://medium.com/techfront/step-by-step-visual-guide-on-deploying-a-flask-application-on-aws-ec2-8e3e8b82c4f7)
+4. Thank you to Andrew Hyndman for their [tutorial on hotloading](https://ajhyndman.medium.com/hot-reloading-with-react-and-flask-b5dae60d9898)
