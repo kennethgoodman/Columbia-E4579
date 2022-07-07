@@ -1,5 +1,6 @@
 # init.py
 import logging
+from os import environ
 import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
@@ -22,6 +23,27 @@ def get_sqlalchemy_database_uri():
     return 'sqlite:///db.sqlite'
 
 
+# we set up proxy so we can do front end dev if we need and serve to react local server
+def proxy(path):
+    from requests import get
+    print("in proxy")
+    host = "http://localhost:3000"
+    response = get(f"{host}{path}")
+    print(response.content)
+    excluded_headers = [
+        "content-encoding",
+        "content-length",
+        "transfer-encoding",
+        "connection",
+    ]
+    headers = {
+        name: value
+        for name, value in response.raw.headers.items()
+        if name.lower() not in excluded_headers
+    }
+    return response.content, response.status_code, headers
+
+
 def create_app():
     if not os.path.isdir('logs_folder'):
         os.mkdir('logs_folder')
@@ -38,8 +60,9 @@ def create_app():
     app.logger.setLevel(min(map(lambda x: x.level, loggers)))
 
     app.config['SECRET_KEY'] = '9OLWxND4o83j4K4iuopO'
-
+    app.config['FLASK_DEBUG'] = int(environ.get("FLASK_DEBUG", 0))
     app.config['SQLALCHEMY_DATABASE_URI'] = get_sqlalchemy_database_uri()
+    app.proxy = proxy
 
     db.init_app(app)
 

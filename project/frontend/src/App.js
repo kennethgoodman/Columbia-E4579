@@ -3,7 +3,7 @@ import useFetch from "./utils/useFetch";
 
 function App() {
   const { data: joke, loading, error, refetch } = useFetch(
-    "https://v2.jokeapi.dev/joke/Any"
+    "/api/joke"
   );
 
   if (loading) return <h1> LOADING...</h1>;
@@ -13,7 +13,7 @@ function App() {
   return (
     <div className="App">
       <h1>
-        {joke?.setup} : {joke?.delivery}
+        {joke?.setup} - {joke?.delivery}
       </h1>
 
       <button onClick={refetch}> Refetch</button>

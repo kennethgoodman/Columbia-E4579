@@ -1,6 +1,6 @@
 # main.py
 
-from flask import Blueprint, render_template, current_app
+from flask import Blueprint, render_template, current_app, request
 from flask_login import login_required, current_user
 
 main = Blueprint('main', __name__, static_folder='../frontend/build')
@@ -28,7 +28,12 @@ def random_photo():
         </html>
     """
 
+
 # Serve React App
-@main.route('/')
-def index():
-    return main.send_static_file('index.html')
+@main.route("/app/", defaults={"path": "index.html"})
+@main.route("/app/<path:path>")
+def index(path):
+    if current_app.config.get("FLASK_DEBUG") == 1:
+        print("using proxy")
+        return current_app.proxy(request.path)
+    return main.send_static_file(path)

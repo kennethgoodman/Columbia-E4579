@@ -5,13 +5,19 @@ from project.recommendation_flow.retriever import get_content_data, ControllerEn
 data_api = Blueprint('data_api', __name__, static_folder='../frontend/build', static_url_path='/')
 
 
-@data_api.route('/get_images', methods=['GET'])
-@login_required
+@data_api.route('/api/get_images', methods=['GET'])
 def get_images():
     urls = get_content_data(ControllerEnum.RANDOM)
     return {
-        "username": current_user.username,
         "images": [urls],
+    }
+
+
+@data_api.route('/api/joke', methods=['GET'])
+def joke():
+    return {
+        "setup": "hi",
+        "delivery": "hello"
     }
 
 
