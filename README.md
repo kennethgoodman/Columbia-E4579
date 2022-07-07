@@ -25,11 +25,13 @@ $ python3
 ```
 
 Run these commands in python one time to create the local DB
+
 ```python
 from project import db, create_app
-from project.models import _tables
-app=create_app()
-db.create_all(app=app) 
+from project.data_models import _tables
+
+app = create_app()
+db.create_all(app=app)
 # pass the create_app result so Flask-SQLAlchemy gets the configuration.
 ```
 You should see a db.sqlite file

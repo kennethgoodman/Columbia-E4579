@@ -1,5 +1,5 @@
 from .AbstractGenerator import AbstractGenerator
-from project.models.content import Content
+from project.data_models.content import Content
 from sqlalchemy.sql.expression import func
 
 

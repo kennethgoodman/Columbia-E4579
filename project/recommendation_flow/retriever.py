@@ -1,5 +1,5 @@
 from project.recommendation_flow.controllers.RandomController import RandomController
-from project.models.content import Content, get_url
+from project.data_models.content import Content, get_url
 from enum import Enum
 
 

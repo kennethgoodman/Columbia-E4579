@@ -1,7 +1,7 @@
 import boto3
 from project import db, create_app
-from project.models import _tables, User
-from project.models.content import Content, MediaType
+from project.data_models import _tables, User
+from project.data_models.content import Content, MediaType
 app = create_app()
 
 s3 = boto3.resource('s3')
