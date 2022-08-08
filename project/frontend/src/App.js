@@ -5,9 +5,13 @@ import Post from "./components/Post";
 import "./App.css";
 
 export default function App() {
+  let url = "https://picsum.photos/v2/list"  // development
+  if(process.env.NODE_ENV === 'production') { // TODO Add some configuration here for testing
+    url = "/api/get_images";
+  }
   const fetchPosts = async ({ pageParam = 1 }) => {
     const response = await fetch(
-      `https://picsum.photos/v2/list?page=${pageParam}&limit=10`
+      `${url}?page=${pageParam}&limit=10`
     );
     const results = await response.json();
     return { results, nextPage: pageParam + 1, totalPages: 100 };

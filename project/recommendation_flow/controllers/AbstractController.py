@@ -1,2 +1,3 @@
 class AbstractController:
-    pass
+    def get_content_ids(self, user_id, limit):
+        pass

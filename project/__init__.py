@@ -26,10 +26,8 @@ def get_sqlalchemy_database_uri():
 # we set up proxy so we can do front end dev if we need and serve to react local server
 def proxy(path):
     from requests import get
-    print("in proxy")
-    host = "http://localhost:3000"
+    host = "http://localhost:3000"  # path that yarn/React serves at
     response = get(f"{host}{path}")
-    print(response.content)
     excluded_headers = [
         "content-encoding",
         "content-length",
@@ -63,6 +61,7 @@ def create_app():
     app.config['FLASK_DEBUG'] = int(environ.get("FLASK_DEBUG", 0))
     app.config['SQLALCHEMY_DATABASE_URI'] = get_sqlalchemy_database_uri()
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    app.config['use_picsum'] = bool(environ.get('use_picsum', False))
     app.proxy = proxy
 
     db.init_app(app)

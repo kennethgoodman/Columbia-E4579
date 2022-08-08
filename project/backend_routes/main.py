@@ -34,6 +34,5 @@ def random_photo():
 @main.route("/app/<path:path>")
 def index(path):
     if current_app.config.get("FLASK_DEBUG") == 1:
-        print("using proxy")
         return current_app.proxy(request.path)
     return main.send_static_file(path)
