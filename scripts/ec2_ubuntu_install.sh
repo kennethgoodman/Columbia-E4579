@@ -1,6 +1,7 @@
 if [ -z "$1" ]
   then
     echo "No argument supplied for IP address"
+    exit
 fi
 
 # update and get all necessary packages from apt-get
@@ -14,8 +15,8 @@ python3 -m venv E4579
 source E4579/bin/activate
 
 # pip install setup
-pip install tensorflow-cpu --no-cache-dir
-pip install -r requirements.txt
+pip install -r requirements.txt || exit
+pip install tensorflow-cpu --no-cache-dir || exit
 export FLASK_APP=project
 export FLASK_DEBUG=1
 
@@ -34,7 +35,7 @@ WorkingDirectory=/home/ubuntu/Columbia-E4579
 ExecStart=/home/ubuntu/Columbia-E4579/E4579/bin/gunicorn --workers=3 --bind=0.0.0.0:8000 --log-level=info 'project.__init__:create_app()'
 Restart=always
 [Install]
-WantedBy=multi-user.target" >> /etc/systemd/system/E4579.service
+WantedBy=multi-user.target" | sudo tee /etc/systemd/system/E4579.service
 
 sudo systemctl daemon-reload
 sudo systemctl start E4579
@@ -53,7 +54,7 @@ echo "server {
         include proxy_params;
         proxy_pass http://127.0.0.1:8000;
    }
-}" >> /etc/nginx/sites-available/E4579
+}" | sudo tee /etc/nginx/sites-available/E4579
 
 sudo ln -s /etc/nginx/sites-available/E4579 /etc/nginx/sites-enabled
 

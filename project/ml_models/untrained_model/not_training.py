@@ -9,7 +9,10 @@ class ModelController:
         self.model = self.get_model()
         if load_model:
             latest = tf.train.latest_checkpoint(self._checkpoint_path)
-            self.model.load_weights(latest)
+            try:
+                self.model.load_weights(latest)
+            except:
+                pass  # no model to load from
 
     def train_model(self):
         pass
