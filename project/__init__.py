@@ -57,9 +57,8 @@ def create_app():
     # take the minimum level
     app.logger.setLevel(min(map(lambda x: x.level, loggers)))
 
-    config = dotenv_values(".env")
     app.proxy = proxy
-    app.config['use_picsum'] = int(config.get('use_picsum', 0))
+    app.config['use_picsum'] = int(dotenv_values(".env").get('use_picsum', 0))
     app.config['SECRET_KEY'] = '9OLWxND4o83j4K4iuopO'
     app.config['FLASK_DEBUG'] = int(environ.get("FLASK_DEBUG", 0))
     app.config['SQLALCHEMY_DATABASE_URI'] = get_sqlalchemy_database_uri()
