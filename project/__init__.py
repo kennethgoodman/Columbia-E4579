@@ -61,7 +61,7 @@ def create_app():
     app.config['FLASK_DEBUG'] = int(environ.get("FLASK_DEBUG", 0))
     app.config['SQLALCHEMY_DATABASE_URI'] = get_sqlalchemy_database_uri()
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    app.config['use_picsum'] = bool(environ.get('use_picsum', False))
+    app.config['use_picsum'] = int(environ.get('use_picsum', 0))
     app.proxy = proxy
 
     db.init_app(app)
