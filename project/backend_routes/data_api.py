@@ -9,7 +9,7 @@ data_api = Blueprint('data_api', __name__, static_folder='../frontend/build', st
 def get_images():
     page = request.args.get('page')
     limit = request.args.get('limit')
-    print('in get images', page, limit)
+    current_app.logger.info('in get images', page, limit)
     if current_app.config.get("use_picsum"):
         import requests
         response = requests.get(f'https://picsum.photos/v2/list?page={page}&limit={limit}')

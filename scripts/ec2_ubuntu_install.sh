@@ -32,7 +32,7 @@ After=network.target
 User=ubuntu
 Group=www-data
 WorkingDirectory=/home/ubuntu/Columbia-E4579
-ExecStart=/home/ubuntu/Columbia-E4579/E4579/bin/gunicorn --workers=3 --bind=0.0.0.0:8000 --log-level=info 'project.__init__:create_app()'
+ExecStart=/home/ubuntu/Columbia-E4579/E4579/bin/gunicorn --workers=3 --bind=0.0.0.0:8000 --access-logfile /home/ubuntu/Columbia-E4579/logs_folder/gunicorn-access.log --error-logfile /home/ubuntu/Columbia-E4579/logs_folder/gunicorn-error.log --log-level=info 'project.__init__:create_app()'
 Restart=always
 [Install]
 WantedBy=multi-user.target" | sudo tee /etc/systemd/system/E4579.service

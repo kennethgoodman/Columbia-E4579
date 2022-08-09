@@ -88,130 +88,37 @@ pip install flask-sqlalchemy flask-login
 
 ### Installing python3-venv, npm, nginx and mysql
 
+You can also clone your own fork. Your server_domain_or_IP is the EC2 ip address
 ```bash
-$ sudo apt-get update
-$ sudo apt-get install python3-venv npm nginx mysql-server
+$ git clone https://github.com/kennethgoodman/Columbia-E4579.git
+$ sudo bash ./Columbia-E4579/scripts/ec2_ubuntu_install.sh server_domain_or_IP
 ```
 
-Install what is necessary for mysql:
-```bash
-$ sudo apt-get install python3-dev default-libmysqlclient-dev build-essential
-```
-
-### Set Up Python Env
-Create a virtual environment
-```bash
-$ python3 -m venv E4579
-$ source E4579/bin/activate
-```
-
-Then install flask dependencies and set two bash variables
-```bash
-$ pip install tensorflow-cpu --no-cache-dir
-$ pip install -r requirements.txt
-$ export FLASK_APP=project
-$ export FLASK_DEBUG=1
-```
-
-### Create the .env file
-You should create a .env file and add the necessary variables:
-```bash
-$ sudo vim .env
-```
-
-and put the values:
+This will end up by opening a .env file, paste the follow and fill out the right side of equal signs:
 ```text
 aws_db_password=
 aws_db_endpoint=
 aws_db_username=
 aws_db_port=
-aws_db_schema
+aws_db_schema=E4579
 use_aws_db=1
+FLASK_APP=project
+FLASK_DEBUG=1
+SQLALCHEMY_TRACK_MODIFICATIONS=False
+use_picsum=1
 ```
 
-### Build react
-Run these npm commands to install packages and build react
+You can now go to server_domain_or_IP and see the website. See server_domain_or_IP/ping on your local browser
+
+To debug problems with the server
 ```bash
-$ cd project/frontend
-$ npm install i
-$ npm run build
+$ sudo systemctl status E4579
 ```
 
-### Run gunicorn 
-
-To test that we've set up everything correctly, you can run (from root of repo):
+To debug problems with nginx:
 ```bash
-gunicorn -b 0.0.0.0:8000 project:__init__
+$ systemctl status nginx.service
 ```
-
-Then in another terminal to test that it is working:
-```bash
-$ curl localhost:8000/ping
-```
-Now you should see "pong" as the response
-
-You can close gunicorn terminal as we start to run this in the background:
-```bash
-$ sudo nano /etc/systemd/system/E4579.service
-```
-
-Write to the file:
-```text
-[Unit]
-Description=Gunicorn instance for Columbia-E4579
-After=network.target
-[Service]
-User=ubuntu
-Group=www-data
-WorkingDirectory=/home/ubuntu/Columbia-E4579
-ExecStart=/home/ubuntu/Columbia-E4579/E4579/bin/gunicorn --workers=3 --bind=0.0.0.0:8000 --log-level=info 'project.__init__:create_app()'
-Restart=always
-[Install]
-WantedBy=multi-user.target
-```
-
-Then start systemctl so that on reload and restart the server will always be up
-```bash
-$ sudo systemctl daemon-reload
-$ sudo systemctl start E4579
-$ sudo systemctl enable E4579
-```
-
-Finally, we use nginx
-```bash
-$ sudo systemctl start nginx
-$ sudo systemctl enable nginx
-```
-
-Now we write to the nginx file:
-```bash
-sudo nano /etc/nginx/sites-available/E4579
-```
-
-You should write to the file: (where server_domain_or_IP = IP address)
-```text
-server {
-    listen 80;
-    server_name server_domain_or_IP;
-
-    location / {
-        include proxy_params;
-        proxy_pass http://127.0.0.1:8000;
-   }
-}
-```
-
-ln the file:
-```bash
-$ sudo ln -s /etc/nginx/sites-available/E4579 /etc/nginx/sites-enabled
-```
-
-Then restart nginx
-```bash
-$ sudo systemctl restart nginx
-```
-
-You can now go to server_domain_or_IP and see the website
 
 ## Credit
 1. Thank you to digitalocean for [tutorial on flask auth](https://www.digitalocean.com/community/tutorials/how-to-add-authentication-to-your-app-with-flask-login)
