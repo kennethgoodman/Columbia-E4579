@@ -26,8 +26,9 @@ $ conda install -c conda-forge mysql
 ```
 
 
-Then install flask dependencies and set two bash variables
+Then install flask dependencies (For macOS users, we have the first line to install tensorflow for macOS)
 ```bash
+$ pip install tensorflow-macos tensorflow-metal
 $ pip install -r requirements.txt
 ```
 
@@ -89,7 +90,7 @@ pip install flask-sqlalchemy flask-login
 
 ```bash
 $ sudo apt-get update
-$ sudo apt-get install python3-venv npm nginx mysql-server 
+$ sudo apt-get install python3-venv npm nginx mysql-server
 ```
 
 Install what is necessary for mysql:
@@ -106,6 +107,7 @@ $ source E4579/bin/activate
 
 Then install flask dependencies and set two bash variables
 ```bash
+$ pip install tensorflow-cpu --no-cache-dir
 $ pip install -r requirements.txt
 $ export FLASK_APP=project
 $ export FLASK_DEBUG=1
@@ -130,13 +132,14 @@ use_aws_db=1
 ### Build react
 Run these npm commands to install packages and build react
 ```bash
+$ cd project/frontend
 $ npm install i
 $ npm run build
 ```
 
 ### Run gunicorn 
 
-To test that we've set up everything correctly, you can run:
+To test that we've set up everything correctly, you can run (from root of repo):
 ```bash
 gunicorn -b 0.0.0.0:8000 project:__init__
 ```
@@ -145,7 +148,7 @@ Then in another terminal to test that it is working:
 ```bash
 $ curl localhost:8000/ping
 ```
-Now you should see "pong"
+Now you should see "pong" as the response
 
 You can close gunicorn terminal as we start to run this in the background:
 ```bash
@@ -193,7 +196,7 @@ server {
 
     location / {
         include proxy_params;
-        proxy_pass proxy_pass http://127.0.0.1:8000;
+        proxy_pass http://127.0.0.1:8000;
    }
 }
 ```

@@ -52,9 +52,7 @@ tensorboard-data-server==0.6.1
 tensorboard-plugin-wit==1.8.1
 tensorflow-datasets==4.6.0
 tensorflow-estimator==2.9.0
-tensorflow-macos==2.9.2
 tensorflow-metadata==1.9.0
-tensorflow-metal==0.5.0
 termcolor==1.1.0
 toml==0.10.2
 tqdm==4.64.0
