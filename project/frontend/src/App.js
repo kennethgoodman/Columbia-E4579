@@ -40,7 +40,7 @@ export default function App() {
         ) : (
           <InfiniteScroll hasMore={hasNextPage} loadMore={fetchNextPage}>
             {data.pages.map((page) =>
-              page.results.map((post) => <Post key={post.id} post={post} />)
+              page.results.map((post) => <Post content_id={post.id} post={post} />)
             )}
           </InfiniteScroll>
         )}
