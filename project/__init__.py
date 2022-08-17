@@ -80,7 +80,8 @@ def create_app():
     from project.backend_routes.auth import auth as auth_blueprint
     from project.backend_routes.main import main as main_blueprint
     from project.backend_routes.data_api import data_api
-    blueprints = [auth_blueprint, main_blueprint, data_api]
+    from project.backend_routes.engagement import engagement_api
+    blueprints = [auth_blueprint, main_blueprint, data_api, engagement_api]
     for blueprint in blueprints:
         app.register_blueprint(blueprint)
 

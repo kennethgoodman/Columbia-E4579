@@ -8,7 +8,7 @@ from enum import Enum
 class EngagementType(Enum):
     Like = 1
     Comment = 2
-    VideoWatch = 3
+    VideoWatch = 3  # more than 100ms
 
 
 class Engagement(db.Model):
