@@ -12,6 +12,10 @@ class EngagementType(Enum):
 
 
 class Engagement(db.Model):
+    __table_args__ = (
+        # this can be db.PrimaryKeyConstraint if you want it to be a primary key
+        db.UniqueConstraint('user_id', 'content_id', 'engagement_type'),
+    )
     __tablename__ = "engagement"
     id = db.Column(db.Integer, primary_key=True)  # primary keys are required by SQLAlchemy
     user_id = db.Column(db.Integer, ForeignKey('user.id'))  # user that engaged

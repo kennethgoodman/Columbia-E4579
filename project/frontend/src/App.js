@@ -6,7 +6,7 @@ import "./App.css";
 
 export default function App() {
   let url = "https://picsum.photos/v2/list"  // development
-  if(process.env.NODE_ENV === 'production') { // TODO Add some configuration here for testing
+  if(process.env.NODE_ENV === 'development') { // TODO Add some configuration here for testing
     url = "/api/get_images";
   }
   const fetchPosts = async ({ pageParam = 1 }) => {

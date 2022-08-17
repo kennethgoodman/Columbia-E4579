@@ -1,23 +1,32 @@
 from flask import Blueprint, request, current_app, jsonify
 from flask_login import current_user, login_required
+from project.query_utils.engagement import get_likes
 from project.recommendation_flow.retriever import get_content_data, ControllerEnum
 
 data_api = Blueprint('data_api', __name__, static_folder='../frontend/build', static_url_path='/')
+
+
+def add_content_data(responses, user_id):
+    # TODO, can we do this all in one query to be faster?
+    for response in responses:
+        total_likes, user_likes = get_likes(response['id'], user_id)
+        response['total_likes'] = total_likes
+        response['user_likes'] = user_likes
+    return responses
 
 
 @data_api.route('/api/get_images', methods=['GET'])
 def get_images():
     page = request.args.get('page')
     limit = request.args.get('limit')
-    current_app.logger.info(f'in get images, page={page}, limit={limit}, use_picsum={current_app.config.get("use_picsum")}')
     if current_app.config.get("use_picsum"):
         import requests
         response = requests.get(f'https://picsum.photos/v2/list?page={page}&limit={limit}')
-        return jsonify(response.json())
-    # logged out user is 0
+        return jsonify(add_content_data(response.json(), current_user.id))
+    # logged-out user is 0
     # don't need page for random (most of the time)
     responses = get_content_data(controller=ControllerEnum.RANDOM, user_id=0, limit=limit)
-    return jsonify(responses)
+    return jsonify(add_content_data(responses, current_user.id))
 
 
 @data_api.route('/random_photos')

@@ -6,6 +6,7 @@ from enum import Enum
 class ControllerEnum(Enum):
     RANDOM = RandomController
 
+
 def content_to_response(content):
     return {
         'download_url': get_url(content),
