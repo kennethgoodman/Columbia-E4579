@@ -5,10 +5,7 @@ import Post from "./components/Post";
 import "./App.css";
 
 export default function App() {
-  let url = "https://picsum.photos/v2/list"  // development
-  if(process.env.NODE_ENV === 'development') { // TODO Add some configuration here for testing
-    url = "/api/get_images";
-  }
+  let url = "/api/get_images";
   const fetchPosts = async ({ pageParam = 1 }) => {
     const response = await fetch(
       `${url}?page=${pageParam}&limit=10`
