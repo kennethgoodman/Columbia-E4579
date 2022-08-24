@@ -12,6 +12,8 @@ def add_content_data(responses, user_id):
         total_likes, user_likes = get_likes(response['id'], user_id)
         response['total_likes'] = total_likes
         response['user_likes'] = user_likes
+        if response.get('text') is None:
+            response['text'] = response['author']
     return responses
 
 
