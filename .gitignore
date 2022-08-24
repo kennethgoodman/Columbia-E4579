@@ -136,6 +136,6 @@ E4579
 logs_folder
 .env
 model_weights
-
+image_generation_pipelines/output
 
 

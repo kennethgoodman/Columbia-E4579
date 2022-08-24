@@ -11,6 +11,7 @@ sudo apt-get install python3-dev default-libmysqlclient-dev build-essential
 
 # clone and CD
 cd Columbia-E4579 || exit
+mkdir logs_folder || exit
 python3 -m venv E4579
 source E4579/bin/activate
 
