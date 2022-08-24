@@ -25,6 +25,8 @@ class Content(db.Model):
     s3_bucket = db.Column(db.String(200), nullable=True)
     s3_id = db.Column(db.String(200), nullable=True)  # might be only text, if media_type = Text
     text = db.Column(db.String(1000), nullable=True)  # text on the post
+
+    # Foreign Keys
     author_id = db.Column(db.Integer, ForeignKey("user.id"), nullable=False)
     # all engagements on the content
     content_engagements = relationship("Engagement")  # one piece of content with many engagements
