@@ -1,7 +1,7 @@
 # main.py
 
-from flask import Blueprint, render_template, current_app, request
-from flask_login import login_required, current_user
+from flask import Blueprint, render_template, current_app, request, redirect, url_for
+from flask_login import login_required, current_user, AnonymousUserMixin
 
 main = Blueprint('main', __name__, static_folder='../frontend/build')
 
@@ -33,6 +33,8 @@ def random_photo():
 @main.route("/app/", defaults={"path": "index.html"})
 @main.route("/app/<path:path>")
 def index(path):
+    if isinstance(current_user, AnonymousUserMixin):
+        return redirect(url_for('auth.login'))
     if current_app.config.get("FLASK_DEBUG") == 1:
         return current_app.proxy(request.path)
     return main.send_static_file(path)
