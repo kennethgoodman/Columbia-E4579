@@ -1,6 +1,6 @@
 # main.py
-
-from flask import Blueprint, render_template, current_app, request, redirect, url_for
+import uuid
+from flask import Blueprint, render_template, current_app, request, redirect, url_for, session
 from flask_login import login_required, current_user, AnonymousUserMixin
 
 main = Blueprint('main', __name__, static_folder='../frontend/build')
@@ -35,6 +35,7 @@ def random_photo():
 def index(path):
     if isinstance(current_user, AnonymousUserMixin):
         return redirect(url_for('auth.login'))
+    session['session_id'] = uuid.uuid4()
     if current_app.config.get("FLASK_DEBUG") == 1:
         return current_app.proxy(request.path)
     return main.send_static_file(path)
