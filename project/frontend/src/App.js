@@ -1,7 +1,7 @@
 import InfiniteScroll from "react-infinite-scroller";
 import { useInfiniteQuery } from "react-query";
 import Post from "./components/Post/Post";
-import "./App.css";
+import "./App.scss";
 
 export default function App() {
   let url = "/api/get_images";
@@ -28,7 +28,6 @@ export default function App() {
 
   return (
     <div className="App">
-      <div>
         {isLoading ? (
           <p>Loading...</p>
         ) : isError ? (
@@ -40,7 +39,6 @@ export default function App() {
             )}
           </InfiniteScroll>
         )}
-      </div>
     </div>
   );
 }

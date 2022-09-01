@@ -36,6 +36,7 @@
     "react-infinite-scroller": "1.2.6",
     "react-query": "3.39.0",
     "react-scripts": "4.0.0",
+    "sass": "^1.54.8",
     "web-vitals": "^2.1.4"
   }
 }
