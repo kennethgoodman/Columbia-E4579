@@ -26,8 +26,8 @@ class Content(db.Model):
 
     # relationships
     content_engagements = relationship("Engagement")  # one piece of content with many engagements
-    generative_metadata = relationship('GeneratedContentMetadata', back_populates="content")
-    non_generative_metadata = relationship('NonGeneratedContentMetadata', back_populates="content", uselist=False)
+    generated_content_metadata = relationship('GeneratedContentMetadata', back_populates="content")
+    non_generated_content_metadata = relationship('NonGeneratedContentMetadata', back_populates="content", uselist=False)
 
     # columns
     media_type = db.Column(SqlEnum(MediaType))
