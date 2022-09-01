@@ -19,4 +19,4 @@ class Engagement(db.Model):
     user_id = db.Column(db.Integer, ForeignKey('user.id'))  # user that engaged
     content_id = db.Column(db.Integer, ForeignKey('content.id'))  # content they engaged with
     engagement_type = db.Column(SqlEnum(EngagementType))  # how they engaged
-    # engagement_value = db.Column(db.Integer, nullable=True)  # the value of the engagement_type
+    engagement_value = db.Column(db.Integer, nullable=True)  # the value of the engagement_type
