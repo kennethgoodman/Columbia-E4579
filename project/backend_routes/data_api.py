@@ -1,4 +1,4 @@
-from flask import Blueprint, request, current_app, jsonify
+from flask import Blueprint, request, current_app, jsonify, session
 from flask_login import current_user, login_required
 from project.query_utils.engagement import get_likes
 from project.recommendation_flow.retriever import get_content_data, ControllerEnum
@@ -19,15 +19,17 @@ def add_content_data(responses, user_id):
 
 @data_api.route('/api/get_images', methods=['GET'])
 def get_images():
-    page = request.args.get('page')
-    limit = request.args.get('limit')
+    # TODO: ensure page and limit exist. Instead of page, use offset directly to allow different limits
+    page = int(request.args.get('page', 0))
+    limit = int(request.args.get('limit', 10))
+    offset = page * limit
     if current_app.config.get("use_picsum"):
         import requests
         response = requests.get(f'https://picsum.photos/v2/list?page={page}&limit={limit}')
         return jsonify(add_content_data(response.json(), current_user.id))
     # logged-out user is 0
     # don't need page for random (most of the time)
-    responses = get_content_data(controller=ControllerEnum.RANDOM, user_id=0, limit=limit)
+    responses = get_content_data(controller=ControllerEnum.RANDOM, user_id=0, limit=limit, offset=offset)
     return jsonify(add_content_data(responses, current_user.id))
 
 
