@@ -1,0 +1,25 @@
+.postContainer {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #dbdbdb;
+    border-radius: 5px;
+    margin-bottom: 1.5rem;
+    width: 500px;
+    padding: 5px;
+
+    .postAuthor {
+        background: #fafafa;
+        padding: 0.5rem;
+        text-align: center;
+    }
+
+    .postBody{
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 800px) {
+    .postContainer {
+        width: 200px;
+    }
+}

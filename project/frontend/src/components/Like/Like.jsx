@@ -1,15 +1,16 @@
 // from https://stackoverflow.com/questions/72153851/create-a-simple-like-button-component-with-react
 import React, { useState } from 'react';
+import styles from './Like.scss';
 
-const LikeButton = ({ content_id, total_likes, user_likes }) => {
-	if (total_likes === undefined) {
-		total_likes = 0;
+const LikeButton = ({ contentId, totalLikes, userLikes }) => {
+	if (totalLikes === undefined) {
+		totalLikes = 0;
 	}
-	if (user_likes === undefined) {
-		user_likes = false;
+	if (userLikes === undefined) {
+		userLikes = false;
 	}
-	const [likes, setLikes] = useState(total_likes);
-	const [isClicked, setIsClicked] = useState(user_likes);
+	const [likes, setLikes] = useState(totalLikes);
+	const [isClicked, setIsClicked] = useState(userLikes);
 	const defaultRequestOptions = {
 		headers: {
 			'Content-Type': 'application/json',
@@ -27,14 +28,14 @@ const LikeButton = ({ content_id, total_likes, user_likes }) => {
 			setLikes(likes + 1);
 			api_uri = '/api/engagement/like_content';
 		}
-		fetch(`${api_uri}?content_id=${content_id}`, postRequestOptions).then(
+		fetch(`${api_uri}?contentId=${contentId}`, postRequestOptions).then(
 			(response) => response.json()
 		);
 		setIsClicked(!isClicked);
 	};
 
 	return (
-		<div className='likeContainer'>
+		<div>
 			<button
 				className={`like-button ${isClicked && 'liked'}`}
 				onClick={handleClick}
