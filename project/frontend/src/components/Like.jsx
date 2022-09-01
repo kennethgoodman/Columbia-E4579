@@ -34,17 +34,19 @@ const LikeButton = ({ content_id, total_likes, user_likes }) => {
 	};
 
 	return (
-		<button
-			className={`like-button ${isClicked && 'liked'}`}
-			onClick={handleClick}
-		>
-			{isClicked ? (
-				<i class='fa fa-thumbs-up'>{likes}</i>
-			) : (
-				// <span className='likes-counter'>{`Unlike | ${likes}`}</span>
-				<i class='fa fa-thumbs-down'>{likes}</i>
-			)}
-		</button>
+		<div className='likeContainer'>
+			<button
+				className={`like-button ${isClicked && 'liked'}`}
+				onClick={handleClick}
+			>
+				{isClicked ? (
+					<i class='fa fa-thumbs-up'>{likes}</i>
+				) : (
+					// <span className='likes-counter'>{`Unlike | ${likes}`}</span>
+					<i class='fa fa-thumbs-down'>{likes}</i>
+				)}
+			</button>
+		</div>
 	);
 };
 

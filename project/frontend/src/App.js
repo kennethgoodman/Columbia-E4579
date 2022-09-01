@@ -1,7 +1,6 @@
 import InfiniteScroll from "react-infinite-scroller";
 import { useInfiniteQuery } from "react-query";
-
-import Post from "./components/Post";
+import Post from "./components/Post/Post";
 import "./App.css";
 
 export default function App() {
