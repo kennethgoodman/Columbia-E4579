@@ -2,6 +2,7 @@
 
 from project import db
 from sqlalchemy import Enum as SqlEnum, ForeignKey
+from sqlalchemy.orm import relationship
 from enum import Enum
 
 
@@ -14,7 +15,10 @@ class GeneratedType(Enum):
 
 class GeneratedContentMetadata(db.Model):
     __tablename__ = "generated_content_metadata"
-    id = db.Column(db.Integer, ForeignKey("content.id"), primary_key=True)  # primary keys are required by SQLAlchemy
+    id = db.Column(db.Integer, primary_key=True)  # primary keys are required by SQLAlchemy
+    content_id = db.Column(db.Integer, ForeignKey("content.id"))
+    content = relationship("Content", back_populates="generated_content_metadata")
+
     seed = db.Column(db.Integer)
     num_inference_steps = db.Column(db.Integer)
     guidance_scale = db.Column(db.Integer)
