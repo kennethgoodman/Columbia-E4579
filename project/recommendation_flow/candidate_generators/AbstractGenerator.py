@@ -1,3 +1,3 @@
 class AbstractGenerator:
-    def get_content_ids(self, limit):
+    def get_content_ids(self, limit, offset):
         pass
