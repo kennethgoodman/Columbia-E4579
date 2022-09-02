@@ -48,10 +48,9 @@ const LikeButton = ({
 
 	return (
 		<button
-			className={isClicked ? 'likeButton liked' : 'likeButton'}
-			onClick={handleClick}
-		>
-			<i class='fa fa-thumbs-up'>{likes}</i>
+			className={`likeButton ${isClicked ? `liked` : ``}`}
+			onClick={handleClick}>
+			<i className='fa fa-thumbs-up'>{likes}</i>
 		</button>
 	);
 };
