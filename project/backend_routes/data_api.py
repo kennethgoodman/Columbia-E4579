@@ -29,7 +29,7 @@ def get_images():
         return jsonify(add_content_data(response.json(), current_user.id))
     # logged-out user is 0
     # don't need page for random (most of the time)
-    responses = get_content_data(controller=ControllerEnum.RANDOM, user_id=0, limit=limit, offset=offset)
+    responses = get_content_data(controller=ControllerEnum.RANDOM, user_id=0, limit=max(limit, 50), offset=offset)
     return jsonify(add_content_data(responses, current_user.id))
 
 
