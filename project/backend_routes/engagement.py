@@ -14,10 +14,7 @@ def _engage(engagement_type):
     new_engagement = Engagement(user_id=current_user.id, content_id=content_id, engagement_type=engagement_type)
     # add the new user to the database
     db.session.add(new_engagement)
-    try:
-        db.session.commit()
-    except sqlalchemy.exc.IntegrityError:
-        pass  # already liked
+    db.session.commit()
     return jsonify({'success': True})
 
 @engagement_api.route('/api/engagement/like_content', methods=['POST'])

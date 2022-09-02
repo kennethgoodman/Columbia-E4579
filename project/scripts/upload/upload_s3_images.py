@@ -10,8 +10,11 @@ buckets = list(s3.buckets.all())
 
 def publish_content_for_user(s3_bucket, key, text, author_id):
     # create new user with the form data. Hash the password so plaintext version isn't saved.
-    new_content = Content(media_type=MediaType.Image, s3_bucket=s3_bucket, s3_id=key,
-                          text=text, author_id=author_id
+    new_content = Content(
+        media_type=MediaType.Image,
+        s3_bucket=s3_bucket,
+        s3_id=key,
+        author_id=author_id
     )
 
     # add the new user to the database
