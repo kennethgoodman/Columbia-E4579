@@ -1,36 +1,46 @@
 import { useEffect, useRef, useState, useMemo } from 'react';
-import LikeButton from '../Like';
+import LikeButton from '../Likes/LikeButton';
+import DislikeButton from '../Likes/DislikeButton';
 import './Post.scss';
 
 const Post = ({ content_id, post }) => {
-	const imageRef = useRef(null);
-	useIsInViewport(imageRef, content_id);
+	// const [likeIsClicked, setLikeIsClicked] = useState(post.user_likes);
+	// const [dislikeIsClicked, setDislikeIsClicked] = useState(post.user_dislikes);
+
+	// const clickable = !likeIsClicked && !dislikeIsClicked;
+
+	const image_ref = useRef(null);
+	useIsInViewport(image_ref, content_id);
 
 	return (
 		<div className='postContainer'>
 			<h4 className='postAuthor'>{post.author}</h4>
-			<img ref={imageRef} src={post.download_url} alt={post.text} />
-			<p className='postBody'>
-				is simply dummy text of the printing and typesetting industry. Lorem
-				Ipsum has been the industry's standard dummy text ever since the 1500s,
-				when an unknown printer took a galley of type and scrambled it to make a
-				type specimen book. It has survived not only five centuries, but also
-				the leap into electronic typesetting, remaining essentially unchanged.
-				It was popularised in the 1960s with the release of Letraset sheets
-				containing Lorem Ipsum passages, and more recently with desktop
-				publishing software like Aldus PageMaker including versions of Lorem
-				Ipsum.
-			</p>
-			<LikeButton
-				content_id={content_id}
-				total_likes={post.total_likes}
-				user_likes={post.user_likes}
-			/>
+
+			<img ref={image_ref} src={post.download_url} alt={post.text} />
+			<p className='postBody'>{post.text}</p>
+			<div className='likesContainer'>
+				<LikeButton
+					content_id={content_id}
+					total_likes={post.total_likes}
+					user_likes={post.user_likes}
+					// isClicked={likeIsClicked}
+					// setIsClicked={setLikeIsClicked}
+					// clickable={clickable}
+				/>
+				<DislikeButton
+					content_id={content_id}
+					total_dislikes={post.total_dislikes}
+					user_dislikes={post.user_dislikes}
+					// isClicked={dislikeIsClicked}
+					// setIsClicked={setDislikeIsClicked}
+					// clickable={clickable}
+				/>
+			</div>
 		</div>
 	);
 };
 
-function useIsInViewport(ref, contentId) {
+function useIsInViewport(ref, content_id) {
 	const [isIntersecting, setIsIntersecting] = useState(false);
 	const [startIntersecting, setStartIntersecting] = useState(-1);
 	const [loaded, setLoaded] = useState(false);
@@ -52,9 +62,10 @@ function useIsInViewport(ref, contentId) {
 						if (loaded) return; // only load once for session
 						setLoaded(true);
 						let api_uri = '/api/engagement/loaded_content';
-						fetch(`${api_uri}?contentId=${contentId}`, postRequestOptions).then(
-							(response) => response.json()
-						);
+						fetch(
+							`${api_uri}?content_id=${content_id}`,
+							postRequestOptions
+						).then((response) => response.json());
 					};
 					const handle_elapsed = (elapsed_time) => {
 						console.log(elapsed_time);
@@ -62,7 +73,7 @@ function useIsInViewport(ref, contentId) {
 							return;
 						}
 						let api_uri = '/api/engagement/elapsed_time';
-						fetch(`${api_uri}?contentId=${contentId}`, {
+						fetch(`${api_uri}?content_id=${content_id}`, {
 							...postRequestOptions,
 							body: JSON.stringify({ elapsed_time: elapsed_time }),
 						}).then((response) => response.json());
@@ -75,7 +86,7 @@ function useIsInViewport(ref, contentId) {
 						}
 						if (startIntersecting === -1) {
 							console.log(
-								`starting to watch content ${contentId} @ ${Date.now()}`
+								`starting to watch content ${content_id} @ ${Date.now()}`
 							);
 							setStartIntersecting(Date.now());
 						}
@@ -86,7 +97,7 @@ function useIsInViewport(ref, contentId) {
 						// not intersecting, and not loaded for first time
 						if (startIntersecting !== -1) {
 							console.log(
-								`stopping to watch content ${contentId} @ ${Date.now()}, elapsed: ${
+								`stopping to watch content ${content_id} @ ${Date.now()}, elapsed: ${
 									Date.now() - startIntersecting
 								}`
 							);
@@ -98,7 +109,7 @@ function useIsInViewport(ref, contentId) {
 				},
 				{ threshold: 0.75 }
 			),
-		[startIntersecting, contentId, loaded]
+		[startIntersecting, content_id, loaded]
 	);
 
 	useEffect(() => {

@@ -4,7 +4,7 @@
     border: 1px solid #dbdbdb;
     border-radius: 5px;
     margin-bottom: 1.5rem;
-    width: 500px;
+    width: 80vw;
     padding: 5px;
 
     .postAuthor {
@@ -15,11 +15,5 @@
 
     .postBody{
         font-size: 12px;
-    }
-}
-
-@media (max-width: 800px) {
-    .postContainer {
-        width: 200px;
     }
 }
