@@ -7,6 +7,7 @@ Your goal should be to install conda, tensorflow and pip install requirements.
 
 First run the first script to install what you need
 ```bash
+git pull
 bash scripts/mac_install.sh
 conda init bash zsh 
 ```
