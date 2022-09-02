@@ -1,77 +1,27 @@
 # Columbia-E4579
 Fall 2022 Class At Columbia. Modern Recommendation Systems
 
-## Local Dev Setup
+## Local Mac Dev Setup
+If you have a windows or linux, the support is not great at the moment. 
+Your goal should be to install conda, tensorflow and pip install requirements.
 
-### Set Up Python Env
-First open a terminal and create a virtual environment
-
-#### WARNING IF USING M1
-If using M1, create virtual env with https://caffeinedev.medium.com/how-to-install-tensorflow-on-m1-mac-8e9b91d93706. 
-You will also need to update to 12.2+
-
-If not in Conda:
-
+First run the first script to install what you need
 ```bash
-$ python3 -m venv E4579  
-$ source E4579/bin/activate
+bash scripts/mac_install.sh
+conda init bash zsh 
 ```
 
-If in Conda:
+Then you need to close the browser once you init conda to be used within bash
+
+In the new terminal run:
 ```bash
-$ conda create --name E4579 python=3.8
-$ conda activate E4579
-$ conda install -c apple tensorflow-deps
-$ conda install -c conda-forge mysql
+conda activate E4579
+bash scripts/install_and_build.sh
 ```
 
-
-Then install flask dependencies (For macOS users, we have the first line to install tensorflow for macOS)
+You can add the "-y" to say yes to everything. like:
 ```bash
-$ pip install tensorflow-macos tensorflow-metal
-$ pip install -r requirements.txt
-```
-
-### Setup flask:
-
-You can also add these to an .env file at the top of the repo
-```bash
-$ export FLASK_APP=project
-$ export FLASK_DEBUG=1
-```
-
-### Init SQLite
-
-We will not open up a python shell and create the database locally
-```bash
-$ python3
-```
-
-Run these commands in python one time to create the local DB
-
-```python
-from project import db, create_app
-from project.data_models import _tables
-
-app = create_app()
-db.create_all(app=app)
-# pass the create_app result so Flask-SQLAlchemy gets the configuration.
-```
-You should see a db.sqlite file
-
-### Building ReactJS
-This will run a react server. In production, we will use a static build, but for development we
-want to have a separate server, so we can have hot loading of dev files with auto-reloading.
-```bash
-$ cd frontend
-$ npm install i
-$ yarn start
-```
-
-### Running app
-We can now run flask in another terminal with:
-```bash
-$ flask run
+bash scripts/install_and_build.sh -y
 ```
 
 Note: If you get an error that flask-sqlalchemy or flask-login doesn't exist, you have two options:
