@@ -25,6 +25,11 @@ You can add the "-y" to say yes to everything. like:
 bash scripts/install_and_build.sh -y
 ```
 
+To just run the server you can run:
+```bash
+bash scripts/install_and_build.sh -s
+```
+
 Note: If you get an error that flask-sqlalchemy or flask-login doesn't exist, you have two options:
 1. uninstall flask locally, quit your local venv by running `deactivate` or opening a new shell
 ```bash
