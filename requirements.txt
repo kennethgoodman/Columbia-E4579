@@ -12,8 +12,8 @@ Flask==2.1.2
 Flask-Login==0.6.1
 Flask-SQLAlchemy==2.5.1
 Flask-session
-flatbuffers==2.0
-gast==0.5.3
+flatbuffers==1.12
+gast==0.2.1
 google-auth==2.9.0
 google-auth-oauthlib==0.4.6
 google-pasta==0.2.0
