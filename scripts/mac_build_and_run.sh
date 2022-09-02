@@ -109,10 +109,12 @@ fi
 # building frontend and installing
 cd project/frontend || exit
 npm install i
-echo "----------------------------------------------------------------------"
-echo "----------------------------------------------------------------------"
-echo "Asking for password to install pm2 globally, which will allow us to run react and flask in the same terminal"
-sudo npm install pm2 -g
+if [[ $(npm list -g | grep pm2 -c) -eq 0 ]]; then
+  echo "----------------------------------------------------------------------"
+  echo "----------------------------------------------------------------------"
+  echo "Asking for password to install pm2 globally, which will allow us to run react and flask in the same terminal"
+  sudo npm install pm2 -g
+fi
 pm2 --name REACTSIDE start npm -- start
 
 cd ../../ # go back to root
