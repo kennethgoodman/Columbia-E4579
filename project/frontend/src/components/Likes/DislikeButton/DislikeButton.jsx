@@ -44,10 +44,9 @@ const DislikeButton = ({
 
 	return (
 		<button
-			className={isClicked ? 'likeButton disliked' : 'likeButton'}
-			onClick={handleClick}
-		>
-			<i class='fa fa-thumbs-down'>{dislikes}</i>
+			className={`likeButton ${isClicked ? `disliked` : ``}`}
+			onClick={handleClick}>
+			<i className='fa fa-thumbs-down'>{dislikes}</i>
 		</button>
 	);
 };
