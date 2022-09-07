@@ -1,5 +1,10 @@
-# Authentication with Flask, React, and Docker
+# Columbia-E4579
+Fall 2022 Class At Columbia. Modern Recommendation Systems
 
-[![pipeline status](https://gitlab.com/testdriven/flask-react-auth/badges/master/pipeline.svg)](https://gitlab.com/testdriven/flask-react-auth/commits/master)
-
-https://testdriven.io/courses/auth-flask-react/
+Install with docker:
+```bash
+export REACT_APP_API_SERVICE_URL=http://localhost:5004
+docker-compose build
+docker-compose up
+```
+Website will be at http://127.0.0.1:3007/app
