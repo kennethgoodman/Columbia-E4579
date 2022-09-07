@@ -1,0 +1,7 @@
+.likeButton .liked {
+    background-color: #6DDA73;
+}
+
+.likeButton.disliked {
+    background-color: #DA706D;
+}
