@@ -56,7 +56,7 @@ export default function App() {
   // we request a new set of images
   useEffect(() => {
     const fetchPosts = async () => {
-      const url = "https://picsum.photos/v2/list";
+      const url = `${process.env.REACT_APP_API_SERVICE_URL}/content`;
       setLoading(true)
       const response = await fetch(
         `${url}?page=${pageNum}&limit=10`
