@@ -3,11 +3,11 @@ version: '3.8'
 services:
   api:
     build:
-      context: ./services/users
+      context: ./services/backend
       dockerfile: Dockerfile
     entrypoint: ['/usr/src/app/entrypoint.sh']
     volumes:
-      - './services/users:/usr/src/app'
+      - './services/backend:/usr/src/app'
     ports:
       - 5004:5000
     environment:
@@ -21,7 +21,7 @@ services:
 
   api-db:
     build:
-      context: ./services/users/src/db
+      context: services/backend/src/db
       dockerfile: Dockerfile
     expose:
       - 5432
