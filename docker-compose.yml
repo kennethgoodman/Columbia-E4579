@@ -1,7 +1,6 @@
 version: '3.8'
 
 services:
-
   api:
     build:
       context: ./services/users
@@ -16,6 +15,7 @@ services:
       - APP_SETTINGS=src.config.DevelopmentConfig
       - DATABASE_URL=postgresql://postgres:postgres@api-db:5432/api_dev
       - DATABASE_TEST_URL=postgresql://postgres:postgres@api-db:5432/api_test
+      - USE_PICSUM=1
     depends_on:
       - api-db
 

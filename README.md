@@ -8,3 +8,9 @@ docker-compose build
 docker-compose up
 ```
 Website will be at http://127.0.0.1:3007/app
+
+If you'd like to set up the database:
+```bash
+docker-compose exec api python manage.py db upgrade
+docker-compose exec api python manage.py seed_db
+```
