@@ -1,7 +1,7 @@
 import React from "react";
 import { render, cleanup } from "@testing-library/react";
 
-import About from "../user_management/About";
+import About from "../routes/About";
 
 afterEach(cleanup);
 
