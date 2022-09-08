@@ -1,17 +1,12 @@
 import React, { useState } from 'react';
 import '../Likes.css';
 
-const DislikeButton = ({
-	content_id,
-	total_dislikes,
-	user_dislikes,
-	isClicked,
-	setIsClicked,
-	clickable,
-}) => {
+const DislikeButton = (props) => {
+	let total_dislikes = props.total_dislikes
 	if (total_dislikes === undefined) {
 		total_dislikes = 0;
 	}
+	let user_dislikes = props.user_dislikes
 	if (user_dislikes === undefined) {
 		user_dislikes = false;
 	}
@@ -43,7 +38,7 @@ const DislikeButton = ({
 	};
 
 	return (
-		<button className={`likeButton ${isClicked ? `disliked` : ``}`} onClick={handleClick}>
+		<button className={`likeButton ${props.user_dislikes ? `disliked` : ``}`} onClick={handleClick}>
 			<i className='fa fa-thumbs-down'>{dislikes}</i>
 		</button>
 	);

@@ -16,16 +16,15 @@ exports[`renders 1`] = `
       >
         <label
           class="label"
-          for="input-email"
+          for="input-username"
         >
-          Email
+          Username
         </label>
         <input
           class="input"
-          id="input-email"
-          name="email"
-          placeholder="Enter an email address"
-          type="email"
+          id="input-username"
+          name="username"
+          placeholder="Enter a username"
           value=""
         />
       </div>

@@ -1,7 +1,7 @@
 import React from "react";
 import { render, cleanup } from "@testing-library/react";
 
-import AddUser from "../AddUser";
+import AddUser from "../user_management/AddUser";
 
 afterEach(cleanup);
 
@@ -17,10 +17,6 @@ it("renders with default props", () => {
   const usernameInput = getByLabelText("Username");
   expect(usernameInput).toHaveAttribute("type", "text");
   expect(usernameInput).not.toHaveValue();
-
-  const emailInput = getByLabelText("Email");
-  expect(emailInput).toHaveAttribute("type", "email");
-  expect(emailInput).not.toHaveValue();
 
   const passwordInput = getByLabelText("Password");
   expect(passwordInput).toHaveAttribute("type", "password");

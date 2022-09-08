@@ -1,7 +1,7 @@
 import React from "react";
 import { cleanup } from "@testing-library/react";
 
-import LoginForm from "../LoginForm";
+import LoginForm from "../user_management/LoginForm";
 
 afterEach(cleanup);
 
@@ -24,9 +24,8 @@ it("renders with default props", () => {
     <LoginForm {...props} />
   );
 
-  const emailInput = getByLabelText("Email");
-  expect(emailInput).toHaveAttribute("type", "email");
-  expect(emailInput).not.toHaveValue();
+  const usernameInput = getByLabelText("username");
+  expect(usernameInput).not.toHaveValue();
 
   const passwordInput = getByLabelText("Password");
   expect(passwordInput).toHaveAttribute("type", "password");

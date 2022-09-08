@@ -1,0 +1,6 @@
+.Feed{
+  margin: 20px;
+  height: 100vh;
+  display: flex;
+  place-content: center;
+}

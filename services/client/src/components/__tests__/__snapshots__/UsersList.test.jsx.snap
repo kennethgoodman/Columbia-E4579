@@ -12,9 +12,6 @@ exports[`renders 1`] = `
             ID
           </th>
           <th>
-            Email
-          </th>
-          <th>
             Username
           </th>
         </tr>
@@ -23,9 +20,6 @@ exports[`renders 1`] = `
         <tr>
           <td>
             1
-          </td>
-          <td>
-            hermanmu@gmail.com
           </td>
           <td
             class="username"
@@ -64,9 +58,6 @@ exports[`renders when authenticated 1`] = `
             ID
           </th>
           <th>
-            Email
-          </th>
-          <th>
             Username
           </th>
           <th />
@@ -76,9 +67,6 @@ exports[`renders when authenticated 1`] = `
         <tr>
           <td>
             1
-          </td>
-          <td>
-            hermanmu@gmail.com
           </td>
           <td
             class="username"

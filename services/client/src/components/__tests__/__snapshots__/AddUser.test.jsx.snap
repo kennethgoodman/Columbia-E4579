@@ -26,24 +26,6 @@ exports[`renders 1`] = `
     >
       <label
         class="label"
-        for="input-email"
-      >
-        Email
-      </label>
-      <input
-        class="input"
-        id="input-email"
-        name="email"
-        placeholder="Enter an email address"
-        type="email"
-        value=""
-      />
-    </div>
-    <div
-      class="field"
-    >
-      <label
-        class="label"
         for="input-password"
       >
         Password
