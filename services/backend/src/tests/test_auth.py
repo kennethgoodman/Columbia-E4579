@@ -11,7 +11,6 @@ def test_user_registration(test_app, test_database):
         data=json.dumps(
             {
                 "username": "justatest",
-                "email": "test@test.com",
                 "password": "123456",
             }
         ),
@@ -21,33 +20,32 @@ def test_user_registration(test_app, test_database):
     assert resp.status_code == 201
     assert resp.content_type == "application/json"
     assert "justatest" in data["username"]
-    assert "test@test.com" in data["email"]
     assert "password" not in data
 
 
-def test_user_registration_duplicate_email(test_app, test_database, add_user):
+def test_user_registration_duplicate_username(test_app, test_database, add_user):
     add_user("test", "test@test.com", "test")
     client = test_app.test_client()
     resp = client.post(
         "/auth/register",
         data=json.dumps(
-            {"username": "michael", "email": "test@test.com", "password": "test"}
+            {"username": "michael", "password": "test"}
         ),
         content_type="application/json",
     )
     data = json.loads(resp.data.decode())
     assert resp.status_code == 400
     assert resp.content_type == "application/json"
-    assert "Sorry. That email already exists." in data["message"]
+    assert "Sorry. That username already exists." in data["message"]
 
 
 @pytest.mark.parametrize(
     "payload",
     [
         {},
-        {"email": "me@testdriven.io", "password": "greaterthanten"},
+        {"username": "me@testdriven.io", "password": "greaterthanten"},
         {"username": "michael", "password": "greaterthanten"},
-        {"email": "me@testdriven.io", "username": "michael"},
+        {"username": "michael"},
     ],
 )
 def test_user_registration_invalid_json(test_app, test_database, payload):
@@ -68,7 +66,7 @@ def test_registered_user_login(test_app, test_database, add_user):
     client = test_app.test_client()
     resp = client.post(
         "/auth/login",
-        data=json.dumps({"email": "test3@test.com", "password": "test"}),
+        data=json.dumps({"username": "test3", "password": "test"}),
         content_type="application/json",
     )
     data = json.loads(resp.data.decode())
@@ -82,7 +80,7 @@ def test_not_registered_user_login(test_app, test_database):
     client = test_app.test_client()
     resp = client.post(
         "/auth/login",
-        data=json.dumps({"email": "testnotreal@test.com", "password": "test"}),
+        data=json.dumps({"username": "testnotreal", "password": "test"}),
         content_type="application/json",
     )
     data = json.loads(resp.data.decode())
@@ -92,12 +90,12 @@ def test_not_registered_user_login(test_app, test_database):
 
 
 def test_valid_refresh(test_app, test_database, add_user):
-    add_user("test4", "test4@test.com", "test")
+    add_user("test4", "test")
     client = test_app.test_client()
     # user login
     resp_login = client.post(
         "/auth/login",
-        data=json.dumps({"email": "test4@test.com", "password": "test"}),
+        data=json.dumps({"username": "test4", "password": "test"}),
         content_type="application/json",
     )
     # valid refresh
@@ -116,13 +114,13 @@ def test_valid_refresh(test_app, test_database, add_user):
 
 
 def test_invalid_refresh_expired_token(test_app, test_database, add_user):
-    add_user("test5", "test5@test.com", "test")
+    add_user("test5", "test")
     current_app.config["REFRESH_TOKEN_EXPIRATION"] = -1
     client = test_app.test_client()
     # user login
     resp_login = client.post(
         "/auth/login",
-        data=json.dumps({"email": "test5@test.com", "password": "test"}),
+        data=json.dumps({"username": "test5", "password": "test"}),
         content_type="application/json",
     )
     # invalid token refresh
@@ -152,11 +150,11 @@ def test_invalid_refresh(test_app, test_database):
 
 
 def test_user_status(test_app, test_database, add_user):
-    add_user("test6", "test6@test.com", "test")
+    add_user("test6", "test6", "test")
     client = test_app.test_client()
     resp_login = client.post(
         "/auth/login",
-        data=json.dumps({"email": "test6@test.com", "password": "test"}),
+        data=json.dumps({"username": "test6", "password": "test"}),
         content_type="application/json",
     )
     token = json.loads(resp_login.data.decode())["access_token"]
@@ -169,7 +167,6 @@ def test_user_status(test_app, test_database, add_user):
     assert resp.status_code == 200
     assert resp.content_type == "application/json"
     assert "test6" in data["username"]
-    assert "test6@test.com" in data["email"]
     assert "password" not in data
 
 

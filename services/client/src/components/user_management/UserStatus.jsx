@@ -7,7 +7,6 @@ class UserStatus extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      email: "",
       username: "",
     };
   }
@@ -26,7 +25,6 @@ class UserStatus extends Component {
     return axios(options)
       .then((res) => {
         this.setState({
-          email: res.data.email,
           username: res.data.username,
         });
       })
@@ -41,10 +39,6 @@ class UserStatus extends Component {
     return (
       <div>
         <ul>
-          <li>
-            <strong>Email:</strong>&nbsp;
-            <span data-testid="user-email">{this.state.email}</span>
-          </li>
           <li>
             <strong>Username:</strong>&nbsp;
             <span data-testid="user-username">{this.state.username}</span>

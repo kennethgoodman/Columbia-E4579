@@ -17,9 +17,14 @@ const NavBar = (props) => {
         </Link>
       </div>
       <div className="navbar-end">
+        <Link to="/feed" className="navbar-item" data-testid="nav-register">
+          Feed
+        </Link>
+          <br />
         <Link to="/register" className="navbar-item" data-testid="nav-register">
           Register
         </Link>
+          <br />
         <Link to="/login" className="navbar-item" data-testid="nav-login">
           Log In
         </Link>
@@ -33,11 +38,16 @@ const NavBar = (props) => {
           <Link to="/about" className="navbar-item" data-testid="nav-about">
             About
           </Link>
+          <br />
           <Link to="/status" className="navbar-item" data-testid="nav-status">
             User Status
           </Link>
         </div>
         <div className="navbar-end">
+          <Link to="/feed" className="navbar-item" data-testid="nav-register">
+            Feed
+          </Link>
+          <br />
           <span
             // eslint-disable-next-line react/jsx-handler-names
             onClick={props.logoutUser}

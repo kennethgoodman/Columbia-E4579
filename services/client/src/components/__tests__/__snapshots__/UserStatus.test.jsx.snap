@@ -6,17 +6,6 @@ exports[`renders 1`] = `
     <ul>
       <li>
         <strong>
-          Email:
-        </strong>
-         
-        <span
-          data-testid="user-email"
-        >
-          test@test.com
-        </span>
-      </li>
-      <li>
-        <strong>
           Username:
         </strong>
          

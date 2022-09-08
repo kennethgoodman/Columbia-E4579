@@ -3,7 +3,7 @@ import { cleanup } from "@testing-library/react";
 import axios from "axios";
 import { act } from "react-dom/test-utils";
 
-import UserStatus from "../UserStatus";
+import UserStatus from "../user_management/UserStatus";
 
 afterEach(cleanup);
 
@@ -18,7 +18,7 @@ const props = {
 it("renders properly when authenticated", async () => {
   axios.mockImplementation(() =>
     Promise.resolve({
-      data: { email: "test@test.com", id: 1, username: "test" },
+      data: { id: 1, username: "test" },
     })
   );
 
@@ -28,14 +28,13 @@ it("renders properly when authenticated", async () => {
   await act(async () => {
     expect(axios).toHaveBeenCalledTimes(1);
   });
-  expect((await findByTestId("user-email")).innerHTML).toBe("test@test.com");
   expect((await findByTestId("user-username")).innerHTML).toBe("test");
 });
 
 it("renders", async () => {
   axios.mockImplementation(() =>
     Promise.resolve({
-      data: { email: "test@test.com", id: 1, username: "test" },
+      data: { id: 1, username: "test" },
     })
   );
 

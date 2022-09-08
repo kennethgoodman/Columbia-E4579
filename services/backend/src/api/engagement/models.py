@@ -4,9 +4,14 @@ from src import db
 from sqlalchemy import Enum as SqlEnum, ForeignKey
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
-from enum import Enum
+from enum import Enum, IntEnum, unique
 
+@unique
+class LikeDislike(IntEnum):
+    Like = 1
+    Dislike = -1
 
+@unique
 class EngagementType(Enum):
     Like = 1
     Comment = 2

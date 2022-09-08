@@ -18,7 +18,6 @@ const RegisterForm = (props) => {
       <Formik
         initialValues={{
           username: "",
-          email: "",
           password: "",
         }}
         onSubmit={(values, { setSubmitting, resetForm }) => {
@@ -28,15 +27,9 @@ const RegisterForm = (props) => {
         }}
         validationSchema={Yup.object().shape({
           username: Yup.string()
-            .required("Username is required.")
-            .min(6, "Username must be greater than 5 characters."),
-          email: Yup.string()
-            .email("Enter a valid email.")
-            .required("Email is required.")
-            .min(6, "Email must be greater than 5 characters."),
+            .required("Username is required."),
           password: Yup.string()
             .required("Password is required.")
-            .min(11, "Password must be greater than 10 characters."),
         })}
       >
         {(props) => {
@@ -72,28 +65,6 @@ const RegisterForm = (props) => {
                 {errors.username && touched.username && (
                   <div className="input-feedback" data-testid="errors-username">
                     {errors.username}
-                  </div>
-                )}
-              </div>
-              <div className="field">
-                <label className="label" htmlFor="input-email">
-                  Email
-                </label>
-                <input
-                  name="email"
-                  id="input-email"
-                  className={
-                    errors.email && touched.email ? "input error" : "input"
-                  }
-                  type="email"
-                  placeholder="Enter an email address"
-                  value={values.email}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                />
-                {errors.email && touched.email && (
-                  <div className="input-feedback" data-testid="errors-email">
-                    {errors.email}
                   </div>
                 )}
               </div>

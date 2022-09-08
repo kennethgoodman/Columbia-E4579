@@ -6,8 +6,10 @@ import os
 import jwt
 from flask import current_app
 from sqlalchemy.sql import func
+from sqlalchemy.orm import relationship
 
 from src import bcrypt, db
+from src.api.content.models import Content
 
 
 class User(db.Model):
@@ -15,14 +17,15 @@ class User(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String(128), nullable=False)
-    email = db.Column(db.String(128), nullable=False)
     password = db.Column(db.String(255), nullable=False)
     active = db.Column(db.Boolean(), default=True, nullable=False)
     created_date = db.Column(db.DateTime, default=func.now(), nullable=False)
 
-    def __init__(self, username="", email="", password=""):
+    # relationship
+    authored_content = relationship("Content", back_populates="author", uselist=True)
+
+    def __init__(self, username="", password=""):
         self.username = username
-        self.email = email
         self.password = bcrypt.generate_password_hash(
             password, current_app.config.get("BCRYPT_LOG_ROUNDS")
         ).decode()

@@ -1,9 +1,11 @@
 # models.py
 
-from src import db
 from sqlalchemy import Enum as SqlEnum, ForeignKey
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
+
+from src import db
+from src.api.engagement.models import Engagement
 
 
 from enum import Enum
@@ -27,7 +29,7 @@ class Content(db.Model):
 
     # relationships
     content_engagements = relationship("Engagement")  # one piece of content with many engagements
-    generated_content_metadata = relationship('GeneratedContentMetadata', back_populates="content")
+    generated_content_metadata = relationship('GeneratedContentMetadata', back_populates="content", uselist=False)
     non_generated_content_metadata = relationship('NonGeneratedContentMetadata', back_populates="content", uselist=False)
 
     # columns
@@ -37,7 +39,8 @@ class Content(db.Model):
     created_date = db.Column(db.DateTime, default=func.now(), nullable=False)
 
     # Foreign Keys
-    author_id = db.Column(db.Integer, ForeignKey("user.id"), nullable=False)
+    author_id = db.Column(db.Integer, ForeignKey("user.id"))
+    author = relationship("User", back_populates="authored_content")
 
 class GeneratedType(Enum):
     HumanTxt2Img = 1

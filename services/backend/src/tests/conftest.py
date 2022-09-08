@@ -22,8 +22,8 @@ def test_database():
 
 @pytest.fixture(scope="module")
 def add_user():
-    def _add_user(username, email, password):
-        user = User(username=username, email=email, password=password)
+    def _add_user(username, password):
+        user = User(username=username, password=password)
         db.session.add(user)
         db.session.commit()
         return user

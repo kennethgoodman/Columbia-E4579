@@ -1,9 +1,18 @@
 import os
+import jwt
 from flask import request, jsonify
 from flask_restx import Namespace, Resource, fields
 
 from src.api.content.models import (
     MediaType
+)
+from src.api.engagement.crud import (
+    get_engagement_by_content_and_user_and_type,
+    get_engagement_count_by_content_id
+)
+from src.api.utils.auth_utils import get_user
+from src.api.engagement.models import (
+    EngagementType, LikeDislike
 )
 
 content_namespace = Namespace("content")
@@ -30,9 +39,11 @@ content = content_namespace.model(
 def add_content_data(responses, user_id):
     # TODO, can we do this all in one query to be faster?
     for response in responses:
-        total_likes, user_likes = 0, 0 # get_likes(response['id'], user_id)
+        total_likes = get_engagement_count_by_content_id(response['id'], EngagementType.Like)
+        print(user_id, response['id'])
+        user_likes = get_engagement_by_content_and_user_and_type(user_id, response['id'], EngagementType.Like)
         response['total_likes'] = total_likes
-        response['user_likes'] = user_likes
+        response['user_likes'] = user_likes.engagement_value if user_likes else None
         if response.get('text') is None:
             response['text'] = response['author']
     return responses
@@ -42,19 +53,9 @@ class ContentPagination(Resource):
     @content_namespace.marshal_with(content, as_list=True)
     def get(self):
         """Returns all content"""
-        auth_header = request.headers.get("Authorization")
-        if auth_header:
-            try:
-                access_token = auth_header.split(" ")[1]
-                user_id = User.decode_token(access_token)
-            except jwt.ExpiredSignatureError:
-                content_namespace.abort(401, "Signature expired. Please log in again.")
-                return "Signature expired. Please log in again.", 401
-            except jwt.InvalidTokenError:
-                content_namespace.abort(401, "Invalid token. Please log in again.")
-                return "Invalid token. Please log in again.", 401
-        else:
-            user_id = 0  # logged out user
+        status_code, user_id, exception_message = get_user(request)
+        if exception_message:
+            user_id = 0  # if error, do a logged out user, not great, TODO: ensure this is right
         page = int(request.args.get('page', 0))
         limit = int(request.args.get('limit', 10))
         offset = page * limit

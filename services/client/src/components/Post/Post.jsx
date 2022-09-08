@@ -3,25 +3,45 @@ import LikeButton from '../Likes/LikeButton';
 import DislikeButton from '../Likes/DislikeButton';
 import './Post.css';
 
-const Post = ({ content_id, post }) => {
-	// const [likeIsClicked, setLikeIsClicked] = useState(post.user_likes);
-	// const [dislikeIsClicked, setDislikeIsClicked] = useState(post.user_dislikes);
-
-	// const clickable = !likeIsClicked && !dislikeIsClicked;
+const Post = (props) => {
+	const [likeIsClicked, setLikeIsClicked] = useState(false);
+	const [dislikeIsClicked, setDislikeIsClicked] = useState(false);
 
 	const image_ref = useRef(null);
 	// useIsInViewport(image_ref, content_id);
 
+	const handleLikes = () => {
+		if(likeIsClicked) {
+			setLikeIsClicked(false); // unclick it
+			props.post.total_likes -= 1;
+		} else {
+			setLikeIsClicked(true); // click it
+			props.post.total_likes += 1;
+		}
+	}
+
+	const handleDislikes = () => {
+		if(dislikeIsClicked) {
+			setDislikeIsClicked(false); // unclick it
+			props.post.total_dislikes -= 1;
+		} else {
+			setDislikeIsClicked(true); // click it
+			props.post.total_dislikes += 1;
+		}
+	}
+
 	return (
 		<div className='postContainer'>
-			<h4 className='postAuthor'>{post.author}</h4>
+			<h4 className='postAuthor'>{props.post.author}</h4>
 
-			<img ref={image_ref} src={post.download_url} alt={post.text} />
-			<p className='postBody'>{post.text}</p>
-			<div className='likesContainer'>
-				<LikeButton content_id={content_id} total_likes={post.total_likes} user_likes={post.user_likes} />
-				<DislikeButton content_id={content_id} total_dislikes={post.total_dislikes} user_dislikes={post.user_dislikes} />
-			</div>
+			<img ref={image_ref} src={props.post.download_url} alt={props.post.text} />
+			<p className='postBody'>{props.post.text}</p>
+			{props.isAuthenticated() && (
+				<div className='likesContainer'>
+					<LikeButton content_id={props.content_id} total_likes={props.post.total_likes} user_likes={props.post.user_likes} accessToken={props.accessToken} handleLikes={handleLikes} />
+					<DislikeButton content_id={props.content_id} total_dislikes={props.post.total_dislikes} user_dislikes={props.post.user_dislikes} accessToken={props.accessToken} handleDislikes={handleDislikes} />
+				</div>
+			)}
 		</div>
 	);
 };

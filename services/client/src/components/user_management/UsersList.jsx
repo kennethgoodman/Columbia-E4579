@@ -8,7 +8,6 @@ const UsersList = (props) => {
         <thead>
           <tr>
             <th>ID</th>
-            <th>Email</th>
             <th>Username</th>
             {props.isAuthenticated() && <th />}
           </tr>
@@ -18,7 +17,6 @@ const UsersList = (props) => {
             return (
               <tr key={user.id}>
                 <td>{user.id}</td>
-                <td>{user.email}</td>
                 <td className="username">{user.username}</td>
                 {props.isAuthenticated() && (
                   <td>

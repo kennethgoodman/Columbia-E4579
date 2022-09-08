@@ -1,3 +1,5 @@
+from sqlalchemy import func
+
 from src import db
 from src.api.engagement.models import Engagement
 
@@ -10,8 +12,17 @@ def get_engagement_by_id(engagement_id):
     return Engagement.query.filter_by(id=engagement_id).all()
 
 
-def get_all_engagements_by_content_id(content_id):
-    return Engagement.query.filter_by(content_id=content_id).all()
+def _get_engagements_query_by_content_id(content_id, engagement_type=None):
+    if engagement_type is None:
+        return Engagement.query.filter_by(content_id=content_id)
+    return Engagement.query.filter_by(content_id=content_id, engagement_type=engagement_type)
+
+def get_all_engagements_by_content_id(content_id, engagement_type=None):
+    return _get_engagements_query_by_content_id(content_id, engagement_type).all()
+
+def get_engagement_count_by_content_id(content_id, engagement_type=None):
+    return _get_engagements_query_by_content_id(content_id, engagement_type).with_entities(func.count()).scalar()
+
 
 def get_all_engagements_by_user_id(user_id):
     return Engagement.query.filter_by(user_id=user_id).all()

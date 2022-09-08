@@ -7,20 +7,16 @@ from src import bcrypt
 class UsersAdminView(ModelView):
     column_searchable_list = (
         "username",
-        "email",
     )
     column_editable_list = (
         "username",
-        "email",
         "created_date",
     )
     column_filters = (
         "username",
-        "email",
     )
     column_sortable_list = (
         "username",
-        "email",
         "active",
         "created_date",
     )

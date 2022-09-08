@@ -17,7 +17,7 @@ const LoginForm = (props) => {
       <br />
       <Formik
         initialValues={{
-          email: "",
+          username: "",
           password: "",
         }}
         onSubmit={(values, { setSubmitting, resetForm }) => {
@@ -26,9 +26,7 @@ const LoginForm = (props) => {
           setSubmitting(false);
         }}
         validationSchema={Yup.object().shape({
-          email: Yup.string()
-            .email("Enter a valid email.")
-            .required("Email is required."),
+          username: Yup.string().required("username is required."),
           password: Yup.string().required("Password is required."),
         })}
       >
@@ -45,23 +43,22 @@ const LoginForm = (props) => {
           return (
             <form onSubmit={handleSubmit}>
               <div className="field">
-                <label className="label" htmlFor="input-email">
-                  Email
+                <label className="label" htmlFor="input-username">
+                  username
                 </label>
                 <input
-                  name="email"
-                  id="input-email"
+                  name="username"
+                  id="input-username"
                   className={
-                    errors.email && touched.email ? "input error" : "input"
+                    errors.username && touched.username ? "input error" : "input"
                   }
-                  type="email"
-                  placeholder="Enter an email address"
-                  value={values.email}
+                  placeholder="Enter a username"
+                  value={values.username}
                   onChange={handleChange}
                   onBlur={handleBlur}
                 />
-                {errors.email && touched.email && (
-                  <div className="input-feedback">{errors.email}</div>
+                {errors.username && touched.username && (
+                  <div className="input-feedback">{errors.username}</div>
                 )}
               </div>
               <div className="field">

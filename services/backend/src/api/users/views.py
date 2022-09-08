@@ -3,12 +3,13 @@ from flask_restx import Namespace, Resource, fields
 
 from src.api.users.crud import (  # isort:skip
     get_all_users,
-    get_user_by_email,
+    get_user_by_username,
     add_user,
     get_user_by_id,
     update_user,
     delete_user,
 )
+from src.api.utils.auth_utils import get_user
 
 users_namespace = Namespace("users")
 
@@ -18,7 +19,6 @@ user = users_namespace.model(
     {
         "id": fields.Integer(readOnly=True),
         "username": fields.String(required=True),
-        "email": fields.String(required=True),
         "created_date": fields.DateTime,
     },
 )
@@ -35,23 +35,22 @@ class UsersList(Resource):
         return get_all_users(), 200
 
     @users_namespace.expect(user_post, validate=True)
-    @users_namespace.response(201, "<user_email> was added!")
-    @users_namespace.response(400, "Sorry. That email already exists.")
+    @users_namespace.response(201, "<user_username> was added!")
+    @users_namespace.response(400, "Sorry. That username already exists.")
     def post(self):
         """Creates a new user."""
         post_data = request.get_json()
         username = post_data.get("username")
-        email = post_data.get("email")
         password = post_data.get("password")
         response_object = {}
 
-        user = get_user_by_email(email)
+        user = get_user_by_username(username)
         if user:
-            response_object["message"] = "Sorry. That email already exists."
+            response_object["message"] = "Sorry. That username already exists."
             return response_object, 400
 
-        add_user(username, email, password)
-        response_object["message"] = f"{email} was added!"
+        add_user(username, password)
+        response_object["message"] = f"{username} was added!"
         return response_object, 201
 
 
@@ -68,24 +67,23 @@ class Users(Resource):
 
     @users_namespace.expect(user, validate=True)
     @users_namespace.response(200, "<user_id> was updated!")
-    @users_namespace.response(400, "Sorry. That email already exists.")
+    @users_namespace.response(400, "Sorry. That username already exists.")
     @users_namespace.response(404, "User <user_id> does not exist")
     def put(self, user_id):
         """Updates a user."""
         post_data = request.get_json()
         username = post_data.get("username")
-        email = post_data.get("email")
         response_object = {}
 
         user = get_user_by_id(user_id)
         if not user:
             users_namespace.abort(404, f"User {user_id} does not exist")
 
-        if get_user_by_email(email):
-            response_object["message"] = "Sorry. That email already exists."
+        if get_user_by_username(username):
+            response_object["message"] = "Sorry. That username already exists."
             return response_object, 400
 
-        update_user(user, username, email)
+        update_user(user, username)
 
         response_object["message"] = f"{user.id} was updated!"
         return response_object, 200
@@ -102,7 +100,7 @@ class Users(Resource):
 
         delete_user(user)
 
-        response_object["message"] = f"{user.email} was removed!"
+        response_object["message"] = f"{user.username} was removed!"
         return response_object, 200
 
 
