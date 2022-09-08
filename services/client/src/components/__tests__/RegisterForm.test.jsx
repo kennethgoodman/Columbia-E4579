@@ -2,7 +2,7 @@ import React from "react";
 import { cleanup, fireEvent, waitFor } from "@testing-library/react";
 import { act } from "react-dom/test-utils";
 
-import RegisterForm from "../user_management/RegisterForm";
+import RegisterForm from "../routes/RegisterForm";
 
 afterEach(cleanup);
 

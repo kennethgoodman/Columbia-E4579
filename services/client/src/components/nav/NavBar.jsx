@@ -39,9 +39,6 @@ const NavBar = (props) => {
             About
           </Link>
           <br />
-          <Link to="/status" className="navbar-item" data-testid="nav-status">
-            User Status
-          </Link>
         </div>
         <div className="navbar-end">
           <Link to="/feed" className="navbar-item" data-testid="nav-register">

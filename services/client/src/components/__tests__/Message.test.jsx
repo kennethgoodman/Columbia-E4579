@@ -1,7 +1,7 @@
 import React from "react";
 import { render, cleanup } from "@testing-library/react";
 
-import Message from "../user_management/Message";
+import Message from "../routes/Message";
 
 afterEach(cleanup);
 

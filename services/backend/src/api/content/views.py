@@ -40,7 +40,6 @@ def add_content_data(responses, user_id):
     # TODO, can we do this all in one query to be faster?
     for response in responses:
         total_likes = get_engagement_count_by_content_id(response['id'], EngagementType.Like)
-        print(user_id, response['id'])
         user_likes = get_engagement_by_content_and_user_and_type(user_id, response['id'], EngagementType.Like)
         response['total_likes'] = total_likes
         response['user_likes'] = user_likes.engagement_value if user_likes else None

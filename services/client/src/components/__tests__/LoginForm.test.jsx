@@ -1,7 +1,7 @@
 import React from "react";
 import { cleanup } from "@testing-library/react";
 
-import LoginForm from "../user_management/LoginForm";
+import LoginForm from "../routes/LoginForm";
 
 afterEach(cleanup);
 

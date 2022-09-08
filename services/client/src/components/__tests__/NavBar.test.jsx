@@ -1,7 +1,7 @@
 import React from "react";
 import { cleanup, waitFor } from "@testing-library/react";
 
-import NavBar from "../user_management/NavBar";
+import NavBar from "../nav/NavBar";
 
 afterEach(cleanup);
 
