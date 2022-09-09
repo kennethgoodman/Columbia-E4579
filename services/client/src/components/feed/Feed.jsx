@@ -6,10 +6,9 @@ import "./Feed.css";
 import {getRefreshTokenIfExists} from '../../utils/tokenHandler'
 
 const Feed = (props) => {
-    console.log(props)
   const [isLoading, setLoading] = useState(true);
   const [data, setData] = useState([]);
-  const [pageNum, setPageNum] = useState(1);
+  const [pageNum, setPageNum] = useState(0);
 
   const observer = useRef()
   const lastElementRef = useCallback((node) => {
@@ -41,7 +40,7 @@ const Feed = (props) => {
             Authorization: `Bearer ${getRefreshTokenIfExists()}`,
           },
       };
-      options['url'] = `${process.env.REACT_APP_API_SERVICE_URL}/content?page=${pageNum}&limit=10`;
+      options['url'] = `${process.env.REACT_APP_API_SERVICE_URL}/content?page=${pageNum}&limit=10&seed=${props.seed}`;
       setLoading(true)
       axios(options).then((response) => {
           const results = response.data;

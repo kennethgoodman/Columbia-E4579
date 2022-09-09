@@ -1,5 +1,7 @@
 import os
 import jwt
+import random
+
 from flask import request, jsonify
 from flask_restx import Namespace, Resource, fields
 
@@ -15,6 +17,8 @@ from src.api.utils.auth_utils import get_user
 from src.api.engagement.models import (
     EngagementType, LikeDislike
 )
+from src.recommendation_system.recommendation_flow.retriever import get_content_data, ControllerEnum
+from src.recommendation_system.recommendation_flow.controllers.RandomController import RandomController
 
 content_namespace = Namespace("content")
 
@@ -64,6 +68,7 @@ class ContentPagination(Resource):
             user_id = 0  # if error, do a logged out user, not great, TODO: ensure this is right
         page = int(request.args.get('page', 0))
         limit = int(request.args.get('limit', 10))
+        seed = float(request.args.get('seed', random.random()))
         offset = page * limit
         if int(os.environ.get("USE_PICSUM", "0")) == 1:
             import requests
@@ -71,8 +76,8 @@ class ContentPagination(Resource):
             return add_content_data(response.json(), user_id), 200
         # logged-out user is 0
         # don't need page for random (most of the time)
-        responses = [] # get_content_data(controller=ControllerEnum.RANDOM, user_id=0, limit=max(limit, 50), offset=offset)
-        return jsonify(add_content_data(responses, user_id)), 200
+        responses = get_content_data(controller=ControllerEnum.RANDOM, user_id=user_id, limit=max(limit, 50), offset=offset, seed=seed)
+        return add_content_data(responses, user_id), 200
 
 
 content_namespace.add_resource(ContentPagination, "")

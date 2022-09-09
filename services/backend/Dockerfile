@@ -28,4 +28,5 @@ COPY . .
 
 # add entrypoint.sh
 COPY ./entrypoint.sh .
+COPY seed_data .
 RUN chmod +x /usr/src/app/entrypoint.sh

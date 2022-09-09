@@ -20,6 +20,7 @@ class App extends Component {
       messageType: null,
       messageText: null,
       showModal: false,
+      seed: Math.random(),
     };
   }
 
@@ -125,7 +126,7 @@ class App extends Component {
                     exact
                     path="/feed"
                     element={
-                      <Feed />
+                      <Feed seed={this.state.seed}/>
                     }
                   />
                   <Route exact path="/about" element={<About />} />
