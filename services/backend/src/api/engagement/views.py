@@ -6,6 +6,7 @@ from src.api.engagement.crud import (  # isort:skip
     get_engagement_by_content_and_user_and_type,
     get_engagement_count_by_content_id,
     add_engagement,
+    update_engagement,
     delete_engagement
 )
 from src.api.engagement.models import (
@@ -50,10 +51,14 @@ def post_like(user_id, content_id, likedislike):
     engagement_type = EngagementType.Like
     engagement = get_engagement_by_content_and_user_and_type(user_id, content_id, engagement_type)
     response_object = {}
-    if engagement and engagement.engagement_value == int(likedislike):
-        response_object["message"] = "engagement already exists"
-        return response_object, 400
-    add_engagement(user_id, content_id, engagement_type, int(likedislike))
+    if engagement:
+        print(content_id, likedislike, engagement.engagement_value)
+        if engagement.engagement_value == int(likedislike):
+            response_object["message"] = "engagement already exists"
+            return response_object, 400
+        update_engagement(engagement, int(likedislike))
+    else:
+        add_engagement(user_id, content_id, engagement_type, int(likedislike))
     response_object["message"] = f"Success"
     return response_object, 200
 
@@ -92,7 +97,6 @@ class Like(Resource):
     @engagement_namespace.expect(parser)
     @engagement_namespace.marshal_with(set_engagement)
     @engagement_namespace.response(200, "Success")
-    @engagement_namespace.response(400, "engagement already exists")
     def post(self, content_id):
         status_code, user_id, exception_message = get_user(request)
         if exception_message:
