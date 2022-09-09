@@ -2,31 +2,94 @@ import React, { useEffect, useRef, useState, useMemo } from 'react';
 import LikeButton from '../Likes/LikeButton';
 import DislikeButton from '../Likes/DislikeButton';
 import './Post.css';
+import axios from "axios"
 
 const Post = (props) => {
-	const [likeIsClicked, setLikeIsClicked] = useState(false);
-	const [dislikeIsClicked, setDislikeIsClicked] = useState(false);
+	const [likeIsClicked, setLikeIsClicked] = useState(props.post.user_likes);
+	const [dislikeIsClicked, setDislikeIsClicked] = useState(props.post.user_dislikes);
+	const [totalLikes, setTotalLikes] = useState(props.post.total_likes);
+	const [totalDislikes, setTotalDislikes] = useState(props.post.total_dislikes);
 
 	const image_ref = useRef(null);
 	// useIsInViewport(image_ref, content_id);
 
+	const get_options = (uri) => {
+		let api_uri = `${process.env.REACT_APP_API_SERVICE_URL}/engagement/${uri}/${props.content_id}`;
+		return {
+		  url: api_uri,
+		  method: "post",
+		  headers: {
+			"Content-Type": "application/json",
+			Authorization: `Bearer ${props.accessToken}`,
+		  },
+		};
+	}
+
+
+	const like = (callback) => {
+		axios(get_options('like'))
+			.then(callback)
+			.catch(function (error) {
+    			console.log(error);
+			});
+	}
+	const unlike = (callback) => {
+		axios(get_options('unlike'))
+			.then(callback)
+			.catch(function (error) {
+    			console.log(error);
+			});
+	}
+	const dislike = (callback) => {
+		axios(get_options('dislike'))
+			.then(callback)
+			.catch(function (error) {
+    			console.log(error);
+			});
+	}
+	const undislike = (callback) => {
+		axios(get_options('undislike'))
+			.then(callback)
+			.catch(function (error) {
+    			console.log(error);
+			});
+	}
+
+
 	const handleLikes = () => {
 		if(likeIsClicked) {
-			setLikeIsClicked(false); // unclick it
-			props.post.total_likes -= 1;
+			unlike((_) => {
+				setLikeIsClicked(false); // unclick it
+				setTotalLikes(totalLikes - 1);
+			});
 		} else {
-			setLikeIsClicked(true); // click it
-			props.post.total_likes += 1;
+			like((_) => {
+				setLikeIsClicked(true); // click it
+				setTotalLikes(totalLikes + 1);
+			});
+			if(dislikeIsClicked) {
+				setDislikeIsClicked(false);
+				setTotalDislikes(totalDislikes - 1);
+			}
 		}
 	}
 
 	const handleDislikes = () => {
+		console.log(`handing dislike for ${props.content_id}, ${likeIsClicked}, ${dislikeIsClicked}`)
 		if(dislikeIsClicked) {
-			setDislikeIsClicked(false); // unclick it
-			props.post.total_dislikes -= 1;
+			undislike((_) => {
+				setDislikeIsClicked(false); // unclick it
+				setTotalDislikes(totalDislikes - 1);
+			})
 		} else {
-			setDislikeIsClicked(true); // click it
-			props.post.total_dislikes += 1;
+			dislike((_) => {
+				setDislikeIsClicked(true); // click it
+				setTotalDislikes(totalDislikes + 1);
+			})
+			if(likeIsClicked) {
+				setLikeIsClicked(false);
+				setTotalLikes(totalLikes - 1);
+			}
 		}
 	}
 
@@ -38,8 +101,8 @@ const Post = (props) => {
 			<p className='postBody'>{props.post.text}</p>
 			{props.isAuthenticated() && (
 				<div className='likesContainer'>
-					<LikeButton content_id={props.content_id} total_likes={props.post.total_likes} user_likes={props.post.user_likes} accessToken={props.accessToken} handleLikes={handleLikes} />
-					<DislikeButton content_id={props.content_id} total_dislikes={props.post.total_dislikes} user_dislikes={props.post.user_dislikes} accessToken={props.accessToken} handleDislikes={handleDislikes} />
+					<LikeButton content_id={props.content_id} total_likes={totalLikes} user_likes={likeIsClicked} handleLikes={handleLikes} />
+					<DislikeButton content_id={props.content_id} total_dislikes={totalDislikes} user_dislikes={dislikeIsClicked} handleDislikes={handleDislikes} />
 				</div>
 			)}
 		</div>

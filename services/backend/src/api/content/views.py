@@ -7,8 +7,9 @@ from src.api.content.models import (
     MediaType
 )
 from src.api.engagement.crud import (
+    get_like_count_by_content_id,
+    get_dislike_count_by_content_id,
     get_engagement_by_content_and_user_and_type,
-    get_engagement_count_by_content_id
 )
 from src.api.utils.auth_utils import get_user
 from src.api.engagement.models import (
@@ -25,7 +26,9 @@ content = content_namespace.model(
     {
         "id": fields.Integer(readOnly=True),
         'total_likes': fields.Integer(required=False),
-        'user_likes': fields.Integer(required=False),
+        'total_dislikes': fields.Integer(required=False),
+        'user_likes': fields.Boolean(required=False),
+        'user_dislikes': fields.Boolean(required=False),
         'text': fields.String(required=False),
         'author': fields.String(required=False),
         'width': fields.Integer(required=False),
@@ -39,10 +42,14 @@ content = content_namespace.model(
 def add_content_data(responses, user_id):
     # TODO, can we do this all in one query to be faster?
     for response in responses:
-        total_likes = get_engagement_count_by_content_id(response['id'], EngagementType.Like)
+        response['total_likes'] = get_like_count_by_content_id(response['id'])
+        response['total_dislikes'] = get_dislike_count_by_content_id(response['id'])
+
         user_likes = get_engagement_by_content_and_user_and_type(user_id, response['id'], EngagementType.Like)
-        response['total_likes'] = total_likes
-        response['user_likes'] = user_likes.engagement_value if user_likes else None
+        print(f"getting engagement by content: {user_id}, {response['id']}, {getattr(user_likes, 'engagement_value', 'None')}")
+        response['user_likes'] = user_likes.engagement_value == int(LikeDislike.Like) if user_likes else False
+        response['user_dislikes'] = user_likes.engagement_value == int(LikeDislike.Dislike) if user_likes else False
+
         if response.get('text') is None:
             response['text'] = response['author']
     return responses
@@ -54,6 +61,7 @@ class ContentPagination(Resource):
         """Returns all content"""
         status_code, user_id, exception_message = get_user(request)
         if exception_message:
+            print(exception_message)
             user_id = 0  # if error, do a logged out user, not great, TODO: ensure this is right
         page = int(request.args.get('page', 0))
         limit = int(request.args.get('limit', 10))
