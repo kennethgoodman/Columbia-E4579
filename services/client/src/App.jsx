@@ -7,6 +7,7 @@ import LoginForm from "./components/routes/LoginForm";
 import Message from "./components/routes/Message";
 import NavBar from "./components/nav/NavBar";
 import RegisterForm from "./components/routes/RegisterForm";
+import {getRefreshTokenIfExists, setRefreshToken, removeRefreshToken} from './utils/tokenHandler'
 
 class App extends Component {
   constructor() {
@@ -38,7 +39,7 @@ class App extends Component {
       .post(url, data)
       .then((res) => {
         this.setState({ accessToken: res.data.access_token });
-        window.localStorage.setItem("refreshToken", res.data.refresh_token);
+        setRefreshToken(res.data.refresh_token);
         this.createMessage("success", "You have logged in successfully.");
       })
       .catch((err) => {
@@ -53,7 +54,7 @@ class App extends Component {
       .post(url, data)
       .then((res) => {
         this.setState({ accessToken: res.data.access_token });
-        window.localStorage.setItem("refreshToken", res.data.refresh_token);
+        setRefreshToken(res.data.refresh_token);
         this.createMessage("success", "You have logged in successfully.");
         this.createMessage("success", "You have registered successfully.");
       })
@@ -63,12 +64,12 @@ class App extends Component {
       });
   };
 
-  isAuthenticated = () => {
-    return this.state.accessToken || this.validRefresh();
+  isAuthenticated = (callback) => {
+    return this.state.accessToken || this.validRefresh(callback);
   };
 
   logoutUser = () => {
-    window.localStorage.removeItem("refreshToken");
+    removeRefreshToken();
     this.setState({ accessToken: null });
     this.createMessage("success", "You have logged out.");
   };
@@ -80,8 +81,8 @@ class App extends Component {
     });
   };
 
-  validRefresh = () => {
-    const token = window.localStorage.getItem("refreshToken");
+  validRefresh = (callback) => {
+    const token = getRefreshTokenIfExists();
     if (token) {
       axios
         .post(`${process.env.REACT_APP_API_SERVICE_URL}/auth/refresh`, {
@@ -89,11 +90,11 @@ class App extends Component {
         })
         .then((res) => {
           this.setState({ accessToken: res.data.access_token });
-          window.localStorage.setItem("refreshToken", res.data.refresh_token);
-          return true;
+          setRefreshToken(res.data.refresh_token);
+          callback();
         })
         .catch((err) => {
-          return false;
+          console.log(err);
         });
     }
     return false;
@@ -124,11 +125,7 @@ class App extends Component {
                     exact
                     path="/feed"
                     element={
-                      <Feed
-                      // eslint-disable-next-line react/jsx-handler-names
-                        isAuthenticated={this.isAuthenticated}
-                        accessToken={this.state.accessToken}
-                      />
+                      <Feed />
                     }
                   />
                   <Route exact path="/about" element={<About />} />
