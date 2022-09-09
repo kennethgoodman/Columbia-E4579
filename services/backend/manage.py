@@ -1,8 +1,12 @@
+import csv
+import random
+import os
+
 from flask.cli import FlaskGroup
 
 from src import create_app, db
 from src.api.users.models import User
-from src.api.content.models import Content, MediaType
+from src.api.content.models import Content, MediaType, GeneratedContentMetadata
 
 
 app = create_app()
@@ -18,11 +22,35 @@ def recreate_db():
 
 @cli.command('seed_db')
 def seed_db():
-    tmp_1 = User(username='abc', password="supersecret")
-    db.session.add(tmp_1)
-    tmp_2 = User(username='xyz', password="supersecret")
-    db.session.add(tmp_2)
-    db.session.add(Content(media_type=MediaType.Image, id=0, author=tmp_2))
+    users = []
+    with open('seed_data/data/users.csv', 'r') as csvfile:
+        reader = csv.DictReader(csvfile, delimiter=',')
+        for row in reader:
+            user = User(**row)
+            users.append(user)
+            db.session.add(user)
+    with open('seed_data/data/content_with_metadata.csv', 'r') as csvfile:
+        reader = csv.DictReader(csvfile, delimiter=chr(255))
+        for row in reader:
+            content = Content(media_type=MediaType.Image,
+                              author=random.choice(users),
+                              s3_bucket=row['s3_bucket'],
+                              s3_id=row['s3_id'],
+            )
+            db.session.add(content)
+            metadata = GeneratedContentMetadata(
+                content=content,
+                original_prompt=row['original_prompt'],
+                source=row['source'],
+                artist_style=row['artist_style'],
+                seed=row['seed'],
+                num_inference_steps=row['num_inference_steps'],
+                guidance_scale=row['guidance_scale'],
+                prompt=row['prompt'],
+                source_img=row['source_img'],
+                generated_type=row['generated_type']
+            )
+            db.session.add(metadata)
     db.session.commit()
 
 
