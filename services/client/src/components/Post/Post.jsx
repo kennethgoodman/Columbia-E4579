@@ -3,12 +3,14 @@ import LikeButton from '../Likes/LikeButton';
 import DislikeButton from '../Likes/DislikeButton';
 import './Post.css';
 import axios from "axios"
+import {getRefreshTokenIfExists} from '../../utils/tokenHandler'
 
 const Post = (props) => {
 	const [likeIsClicked, setLikeIsClicked] = useState(props.post.user_likes);
 	const [dislikeIsClicked, setDislikeIsClicked] = useState(props.post.user_dislikes);
 	const [totalLikes, setTotalLikes] = useState(props.post.total_likes);
 	const [totalDislikes, setTotalDislikes] = useState(props.post.total_dislikes);
+	const [isAuthenticated, _] = useState(getRefreshTokenIfExists() !== null);
 
 	const image_ref = useRef(null);
 	// useIsInViewport(image_ref, content_id);
@@ -20,7 +22,7 @@ const Post = (props) => {
 		  method: "post",
 		  headers: {
 			"Content-Type": "application/json",
-			Authorization: `Bearer ${props.accessToken}`,
+			Authorization: `Bearer ${getRefreshTokenIfExists()}`,
 		  },
 		};
 	}
@@ -99,7 +101,7 @@ const Post = (props) => {
 
 			<img ref={image_ref} src={props.post.download_url} alt={props.post.text} />
 			<p className='postBody'>{props.post.text}</p>
-			{props.isAuthenticated() && (
+			{isAuthenticated && (
 				<div className='likesContainer'>
 					<LikeButton content_id={props.content_id} total_likes={totalLikes} user_likes={likeIsClicked} handleLikes={handleLikes} />
 					<DislikeButton content_id={props.content_id} total_dislikes={totalDislikes} user_dislikes={dislikeIsClicked} handleDislikes={handleDislikes} />

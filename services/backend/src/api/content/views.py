@@ -46,7 +46,6 @@ def add_content_data(responses, user_id):
         response['total_dislikes'] = get_dislike_count_by_content_id(response['id'])
 
         user_likes = get_engagement_by_content_and_user_and_type(user_id, response['id'], EngagementType.Like)
-        print(f"getting engagement by content: {user_id}, {response['id']}, {getattr(user_likes, 'engagement_value', 'None')}")
         response['user_likes'] = user_likes.engagement_value == int(LikeDislike.Like) if user_likes else False
         response['user_dislikes'] = user_likes.engagement_value == int(LikeDislike.Dislike) if user_likes else False
 

@@ -3,6 +3,7 @@ import { useState , useEffect, useRef, useCallback} from "react";
 import Post from "../Post/Post";
 import axios from "axios"
 import "./Feed.css";
+import {getRefreshTokenIfExists} from '../../utils/tokenHandler'
 
 const Feed = (props) => {
     console.log(props)
@@ -32,14 +33,14 @@ const Feed = (props) => {
   // every time the pageNum changes
   // we request a new set of images
   useEffect(() => {
-    const options = {
-      method: "get",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${props.accessToken}`,
-      },
-    };
     const fetchPosts = async () => {
+      const options = {
+          method: "get",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${getRefreshTokenIfExists()}`,
+          },
+      };
       options['url'] = `${process.env.REACT_APP_API_SERVICE_URL}/content?page=${pageNum}&limit=10`;
       setLoading(true)
       axios(options).then((response) => {
@@ -69,8 +70,6 @@ const Feed = (props) => {
                         // eslint-disable-next-line react/jsx-handler-names
                         content_id={post.id}
                         post={post}
-                        isAuthenticated={props.isAuthenticated}
-                        accessToken={props.accessToken}
                       />
                     </div>
                   )
@@ -81,8 +80,6 @@ const Feed = (props) => {
                         // eslint-disable-next-line react/jsx-handler-names
                       content_id={post.id}
                       post={post}
-                      isAuthenticated={props.isAuthenticated}
-                      accessToken={props.accessToken}
                     />
                   </div>
                 )

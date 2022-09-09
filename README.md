@@ -30,3 +30,7 @@ while `docker-compose up` is running:
 ```bash
 docker exec -it $(docker ps | grep columbia-e4579_api-db | awk '{print $1}') psql -U postgres -d api_dev
 ```
+
+
+## Thanks
+1. [testdrivenio](https://github.com/testdrivenio/flask-react-aws) for a template for docker + flask + react

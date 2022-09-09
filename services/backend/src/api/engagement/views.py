@@ -52,7 +52,6 @@ def post_like(user_id, content_id, likedislike):
     engagement = get_engagement_by_content_and_user_and_type(user_id, content_id, engagement_type)
     response_object = {}
     if engagement:
-        print(content_id, likedislike, engagement.engagement_value)
         if engagement.engagement_value == int(likedislike):
             response_object["message"] = "engagement already exists"
             return response_object, 400
@@ -102,7 +101,7 @@ class Like(Resource):
         if exception_message:
             engagement_namespace.abort(status_code, exception_message)
             return status_code, exception_message
-        return post_like(user_id, content_id, LikeDislike.Dislike)
+        return post_like(user_id, content_id, LikeDislike.Like)
 
 
 class Dislike(Resource):
