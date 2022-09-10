@@ -6,7 +6,7 @@ from flask.cli import FlaskGroup
 
 from src import create_app, db
 from src.api.users.models import User
-from src.api.content.models import Content, MediaType, GeneratedContentMetadata
+from src.api.content.models import Content, MediaType, GeneratedContentMetadata, ModelType
 
 
 app = create_app()
@@ -48,11 +48,18 @@ def seed_db():
                 guidance_scale=row['guidance_scale'],
                 prompt=row['prompt'],
                 source_img=row['source_img'],
-                generated_type=row['generated_type']
+                generated_type=row['generated_type'],
+                model=ModelType.StableDiffusion, # TODO: read this, don't hardcode
+                model_version='1.4', # TODO: read this, don't hardcode
             )
             db.session.add(metadata)
     db.session.commit()
 
+
+@cli.command('recreate_and_seed_db')
+def recreate_and_seed_db():
+    recreate_db()
+    seed_db
 
 if __name__ == "__main__":
     cli()
