@@ -146,3 +146,4 @@ image_generation_pipelines/output
 flask_session/
 tmp.err
 tmp.out
+tmp.sql
