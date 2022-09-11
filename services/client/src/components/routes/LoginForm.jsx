@@ -44,7 +44,7 @@ const LoginForm = (props) => {
             <form onSubmit={handleSubmit}>
               <div className="field">
                 <label className="label" htmlFor="input-username">
-                  username
+                  Username
                 </label>
                 <input
                   name="username"
