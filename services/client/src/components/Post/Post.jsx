@@ -1,10 +1,9 @@
 import React, { useEffect, useRef, useState, useMemo } from "react";
 import LikeButton from "../Likes/LikeButton";
 import DislikeButton from "../Likes/DislikeButton";
+import "./Post.css";
 import axios from "axios";
 import { getRefreshTokenIfExists } from "../../utils/tokenHandler";
-
-import "./Post.css";
 
 const Post = (props) => {
   const [likeIsClicked, setLikeIsClicked] = useState(props.post.user_likes);
@@ -101,11 +100,11 @@ const Post = (props) => {
   return (
     <div className="postContainer">
       <h4 className="postAuthor">{props.post.author}</h4>
+
       <img
         ref={image_ref}
         src={props.post.download_url}
         alt={props.post.text}
-        onDoubleClick={() => handleLikes()}
       />
       <p className="postBody">{props.post.text}</p>
       {isAuthenticated && (

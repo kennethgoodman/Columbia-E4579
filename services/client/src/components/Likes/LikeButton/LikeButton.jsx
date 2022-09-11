@@ -1,6 +1,5 @@
 // from https://stackoverflow.com/questions/72153851/create-a-simple-like-button-component-with-react
 import React from "react";
-
 import "../Likes.css";
 
 const LikeButton = (props) => {

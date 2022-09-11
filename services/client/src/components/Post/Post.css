@@ -2,6 +2,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 80vw;
   max-width: 600px;
   min-width: 300px;
   border: 1px solid #dbdbdb;
@@ -9,8 +10,6 @@
   margin: 1.5rem;
   padding: 5px;
   text-align: center;
-  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
-    rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
 }
 
 .postAuthor {
@@ -21,12 +20,4 @@
 
 .postBody {
   font-size: 12px;
-}
-
-img {
-  user-select: none; /* standard syntax */
-  -webkit-user-select: none; /* webkit (safari, chrome) browsers */
-  -moz-user-select: none; /* mozilla browsers */
-  -khtml-user-select: none; /* webkit (konqueror) browsers */
-  -ms-user-select: none; /* IE10+ */
 }

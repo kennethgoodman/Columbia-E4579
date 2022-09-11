@@ -1,18 +1,17 @@
 import React, { Component } from "react";
 import axios from "axios";
 import { Route, Routes } from "react-router-dom";
-import Feed from "./components/Feed";
-import About from "./components/Routes/About";
-import LoginForm from "./components/Routes/LoginForm";
-import Message from "./components/Routes/Message";
-import NavBar from "./components/Navbar";
-import RegisterForm from "./components/Routes/RegisterForm";
+import Feed from "./components/feed/Feed";
+import About from "./components/routes/About";
+import LoginForm from "./components/routes/LoginForm";
+import Message from "./components/routes/Message";
+import NavBar from "./components/nav/NavBar";
+import RegisterForm from "./components/routes/RegisterForm";
 import {
   getRefreshTokenIfExists,
   setRefreshToken,
   removeRefreshToken,
 } from "./utils/tokenHandler";
-
 import "./App.css";
 
 class App extends Component {
@@ -124,6 +123,7 @@ class App extends Component {
         )}
         <Routes>
           <Route exact path="/feed" element={<Feed seed={this.state.seed} />} />
+          <Route></Route>
           <Route exact path="/about" element={<About />} />
           <Route
             exact

@@ -1,6 +1,6 @@
 # models.py
 
-from enum import Enum, IntEnum
+from enum import Enum
 
 from sqlalchemy import Enum as SqlEnum
 from sqlalchemy import ForeignKey
@@ -14,7 +14,7 @@ def get_url(content):
     return f"https://{content.s3_bucket}.s3.amazonaws.com/{content.s3_id}"
 
 
-class MediaType(IntEnum):
+class MediaType(Enum):
     Image = 1
     Text = 2
     Video = 3
@@ -49,15 +49,12 @@ class Content(db.Model):
     author_id = db.Column(db.Integer, ForeignKey("user.id"))
     author = relationship("User", back_populates="authored_content")
 
-class GeneratedType(IntEnum):
+
+class GeneratedType(Enum):
     HumanTxt2Img = 1
     GPT3Txt2Img = 2
     Img2Txt2Img = 3
     Img2Img = 4
-
-
-class ModelType(IntEnum):
-    StableDiffusion = 1
 
 
 class GeneratedContentMetadata(db.Model):
@@ -77,8 +74,6 @@ class GeneratedContentMetadata(db.Model):
     source = db.Column(db.String(100))
     source_img = db.Column(db.String(200), nullable=True)
     generated_type = db.Column(SqlEnum(GeneratedType))
-    model = db.Column(SqlEnum(ModelType), nullable=False)
-    model_version = db.Column(db.String(10), nullable=False)
 
 
 class NonGeneratedContentMetadata(db.Model):
