@@ -26,10 +26,8 @@ const RegisterForm = (props) => {
           setSubmitting(false);
         }}
         validationSchema={Yup.object().shape({
-          username: Yup.string()
-            .required("Username is required."),
-          password: Yup.string()
-            .required("Password is required.")
+          username: Yup.string().required("Username is required."),
+          password: Yup.string().required("Password is required."),
         })}
       >
         {(props) => {

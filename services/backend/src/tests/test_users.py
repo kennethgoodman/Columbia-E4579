@@ -1,7 +1,6 @@
 import json
 
 import pytest
-
 from src import bcrypt
 from src.api.users.crud import get_user_by_id
 from src.api.users.models import User
@@ -206,9 +205,7 @@ def test_update_user_with_passord(test_app, test_database, add_user):
     client = test_app.test_client()
     resp = client.put(
         f"/users/{user.id}",
-        data=json.dumps(
-            {"username": "me", "password": password_two}
-        ),
+        data=json.dumps({"username": "me", "password": password_two}),
         content_type="application/json",
     )
     assert resp.status_code == 200

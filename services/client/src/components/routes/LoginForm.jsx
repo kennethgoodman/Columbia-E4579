@@ -50,7 +50,9 @@ const LoginForm = (props) => {
                   name="username"
                   id="input-username"
                   className={
-                    errors.username && touched.username ? "input error" : "input"
+                    errors.username && touched.username
+                      ? "input error"
+                      : "input"
                   }
                   placeholder="Enter a username"
                   value={values.username}

@@ -5,7 +5,6 @@ import json
 from datetime import datetime
 
 import pytest
-
 import src.api.users.views
 
 
@@ -147,7 +146,7 @@ def test_all_users(test_app, monkeypatch):
 def test_remove_user(test_app, monkeypatch):
     class AttrDict(dict):
         def __init__(self, *args, **kwargs):
-            super(AttrDict, self).__init__(*args, **kwargs)
+            super().__init__(*args, **kwargs)
             self.__dict__ = self
 
     def mock_get_user_by_id(user_id):
@@ -187,7 +186,7 @@ def test_remove_user_incorrect_id(test_app, monkeypatch):
 def test_update_user(test_app, monkeypatch):
     class AttrDict(dict):
         def __init__(self, *args, **kwargs):
-            super(AttrDict, self).__init__(*args, **kwargs)
+            super().__init__(*args, **kwargs)
             self.__dict__ = self
 
     def mock_get_user_by_id(user_id):
@@ -258,7 +257,7 @@ def test_update_user_invalid(
 def test_update_user_duplicate_username(test_app, monkeypatch):
     class AttrDict(dict):
         def __init__(self, *args, **kwargs):
-            super(AttrDict, self).__init__(*args, **kwargs)
+            super().__init__(*args, **kwargs)
             self.__dict__ = self
 
     def mock_get_user_by_id(user_id):

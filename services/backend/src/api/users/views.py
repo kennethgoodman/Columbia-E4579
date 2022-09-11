@@ -1,5 +1,6 @@
 from flask import request
 from flask_restx import Namespace, Resource, fields
+from src.api.utils.auth_utils import get_user
 
 from src.api.users.crud import (  # isort:skip
     get_all_users,
@@ -9,7 +10,6 @@ from src.api.users.crud import (  # isort:skip
     update_user,
     delete_user,
 )
-from src.api.utils.auth_utils import get_user
 
 users_namespace = Namespace("users")
 

@@ -23,7 +23,7 @@ describe("renders", () => {
 
   it("default props", () => {
     const { getByLabelText, getByText } = renderWithRouter(
-      <RegisterForm {...props} />
+      <RegisterForm {...props} />,
     );
 
     const usernameInput = getByLabelText("Username");
@@ -52,7 +52,7 @@ describe("handles form validation correctly", () => {
 
   it("when fields are empty", async () => {
     const { getByLabelText, container, findByTestId } = renderWithRouter(
-      <RegisterForm {...mockProps} />
+      <RegisterForm {...mockProps} />,
     );
 
     const form = container.querySelector("form");
@@ -67,10 +67,10 @@ describe("handles form validation correctly", () => {
     });
 
     expect((await findByTestId("errors-username")).innerHTML).toBe(
-      "Username is required."
+      "Username is required.",
     );
     expect((await findByTestId("errors-password")).innerHTML).toBe(
-      "Password is required."
+      "Password is required.",
     );
 
     await act(async () => {
@@ -84,7 +84,7 @@ describe("handles form validation correctly", () => {
 
   it("when fields are not the proper length", async () => {
     const { getByLabelText, container, findByTestId } = renderWithRouter(
-      <RegisterForm {...mockProps} />
+      <RegisterForm {...mockProps} />,
     );
 
     const form = container.querySelector("form");
@@ -101,10 +101,10 @@ describe("handles form validation correctly", () => {
     });
 
     expect((await findByTestId("errors-username")).innerHTML).toBe(
-      "Username must be greater than 5 characters."
+      "Username must be greater than 5 characters.",
     );
     expect((await findByTestId("errors-password")).innerHTML).toBe(
-      "Password must be greater than 10 characters."
+      "Password must be greater than 10 characters.",
     );
 
     await act(async () => {
@@ -118,7 +118,7 @@ describe("handles form validation correctly", () => {
 
   it("when fields are valid", async () => {
     const { getByLabelText, container, findByTestId } = renderWithRouter(
-      <RegisterForm {...mockProps} />
+      <RegisterForm {...mockProps} />,
     );
 
     const form = container.querySelector("form");

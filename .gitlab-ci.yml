@@ -17,11 +17,11 @@ build:users:
     - docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY
     - docker pull $IMAGE:users || true
     - docker build
-        --cache-from $IMAGE:users
-        --tag $IMAGE:users
-        --file ./services/backend/Dockerfile.prod
-        --build-arg SECRET_KEY=$SECRET_KEY
-        "./services/backend"
+      --cache-from $IMAGE:users
+      --tag $IMAGE:users
+      --file ./services/backend/Dockerfile.prod
+      --build-arg SECRET_KEY=$SECRET_KEY
+      "./services/backend"
     - docker push $IMAGE:users
 
 build:client:
@@ -35,10 +35,10 @@ build:client:
     - docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY
     - docker pull $IMAGE:client || true
     - docker build
-        --cache-from $IMAGE:client
-        --tag $IMAGE:client
-        --file ./services/client/Dockerfile.ci
-        "./services/client"
+      --cache-from $IMAGE:client
+      --tag $IMAGE:client
+      --file ./services/client/Dockerfile.ci
+      "./services/client"
     - docker push $IMAGE:client
 
 build:heroku:
@@ -56,17 +56,17 @@ build:heroku:
     - docker pull $IMAGE:build-react || true
     - docker pull $IMAGE:production || true
     - docker build
-        --target build-react
-        --cache-from $IMAGE:build-react
-        --tag $IMAGE:build-react
-        --file ./Dockerfile.deploy
-        "."
+      --target build-react
+      --cache-from $IMAGE:build-react
+      --tag $IMAGE:build-react
+      --file ./Dockerfile.deploy
+      "."
     - docker build
-        --cache-from $IMAGE:production
-        --tag $IMAGE:production
-        --tag $HEROKU_REGISTRY_IMAGE
-        --file ./Dockerfile.deploy
-        "."
+      --cache-from $IMAGE:production
+      --tag $IMAGE:production
+      --tag $HEROKU_REGISTRY_IMAGE
+      --file ./Dockerfile.deploy
+      "."
     - docker push $IMAGE:build-react
     - docker push $IMAGE:production
     - docker login -u _ -p $HEROKU_AUTH_TOKEN registry.heroku.com

@@ -1,6 +1,5 @@
-.Feed{
-  margin: 20px;
-  height: 100vh;
+.Feed {
   display: flex;
-  place-content: center;
+  flex-direction: column;
+  align-items: center;
 }

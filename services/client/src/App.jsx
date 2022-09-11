@@ -7,7 +7,12 @@ import LoginForm from "./components/routes/LoginForm";
 import Message from "./components/routes/Message";
 import NavBar from "./components/nav/NavBar";
 import RegisterForm from "./components/routes/RegisterForm";
-import {getRefreshTokenIfExists, setRefreshToken, removeRefreshToken} from './utils/tokenHandler'
+import {
+  getRefreshTokenIfExists,
+  setRefreshToken,
+  removeRefreshToken,
+} from "./utils/tokenHandler";
+import "./App.css";
 
 class App extends Component {
   constructor() {
@@ -103,60 +108,46 @@ class App extends Component {
 
   render() {
     return (
-      <div>
+      <div className="App">
         <NavBar
           title={this.state.title}
           logoutUser={this.logoutUser}
           isAuthenticated={this.isAuthenticated}
         />
-        <section className="section">
-          <div className="container">
-            {this.state.messageType && this.state.messageText && (
-              <Message
-                messageType={this.state.messageType}
-                messageText={this.state.messageText}
-                removeMessage={this.removeMessage}
+        {this.state.messageType && this.state.messageText && (
+          <Message
+            messageType={this.state.messageType}
+            messageText={this.state.messageText}
+            removeMessage={this.removeMessage}
+          />
+        )}
+        <Routes>
+          <Route exact path="/feed" element={<Feed seed={this.state.seed} />} />
+          <Route></Route>
+          <Route exact path="/about" element={<About />} />
+          <Route
+            exact
+            path="/register"
+            element={
+              <RegisterForm
+                // eslint-disable-next-line react/jsx-handler-names
+                handleRegisterFormSubmit={this.handleRegisterFormSubmit}
+                isAuthenticated={this.isAuthenticated}
               />
-            )}
-            <div className="columns">
-              <div className="column is-half">
-                <br />
-                <Routes>
-                  <Route
-                    exact
-                    path="/feed"
-                    element={
-                      <Feed seed={this.state.seed}/>
-                    }
-                  />
-                  <Route exact path="/about" element={<About />} />
-                  <Route
-                    exact
-                    path="/register"
-                    element={
-                      <RegisterForm
-                        // eslint-disable-next-line react/jsx-handler-names
-                        handleRegisterFormSubmit={this.handleRegisterFormSubmit}
-                        isAuthenticated={this.isAuthenticated}
-                      />
-                    }
-                  />
-                  <Route
-                    exact
-                    path="/login"
-                    element={
-                      <LoginForm
-                        // eslint-disable-next-line react/jsx-handler-names
-                        handleLoginFormSubmit={this.handleLoginFormSubmit}
-                        isAuthenticated={this.isAuthenticated}
-                      />
-                    }
-                  />
-                </Routes>
-              </div>
-            </div>
-          </div>
-        </section>
+            }
+          />
+          <Route
+            exact
+            path="/login"
+            element={
+              <LoginForm
+                // eslint-disable-next-line react/jsx-handler-names
+                handleLoginFormSubmit={this.handleLoginFormSubmit}
+                isAuthenticated={this.isAuthenticated}
+              />
+            }
+          />
+        </Routes>
       </div>
     );
   }

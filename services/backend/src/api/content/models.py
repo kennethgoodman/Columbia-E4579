@@ -1,14 +1,13 @@
 # models.py
 
-from sqlalchemy import Enum as SqlEnum, ForeignKey
+from enum import Enum
+
+from sqlalchemy import Enum as SqlEnum
+from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
-
 from src import db
 from src.api.engagement.models import Engagement
-
-
-from enum import Enum
 
 
 def get_url(content):
@@ -23,24 +22,33 @@ class MediaType(Enum):
 
 class Content(db.Model):
     __tablename__ = "content"
-    id = db.Column(db.Integer,
-                   primary_key=True
+    id = db.Column(
+        db.Integer, primary_key=True
     )  # primary keys are required by SQLAlchemy
 
     # relationships
-    content_engagements = relationship("Engagement")  # one piece of content with many engagements
-    generated_content_metadata = relationship('GeneratedContentMetadata', back_populates="content", uselist=False)
-    non_generated_content_metadata = relationship('NonGeneratedContentMetadata', back_populates="content", uselist=False)
+    content_engagements = relationship(
+        "Engagement"
+    )  # one piece of content with many engagements
+    generated_content_metadata = relationship(
+        "GeneratedContentMetadata", back_populates="content", uselist=False
+    )
+    non_generated_content_metadata = relationship(
+        "NonGeneratedContentMetadata", back_populates="content", uselist=False
+    )
 
     # columns
     media_type = db.Column(SqlEnum(MediaType))
     s3_bucket = db.Column(db.String(200), nullable=True)
-    s3_id = db.Column(db.String(200), nullable=True)  # might be only text, if media_type = Text
+    s3_id = db.Column(
+        db.String(200), nullable=True
+    )  # might be only text, if media_type = Text
     created_date = db.Column(db.DateTime, default=func.now(), nullable=False)
 
     # Foreign Keys
     author_id = db.Column(db.Integer, ForeignKey("user.id"))
     author = relationship("User", back_populates="authored_content")
+
 
 class GeneratedType(Enum):
     HumanTxt2Img = 1
@@ -51,7 +59,9 @@ class GeneratedType(Enum):
 
 class GeneratedContentMetadata(db.Model):
     __tablename__ = "generated_content_metadata"
-    id = db.Column(db.Integer, primary_key=True)  # primary keys are required by SQLAlchemy
+    id = db.Column(
+        db.Integer, primary_key=True
+    )  # primary keys are required by SQLAlchemy
     content_id = db.Column(db.Integer, ForeignKey("content.id"))
     content = relationship("Content", back_populates="generated_content_metadata")
 
@@ -68,7 +78,9 @@ class GeneratedContentMetadata(db.Model):
 
 class NonGeneratedContentMetadata(db.Model):
     __tablename__ = "non_generated_content_metadata"
-    id = db.Column(db.Integer, primary_key=True)  # primary keys are required by SQLAlchemy
+    id = db.Column(
+        db.Integer, primary_key=True
+    )  # primary keys are required by SQLAlchemy
     content_id = db.Column(db.Integer, ForeignKey("content.id"))
     content = relationship("Content", back_populates="non_generated_content_metadata")
 
