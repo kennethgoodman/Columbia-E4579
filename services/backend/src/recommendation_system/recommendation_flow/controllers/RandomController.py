@@ -1,8 +1,18 @@
-from src.recommendation_system.recommendation_flow.controllers.AbstractController import AbstractController
-from src.recommendation_system.recommendation_flow.candidate_generators.RandomGenerator import RandomGenerator
-from src.recommendation_system.recommendation_flow.filtering.RandomFilter import RandomFilter
-from src.recommendation_system.recommendation_flow.model_prediction.RandomModel import RandomModel
-from src.recommendation_system.recommendation_flow.ranking.RandomRanker import RandomRanker
+from src.recommendation_system.recommendation_flow.candidate_generators.RandomGenerator import (
+    RandomGenerator,
+)
+from src.recommendation_system.recommendation_flow.controllers.AbstractController import (
+    AbstractController,
+)
+from src.recommendation_system.recommendation_flow.filtering.RandomFilter import (
+    RandomFilter,
+)
+from src.recommendation_system.recommendation_flow.model_prediction.RandomModel import (
+    RandomModel,
+)
+from src.recommendation_system.recommendation_flow.ranking.RandomRanker import (
+    RandomRanker,
+)
 
 
 class RandomController(AbstractController):

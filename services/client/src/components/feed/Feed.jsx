@@ -63,24 +63,13 @@ const Feed = (props) => {
 
   return (
     <div className="Feed">
-      <div>
-        {data?.map((post, index) => {
-          // we request a new set of images
-          // when the second to last image is on the screen
-          // kenny knows why index + 2 ???
-          if (data.length === index + 2) {
-            return (
-              <div key={post.id} ref={lastElementRef}>
-                <Post
-                  // eslint-disable-next-line react/jsx-handler-names
-                  content_id={post.id}
-                  post={post}
-                />
-              </div>
-            );
-          }
+      {data?.map((post, index) => {
+        // we request a new set of images
+        // when the second to last image is on the screen
+        // kenny knows why index + 2 ???
+        if (data.length === index + 2) {
           return (
-            <div key={post.id}>
+            <div key={post.id} ref={lastElementRef}>
               <Post
                 // eslint-disable-next-line react/jsx-handler-names
                 content_id={post.id}
@@ -88,8 +77,17 @@ const Feed = (props) => {
               />
             </div>
           );
-        })}
-      </div>
+        }
+        return (
+          <div key={post.id}>
+            <Post
+              // eslint-disable-next-line react/jsx-handler-names
+              content_id={post.id}
+              post={post}
+            />
+          </div>
+        );
+      })}
     </div>
   );
 };

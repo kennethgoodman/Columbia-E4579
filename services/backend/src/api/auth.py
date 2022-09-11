@@ -1,9 +1,8 @@
 import jwt
 from flask import request
 from flask_restx import Namespace, Resource, fields
-
 from src import bcrypt
-from src.api.users.crud import add_user, get_user_by_username, get_user_by_id
+from src.api.users.crud import add_user, get_user_by_id, get_user_by_username
 from src.api.users.models import User
 from src.api.utils.auth_utils import get_user
 

@@ -35,7 +35,7 @@ In your first terminal, after you are done building the app, you can run the fol
 docker-compose up
 ```
 
-The website will be at http://127.0.0.1:3007/feed
+Website will be at http://127.0.0.1:3007/feed
 
 ### Set up the database:
 
