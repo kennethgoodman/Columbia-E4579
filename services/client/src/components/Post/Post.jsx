@@ -1,9 +1,10 @@
 import React, { useEffect, useRef, useState, useMemo } from "react";
 import LikeButton from "../Likes/LikeButton";
 import DislikeButton from "../Likes/DislikeButton";
-import "./Post.css";
 import axios from "axios";
 import { getRefreshTokenIfExists } from "../../utils/tokenHandler";
+
+import "./Post.css";
 
 const Post = (props) => {
   const [likeIsClicked, setLikeIsClicked] = useState(props.post.user_likes);

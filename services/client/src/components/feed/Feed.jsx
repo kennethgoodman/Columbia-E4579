@@ -1,9 +1,11 @@
+/* eslint-disable react/jsx-handler-names */
 import React from "react";
 import { useState, useEffect, useRef, useCallback } from "react";
 import Post from "../Post/Post";
 import axios from "axios";
-import "./Feed.css";
 import { getRefreshTokenIfExists } from "../../utils/tokenHandler";
+
+import "./Feed.css";
 
 const Feed = (props) => {
   const [isLoading, setLoading] = useState(true);
@@ -70,21 +72,13 @@ const Feed = (props) => {
         if (data.length === index + 2) {
           return (
             <div key={post.id} ref={lastElementRef}>
-              <Post
-                // eslint-disable-next-line react/jsx-handler-names
-                content_id={post.id}
-                post={post}
-              />
+              <Post content_id={post.id} post={post} />
             </div>
           );
         }
         return (
           <div key={post.id}>
-            <Post
-              // eslint-disable-next-line react/jsx-handler-names
-              content_id={post.id}
-              post={post}
-            />
+            <Post content_id={post.id} post={post} />
           </div>
         );
       })}
