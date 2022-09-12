@@ -57,6 +57,10 @@ class GeneratedType(Enum):
     Img2Img = 4
 
 
+class ModelType(Enum):
+    StableDiffusion = 1
+
+
 class GeneratedContentMetadata(db.Model):
     __tablename__ = "generated_content_metadata"
     id = db.Column(
@@ -74,6 +78,8 @@ class GeneratedContentMetadata(db.Model):
     source = db.Column(db.String(100))
     source_img = db.Column(db.String(200), nullable=True)
     generated_type = db.Column(SqlEnum(GeneratedType))
+    model = db.Column(db.Integer, nullable=False)
+    model_version = db.Column(db.String(10), nullable=False)
 
 
 class NonGeneratedContentMetadata(db.Model):
