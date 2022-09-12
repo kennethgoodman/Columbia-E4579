@@ -147,3 +147,4 @@ flask_session/
 tmp.err
 tmp.out
 tmp.sql
+.pre-commit-config.yaml
