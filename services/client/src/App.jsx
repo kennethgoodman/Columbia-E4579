@@ -7,7 +7,11 @@ import LoginForm from "./components/routes/LoginForm";
 import Message from "./components/routes/Message";
 import NavBar from "./components/nav/NavBar";
 import RegisterForm from "./components/routes/RegisterForm";
-import {getRefreshTokenIfExists, setRefreshToken, removeRefreshToken} from './utils/tokenHandler'
+import {
+  getRefreshTokenIfExists,
+  setRefreshToken,
+  removeRefreshToken,
+} from "./utils/tokenHandler";
 
 class App extends Component {
   constructor() {
@@ -125,9 +129,7 @@ class App extends Component {
                   <Route
                     exact
                     path="/feed"
-                    element={
-                      <Feed seed={this.state.seed}/>
-                    }
+                    element={<Feed seed={this.state.seed} />}
                   />
                   <Route exact path="/about" element={<About />} />
                   <Route
