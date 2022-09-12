@@ -1,8 +1,7 @@
 import boto3
-from project.data_models.content import Content, MediaType
-
 from project import create_app, db
 from project.data_models import User, _tables
+from project.data_models.content import Content, MediaType
 
 app = create_app()
 

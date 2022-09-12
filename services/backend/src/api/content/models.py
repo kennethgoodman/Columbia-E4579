@@ -4,10 +4,14 @@ from enum import Enum
 
 from sqlalchemy import Enum as SqlEnum
 from sqlalchemy import ForeignKey
+from sqlalchemy.ext.declarative import DeclarativeMeta
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from src import db
 from src.api.engagement.models import Engagement
+
+# As per https://stackoverflow.com/questions/63542818/mypy-and-inheriting-from-a-class-that-is-an-attribute-on-an-instance
+BaseModel: DeclarativeMeta = db.Model
 
 
 def get_url(content):
@@ -20,7 +24,7 @@ class MediaType(Enum):
     Video = 3
 
 
-class Content(db.Model):
+class Content(BaseModel):
     __tablename__ = "content"
     id = db.Column(
         db.Integer, primary_key=True
@@ -61,7 +65,7 @@ class ModelType(Enum):
     StableDiffusion = 1
 
 
-class GeneratedContentMetadata(db.Model):
+class GeneratedContentMetadata(BaseModel):
     __tablename__ = "generated_content_metadata"
     id = db.Column(
         db.Integer, primary_key=True
@@ -82,7 +86,7 @@ class GeneratedContentMetadata(db.Model):
     model_version = db.Column(db.String(10), nullable=False)
 
 
-class NonGeneratedContentMetadata(db.Model):
+class NonGeneratedContentMetadata(BaseModel):
     __tablename__ = "non_generated_content_metadata"
     id = db.Column(
         db.Integer, primary_key=True

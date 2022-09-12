@@ -4,9 +4,13 @@ from enum import Enum, IntEnum, unique
 
 from sqlalchemy import Enum as SqlEnum
 from sqlalchemy import ForeignKey
+from sqlalchemy.ext.declarative import DeclarativeMeta
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from src import db
+
+# As per https://stackoverflow.com/questions/63542818/mypy-and-inheriting-from-a-class-that-is-an-attribute-on-an-instance
+BaseModel: DeclarativeMeta = db.Model
 
 
 @unique
@@ -24,7 +28,7 @@ class EngagementType(Enum):
     MillisecondsEngagedWith = 5
 
 
-class Engagement(db.Model):
+class Engagement(BaseModel):
     __tablename__ = "engagement"
     id = db.Column(
         db.Integer, primary_key=True

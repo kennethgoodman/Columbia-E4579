@@ -3,14 +3,13 @@ import os
 
 import boto3
 from botocore.exceptions import ClientError
+from project import create_app, db
+from project.data_models import User, _tables
 from project.data_models.content import Content, MediaType
 from project.data_models.generated_content_metadata import (
     GeneratedContentMetadata,
     GeneratedType,
 )
-
-from project import create_app, db
-from project.data_models import User, _tables
 
 app = create_app()
 
