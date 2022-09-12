@@ -56,10 +56,5 @@ def seed_db():
     db.session.commit()
 
 
-@cli.command('recreate_and_seed_db')
-def recreate_and_seed_db():
-    recreate_db()
-    seed_db
-
 if __name__ == "__main__":
     cli()

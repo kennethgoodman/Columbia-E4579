@@ -8,14 +8,14 @@ from src import db
 from src.api.engagement.models import Engagement
 
 
-from enum import Enum
+from enum import Enum, IntEnum
 
 
 def get_url(content):
     return f"https://{content.s3_bucket}.s3.amazonaws.com/{content.s3_id}"
 
 
-class MediaType(Enum):
+class MediaType(IntEnum):
     Image = 1
     Text = 2
     Video = 3
@@ -42,14 +42,14 @@ class Content(db.Model):
     author_id = db.Column(db.Integer, ForeignKey("user.id"))
     author = relationship("User", back_populates="authored_content")
 
-class GeneratedType(Enum):
+class GeneratedType(IntEnum):
     HumanTxt2Img = 1
     GPT3Txt2Img = 2
     Img2Txt2Img = 3
     Img2Img = 4
 
 
-class ModelType(Enum):
+class ModelType(IntEnum):
     StableDiffusion = 1
 
 
@@ -68,7 +68,7 @@ class GeneratedContentMetadata(db.Model):
     source = db.Column(db.String(100))
     source_img = db.Column(db.String(200), nullable=True)
     generated_type = db.Column(SqlEnum(GeneratedType))
-    model = db.Column(db.Integer, nullable=False)
+    model = db.Column(SqlEnum(ModelType), nullable=False)
     model_version = db.Column(db.String(10), nullable=False)
 
 

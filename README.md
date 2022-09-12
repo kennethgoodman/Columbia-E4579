@@ -58,14 +58,6 @@ docker-compose exec api python manage.py seed_db
 
 To seed the database
 
-### Recreate And Seed Database
-
-To make your life easy, there is a command to run them both at the same time:
-
-```bash
-docker-compose exec api python manage.py recreate_and_seed_db
-```
-
 ### Access the dev database
 
 If you want to access the database in a postgres CLI, you can run the following command while `docker-compose up` is running:
