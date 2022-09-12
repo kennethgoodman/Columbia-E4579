@@ -5,13 +5,17 @@ import os
 
 import jwt
 from flask import current_app
+from sqlalchemy.ext.declarative import DeclarativeMeta
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from src import bcrypt, db
 from src.api.content.models import Content
 
+# As per https://stackoverflow.com/questions/63542818/mypy-and-inheriting-from-a-class-that-is-an-attribute-on-an-instance
+BaseModel: DeclarativeMeta = db.Model
 
-class User(db.Model):
+
+class User(BaseModel):
     __tablename__ = "user"
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)

@@ -28,9 +28,7 @@ def test_user_registration_duplicate_username(test_app, test_database, add_user)
     client = test_app.test_client()
     resp = client.post(
         "/auth/register",
-        data=json.dumps(
-            {"username": "michael", "password": "test"}
-        ),
+        data=json.dumps({"username": "michael", "password": "test"}),
         content_type="application/json",
     )
     data = json.loads(resp.data.decode())

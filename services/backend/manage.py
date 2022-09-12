@@ -4,8 +4,13 @@ import random
 
 from flask.cli import FlaskGroup
 from src import create_app, db
+from src.api.content.models import (
+    Content,
+    GeneratedContentMetadata,
+    MediaType,
+    ModelType,
+)
 from src.api.users.models import User
-from src.api.content.models import Content, MediaType, GeneratedContentMetadata, ModelType
 
 app = create_app()
 cli = FlaskGroup(create_app=create_app)
@@ -39,17 +44,17 @@ def seed_db():
             db.session.add(content)
             metadata = GeneratedContentMetadata(
                 content=content,
-                original_prompt=row['original_prompt'],
-                source=row['source'],
-                artist_style=row['artist_style'],
-                seed=row['seed'],
-                num_inference_steps=row['num_inference_steps'],
-                guidance_scale=row['guidance_scale'],
-                prompt=row['prompt'],
-                source_img=row['source_img'],
-                generated_type=row['generated_type'],
-                model=ModelType.StableDiffusion, # TODO: read this, don't hardcode
-                model_version='1.4', # TODO: read this, don't hardcode
+                original_prompt=row["original_prompt"],
+                source=row["source"],
+                artist_style=row["artist_style"],
+                seed=row["seed"],
+                num_inference_steps=row["num_inference_steps"],
+                guidance_scale=row["guidance_scale"],
+                prompt=row["prompt"],
+                source_img=row["source_img"],
+                generated_type=row["generated_type"],
+                model=ModelType.StableDiffusion,  # TODO: read this, don't hardcode
+                model_version="1.4",  # TODO: read this, don't hardcode
             )
             db.session.add(metadata)
     db.session.commit()

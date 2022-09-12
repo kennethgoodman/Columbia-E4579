@@ -81,7 +81,7 @@ class ContentPagination(Resource):
         seed = float(request.args.get("seed", random.random()))
         offset = page * limit
         if int(os.environ.get("USE_PICSUM", "0")) == 1:
-            import requests
+            import requests  # type: ignore[import]
 
             response = requests.get(
                 f"https://picsum.photos/v2/list?page={page}&limit={limit}"
