@@ -1,4 +1,5 @@
 # Columbia-E4579
+
 Fall 2022 Class At Columbia. Modern Recommendation Systems
 
 ### Setup
@@ -54,7 +55,6 @@ If you want to access the database in a postgres CLI, you can run the following 
 ```bash
 docker exec -it $(docker ps | grep columbia-e4579_api-db | awk '{print $1}') psql -U postgres -d api_dev
 ```
-
 
 ## Thanks
 1. [testdrivenio](https://github.com/testdrivenio/flask-react-aws) for a template for docker + flask + react

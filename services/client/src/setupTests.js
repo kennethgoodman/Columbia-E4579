@@ -11,13 +11,13 @@ global.renderWithRouter = function renderWithRouter(
   {
     route = "/",
     history = createMemoryHistory({ initialEntries: [route] }),
-  } = {}
+  } = {},
 ) {
   return {
     ...render(
       <Router location={history.location} navigator={history}>
         {ui}
-      </Router>
+      </Router>,
     ),
     history,
   };

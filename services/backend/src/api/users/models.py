@@ -5,9 +5,8 @@ import os
 
 import jwt
 from flask import current_app
-from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
-
+from sqlalchemy.sql import func
 from src import bcrypt, db
 from src.api.content.models import Content
 

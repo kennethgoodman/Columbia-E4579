@@ -1,2 +1,3 @@
 import DislikeButton from "./DislikeButton";
-export default DislikeButton
+
+export default DislikeButton;

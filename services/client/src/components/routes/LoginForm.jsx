@@ -44,13 +44,15 @@ const LoginForm = (props) => {
             <form onSubmit={handleSubmit}>
               <div className="field">
                 <label className="label" htmlFor="input-username">
-                  username
+                  Username
                 </label>
                 <input
                   name="username"
                   id="input-username"
                   className={
-                    errors.username && touched.username ? "input error" : "input"
+                    errors.username && touched.username
+                      ? "input error"
+                      : "input"
                   }
                   placeholder="Enter a username"
                   value={values.username}

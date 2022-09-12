@@ -21,7 +21,7 @@ it("renders properly", () => {
 
 it("renders with default props", () => {
   const { getByLabelText, getByText } = renderWithRouter(
-    <LoginForm {...props} />
+    <LoginForm {...props} />,
   );
 
   const usernameInput = getByLabelText("username");

@@ -1,13 +1,11 @@
 import csv
-import random
 import os
+import random
 
 from flask.cli import FlaskGroup
-
 from src import create_app, db
 from src.api.users.models import User
 from src.api.content.models import Content, MediaType, GeneratedContentMetadata, ModelType
-
 
 app = create_app()
 cli = FlaskGroup(create_app=create_app)
@@ -20,22 +18,23 @@ def recreate_db():
     db.session.commit()
 
 
-@cli.command('seed_db')
+@cli.command("seed_db")
 def seed_db():
     users = []
-    with open('seed_data/data/users.csv', 'r') as csvfile:
-        reader = csv.DictReader(csvfile, delimiter=',')
+    with open("seed_data/data/users.csv") as csvfile:
+        reader = csv.DictReader(csvfile, delimiter=",")
         for row in reader:
             user = User(**row)
             users.append(user)
             db.session.add(user)
-    with open('seed_data/data/content_with_metadata.csv', 'r') as csvfile:
+    with open("seed_data/data/content_with_metadata.csv") as csvfile:
         reader = csv.DictReader(csvfile, delimiter=chr(255))
         for row in reader:
-            content = Content(media_type=MediaType.Image,
-                              author=random.choice(users),
-                              s3_bucket=row['s3_bucket'],
-                              s3_id=row['s3_id'],
+            content = Content(
+                media_type=MediaType.Image,
+                author=random.choice(users),
+                s3_bucket=row["s3_bucket"],
+                s3_id=row["s3_id"],
             )
             db.session.add(content)
             metadata = GeneratedContentMetadata(
