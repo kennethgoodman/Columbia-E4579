@@ -24,7 +24,7 @@ class UntrainedModel(AbstractModel):
             )
         ).reshape((len(content_ids), 2))
 
-    def predict_probabilities(self, content_ids, user_id):
+    def predict_probabilities(self, content_ids, user_id, seed=None):
         predictions = model(self._create_all_data(content_ids, user_id)).numpy()
         predictions = tf.nn.softmax(predictions).numpy()
         return list(
