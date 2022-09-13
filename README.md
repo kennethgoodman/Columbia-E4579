@@ -23,7 +23,7 @@ docker-compose up --build --force-recreate
 
 The website will be at http://127.0.0.1:3007/feed
 
-You can use `control-c`
+You can use `control-c` to kill the local servers
 
 ### Access the dev database
 
