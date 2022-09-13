@@ -15,6 +15,8 @@ Running the docker app will add `docker` and `docker-compose` to your PATH so yo
 
 To do everything at once, open up a terminal and run the following two commands:
 
+_WARNING_ running this command WILL delete all data in the local database
+
 ```bash
 docker-compose up --build --force-recreate
 ```
