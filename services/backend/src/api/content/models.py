@@ -82,7 +82,7 @@ class GeneratedContentMetadata(BaseModel):
     source = db.Column(db.String(100))
     source_img = db.Column(db.String(200), nullable=True)
     generated_type = db.Column(SqlEnum(GeneratedType))
-    model = db.Column(db.Integer, nullable=False)
+    model = db.Column(SqlEnum(ModelType), nullable=False)
     model_version = db.Column(db.String(10), nullable=False)
 
 

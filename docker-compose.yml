@@ -21,7 +21,7 @@ services:
 
   api-db:
     build:
-      context: services/backend/src/db
+      context: services/db
       dockerfile: Dockerfile
     expose:
       - 5432
