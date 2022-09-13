@@ -74,17 +74,22 @@ def add_content_data(responses, user_id):
 
 class ListControllers(Resource):
     @content_namespace.marshal_with(controllers, as_list=True)
+    @content_namespace.response(200, "Success")
     def get(self):
+        """Return a list of all possible controllers in their human-readable string format"""
         return [
             {"controller": controller.human_string()}
             for controller in list(ControllerEnum)
-        ]
+        ], 200
 
 
 class ContentPagination(Resource):
     @content_namespace.marshal_with(content, as_list=True)
+    @content_namespace.response(200, "Success")
     def get(self):
-        """Returns all content"""
+        """
+        This API should be used for content pagination. Do not NEED to be signed in, but better experience if signed in
+        """
         status_code, user_id, exception_message = get_user(request)
         if exception_message:
             print(exception_message)
