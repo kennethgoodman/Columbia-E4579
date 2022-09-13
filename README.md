@@ -11,17 +11,11 @@ to download the latest version of `docker` (comes with compose). Once you instal
 
 Running the docker app will add `docker` and `docker-compose` to your PATH so you can run those commands on your terminal
 
-#### Setup terminals
-
-Open up two terminals, in both of them run:
-
-```bash
-export REACT_APP_API_SERVICE_URL=http://localhost:5004
-```
-
 ### Build, Create DB, Seed DB and Run:
 
-To do everything at once:
+To do everything at once, open up a terminal and run the following two commands:
+
+_WARNING_ running this command WILL delete all data in the local database
 
 ```bash
 docker-compose up --build --force-recreate
@@ -37,6 +31,26 @@ If you want to access the database in a mysql CLI, you can run the following com
 
 ```bash
 docker exec -it $(docker ps | grep columbia-e4579_api-db | awk '{print $1}') mysql --password=mysql api_dev
+```
+
+### Misc Commands
+
+#### Access a python shell instantiated with the app env
+
+```bash
+docker-compose exec api python manage.py shell
+```
+
+#### Recreating DB
+
+```bash
+docker-compose exec api python manage.py recreate_db
+```
+
+#### Seed DB
+
+```bash
+docker-compose exec api python manage.py seed_db
 ```
 
 ## Thanks
