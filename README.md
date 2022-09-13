@@ -19,51 +19,24 @@ Open up two terminals, in both of them run:
 export REACT_APP_API_SERVICE_URL=http://localhost:5004
 ```
 
-### Build:
+### Build, Create DB, Seed DB and Run:
 
-In your first terminal, you can build and install all depedencies by running:
-
-```bash
-docker-compose build
-```
-
-### Run Locally
-
-In your first terminal, after you are done building the app, you can run the following command to bring up the web server, backend and database locally
+To do everything at once:
 
 ```bash
-docker-compose up
+docker-compose up --build --force-recreate
 ```
 
 The website will be at http://127.0.0.1:3007/feed
 
-### Set up the database:
-
-If this is your first time running the app (or if you made a change to the data models) you should run the following command:
-_You should run this in your SECOND terminal_ as the first terminal will be running the servers
-
-```bash
-docker-compose exec api python manage.py recreate_db
-```
-
-This command will delete all data in the local database and recreate the tables
-
-### Seed the db:
-
-In your second terminal following the creation of the database you should run
-
-```bash
-docker-compose exec api python manage.py seed_db
-```
-
-To seed the database
+You can use `control-c`
 
 ### Access the dev database
 
-If you want to access the database in a postgres CLI, you can run the following command while `docker-compose up` is running:
+If you want to access the database in a mysql CLI, you can run the following command while `docker-compose up` is running:
 
 ```bash
-docker exec -it $(docker ps | grep columbia-e4579_api-db | awk '{print $1}') psql -U postgres -d api_dev
+docker exec -it $(docker ps | grep columbia-e4579_api-db | awk '{print $1}') mysql --password=mysql api_dev
 ```
 
 ## Thanks

@@ -13,8 +13,8 @@ services:
     environment:
       - FLASK_ENV=development
       - APP_SETTINGS=src.config.DevelopmentConfig
-      - DATABASE_URL=postgresql://postgres:postgres@api-db:5432/api_dev
-      - DATABASE_TEST_URL=postgresql://postgres:postgres@api-db:5432/api_test
+      - DATABASE_URL=mysql://mysql:mysql@api-db/api_dev
+      - DATABASE_TEST_URL=mysql://mysql:mysql@api-db/api_test
       - USE_PICSUM=0
     depends_on:
       - api-db
@@ -23,11 +23,20 @@ services:
     build:
       context: services/db
       dockerfile: Dockerfile
+    restart: "always"
+    ports:
+      - "127.0.0.1:3306:3306"
+    volumes:
+      - ./config/initdb:/docker-entrypoint-initdb.d
+      - ./data/mysql:/var/lib/mysql
+      - ./logs/mysql:/var/log/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: mysql
+      MYSQL_DATABASE: api_dev
+      MYSQL_USER: mysql
+      MYSQL_PASSWORD: mysql
     expose:
       - 5432
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
 
   client:
     stdin_open: true
@@ -44,3 +53,8 @@ services:
       - REACT_APP_API_SERVICE_URL=${REACT_APP_API_SERVICE_URL}
     depends_on:
       - api
+
+  redis:
+    image: redis:latest
+    ports:
+      - "127.0.0.1:6379:6379"

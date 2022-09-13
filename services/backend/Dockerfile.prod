@@ -3,7 +3,7 @@
 ###########
 
 # pull official base image
-FROM python:3.10.3-slim-buster as builder
+FROM python:3.10.3 as builder
 
 # set working directory
 WORKDIR /usr/src/app
@@ -12,10 +12,15 @@ WORKDIR /usr/src/app
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
+RUN pip install mysql-connector-python
+
 # install system dependencies
 RUN apt-get update \
-  && apt-get -y install gcc postgresql \
+  && apt-get -y install gnupg netcat gcc build-essential python-dev \
   && apt-get clean
+
+# install mysql
+RUN pip install mysqlclient
 
 # install dependencies
 RUN pip install --upgrade pip
@@ -49,9 +54,15 @@ ARG SECRET_KEY
 ENV SECRET_KEY $SECRET_KEY
 
 # install system dependencies
+RUN pip install mysql-connector-python
+
+# install system dependencies
 RUN apt-get update \
-  && apt-get -y install gcc postgresql \
+  && apt-get -y install gnupg netcat gcc build-essential python-dev \
   && apt-get clean
+
+# install mysql
+RUN pip install mysqlclient
 
 # install dependencies
 COPY --from=builder /usr/src/app/wheels /wheels
