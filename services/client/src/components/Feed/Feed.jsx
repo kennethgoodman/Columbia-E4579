@@ -8,6 +8,7 @@ import { getRefreshTokenIfExists } from "../../utils/tokenHandler";
 import "./Feed.css";
 
 const Feed = (props) => {
+  const [controller, setController] = useState("");
   const [isLoading, setLoading] = useState(true);
   const [data, setData] = useState([]);
   const [pageNum, setPageNum] = useState(0);
@@ -47,7 +48,7 @@ const Feed = (props) => {
       };
       options[
         "url"
-      ] = `${process.env.REACT_APP_API_SERVICE_URL}/content?page=${pageNum}&limit=10&seed=${props.seed}`;
+      ] = `${process.env.REACT_APP_API_SERVICE_URL}/content?page=${pageNum}&limit=10&seed=${props.seed}&controller=${controller}`;
       setLoading(true);
       axios(options)
         .then((response) => {
@@ -63,8 +64,21 @@ const Feed = (props) => {
     fetchPosts();
   }, [pageNum]);
 
+  const handleChange = (event) => {
+    setController(event.target.value);
+    setData([]);
+    setPageNum(0);
+  };
+
   return (
     <div className="Feed">
+      <label>
+        Which Controller Do You Want To Use:
+        <select value={controller} onChange={handleChange}>
+          <option value="RANDOM">Random</option>
+          <option value="STATIC">Static</option>
+        </select>
+      </label>
       {data?.map((post, index) => {
         // we request a new set of images
         // when the second to last image is on the screen

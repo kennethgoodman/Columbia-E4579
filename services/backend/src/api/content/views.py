@@ -25,6 +25,10 @@ content_namespace = Namespace("content")
 parser = content_namespace.parser()
 parser.add_argument("Authorization", location="headers")
 
+controllers = content_namespace.model(
+    "Controllers", {"controller": fields.String(required=True)}
+)
+
 content = content_namespace.model(
     "Content",
     {
@@ -68,6 +72,15 @@ def add_content_data(responses, user_id):
     return responses
 
 
+class ListControllers(Resource):
+    @content_namespace.marshal_with(controllers, as_list=True)
+    def get(self):
+        return [
+            {"controller": controller.human_string()}
+            for controller in list(ControllerEnum)
+        ]
+
+
 class ContentPagination(Resource):
     @content_namespace.marshal_with(content, as_list=True)
     def get(self):
@@ -78,6 +91,10 @@ class ContentPagination(Resource):
             user_id = 0  # if error, do a logged out user, not great, TODO: ensure this is right
         page = int(request.args.get("page", 0))
         limit = int(request.args.get("limit", 10))
+        controller = ControllerEnum.string_to_controller(
+            request.args.get("controller", ControllerEnum.RANDOM.human_string())
+            or ControllerEnum.RANDOM.human_string()
+        )
         seed = float(request.args.get("seed", random.random()))
         offset = page * limit
         if int(os.environ.get("USE_PICSUM", "0")) == 1:
@@ -90,7 +107,7 @@ class ContentPagination(Resource):
         # logged-out user is 0
         # don't need page for random (most of the time)
         responses = get_content_data(
-            controller=ControllerEnum.RANDOM,
+            controller=controller,
             user_id=user_id,
             limit=max(limit, 50),
             offset=offset,
@@ -100,3 +117,4 @@ class ContentPagination(Resource):
 
 
 content_namespace.add_resource(ContentPagination, "")
+content_namespace.add_resource(ListControllers, "/listcontrollers")

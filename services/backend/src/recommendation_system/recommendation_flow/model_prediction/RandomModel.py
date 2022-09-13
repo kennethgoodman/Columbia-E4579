@@ -4,7 +4,9 @@ from .AbstractModel import AbstractModel
 
 
 class RandomModel(AbstractModel):
-    def predict_probabilities(self, content_ids, user_id):
+    def predict_probabilities(self, content_ids, user_id, seed=None):
+        if seed:
+            random.seed(seed)
         return list(
             map(
                 lambda content_id: {
