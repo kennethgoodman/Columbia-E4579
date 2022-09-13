@@ -8,10 +8,12 @@ import { getRefreshTokenIfExists } from "../../utils/tokenHandler";
 import "./Feed.css";
 
 const Feed = (props) => {
-  const [controller, setController] = useState("");
   const [isLoading, setLoading] = useState(true);
   const [data, setData] = useState([]);
-  const [pageNum, setPageNum] = useState(0);
+  const [fetchParams, setFetchParams] = useState({
+    page: 0,
+    controller: "RANDOM",
+  });
 
   const observer = useRef();
   const lastElementRef = useCallback(
@@ -24,7 +26,12 @@ const Feed = (props) => {
         if (first.isIntersecting) {
           // increment the pageNumber when
           // the intersection observer comes on screen
-          setPageNum((previousPageNumber) => previousPageNumber + 1);
+          setFetchParams((previousFetchParams) => {
+            return {
+              page: previousFetchParams["page"] + 1,
+              controller: previousFetchParams["controller"],
+            };
+          });
         }
       });
 
@@ -48,7 +55,7 @@ const Feed = (props) => {
       };
       options[
         "url"
-      ] = `${process.env.REACT_APP_API_SERVICE_URL}/content?page=${pageNum}&limit=10&seed=${props.seed}&controller=${controller}`;
+      ] = `${process.env.REACT_APP_API_SERVICE_URL}/content?page=${fetchParams["page"]}&limit=50&seed=${props.seed}&controller=${fetchParams["controller"]}`;
       setLoading(true);
       axios(options)
         .then((response) => {
@@ -62,19 +69,21 @@ const Feed = (props) => {
     };
 
     fetchPosts();
-  }, [pageNum]);
+  }, [fetchParams]);
 
   const handleChange = (event) => {
-    setController(event.target.value);
     setData([]);
-    setPageNum(0);
+    setFetchParams({
+      page: 0,
+      controller: event.target.value,
+    });
   };
 
   return (
     <div className="Feed">
       <label>
         Which Controller Do You Want To Use:
-        <select value={controller} onChange={handleChange}>
+        <select value={fetchParams["controller"]} onChange={handleChange}>
           <option value="RANDOM">Random</option>
           <option value="STATIC">Static</option>
         </select>

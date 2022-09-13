@@ -109,7 +109,7 @@ class ContentPagination(Resource):
         responses = get_content_data(
             controller=controller,
             user_id=user_id,
-            limit=max(limit, 50),
+            limit=limit,
             offset=offset,
             seed=seed,
         )

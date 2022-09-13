@@ -98,7 +98,7 @@ class App extends Component {
         .then((res) => {
           this.setState({ accessToken: res.data.access_token });
           setRefreshToken(res.data.refresh_token);
-          callback();
+          if (callback) callback();
         })
         .catch((err) => {
           console.log(err);

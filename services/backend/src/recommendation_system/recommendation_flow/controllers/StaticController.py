@@ -18,9 +18,7 @@ from src.recommendation_system.recommendation_flow.ranking.RandomRanker import (
 class StaticController(AbstractController):
     def get_content_ids(self, user_id, limit, offset, _):
         seed = 0.25  # static random seed
-        print("get_content_ids", user_id, limit, offset, seed)
         candidates = RandomGenerator().get_content_ids(limit, offset, seed)
-        print("candidates", candidates)
         filtered_candidates = RandomFilter().filter_ids(candidates, seed)
         predictions = RandomModel().predict_probabilities(
             filtered_candidates, user_id, seed
