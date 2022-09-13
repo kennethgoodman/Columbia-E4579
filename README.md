@@ -13,7 +13,7 @@ Running the docker app will add `docker` and `docker-compose` to your PATH so yo
 
 ### Build, Create DB, Seed DB and Run:
 
-To do everything at once, open up a terminal and run the following two commands:
+To do everything at once, open up a terminal and run the following command:
 
 _WARNING_ running this command WILL delete all data in the local database
 
