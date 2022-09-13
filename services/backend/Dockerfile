@@ -1,5 +1,5 @@
 # pull official base image
-FROM python:3.10.3-slim-buster
+FROM python:3.10.3
 
 # set working directory
 WORKDIR /usr/src/app
@@ -8,14 +8,15 @@ WORKDIR /usr/src/app
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
+RUN pip install mysql-connector-python
+
 # install system dependencies
 RUN apt-get update \
-  && apt-get -y install netcat gcc postgresql \
+  && apt-get -y install gnupg netcat gcc build-essential python-dev \
   && apt-get clean
 
-# install postgres
-RUN apt update -y && apt install -y build-essential libpq-dev
-RUN pip install psycopg2-binary --no-binary psycopg2-binary
+# install mysql
+RUN pip install mysqlclient
 
 # install dependencies
 RUN pip install --upgrade pip

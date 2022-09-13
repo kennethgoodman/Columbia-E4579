@@ -1,11 +1,13 @@
 #!/bin/sh
 
-echo "Waiting for postgres..."
+echo "Waiting for mysql..."
 
-while ! nc -z api-db 5432; do
+while ! nc -z api-db 3306; do
   sleep 0.1
 done
 
-echo "PostgreSQL started"
+echo "mysql started"
 
 python manage.py run -h 0.0.0.0
+python manage.py recreate_db
+python manage.py seed_db

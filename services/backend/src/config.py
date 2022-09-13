@@ -25,9 +25,5 @@ class TestingConfig(BaseConfig):
 
 class ProductionConfig(BaseConfig):
     url = os.environ.get("DATABASE_URL")
-
-    if url is not None and url.startswith("postgres://"):
-        url = url.replace("postgres://", "postgresql://", 1)
-
     SQLALCHEMY_DATABASE_URI = url
     SECRET_KEY = os.getenv("SECRET_KEY", "my_precious")
