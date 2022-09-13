@@ -96,12 +96,17 @@ class LikeCount(Resource):
 class Like(Resource):
     @engagement_namespace.marshal_with(engagement)
     def get(self, content_id):
+        """Retrieve the like count for this content_id"""
         return _get_all_engagements_by_content_id(content_id, EngagementType.Like)
 
     @engagement_namespace.expect(parser)
     @engagement_namespace.marshal_with(set_engagement)
     @engagement_namespace.response(200, "Success")
+    @engagement_namespace.response(403, "Need To Login")
+    @engagement_namespace.response(401, "Bad Token, need to re-login")
+    @engagement_namespace.response(400, "Already exists")
     def post(self, content_id):
+        """Like this content"""
         status_code, user_id, exception_message = get_user(request)
         if exception_message:
             engagement_namespace.abort(status_code, exception_message)
@@ -112,11 +117,17 @@ class Like(Resource):
 class Dislike(Resource):
     @engagement_namespace.marshal_with(engagement)
     def get(self, content_id):
+        """Retrieve the dislike count for this content_id"""
         return _get_all_engagements_by_content_id(content_id, EngagementType.Like)
 
     @engagement_namespace.expect(parser)
     @engagement_namespace.marshal_with(set_engagement)
+    @engagement_namespace.response(200, "Success")
+    @engagement_namespace.response(403, "Need To Login")
+    @engagement_namespace.response(401, "Bad Token, need to re-login")
+    @engagement_namespace.response(400, "Already exists")
     def post(self, content_id):
+        """Dislike this content"""
         status_code, user_id, exception_message = get_user(request)
         if exception_message:
             engagement_namespace.abort(status_code, exception_message)
@@ -127,7 +138,12 @@ class Dislike(Resource):
 class UnLike(Resource):
     @engagement_namespace.expect(parser)
     @engagement_namespace.marshal_with(set_engagement)
+    @engagement_namespace.response(200, "Success")
+    @engagement_namespace.response(403, "Need To Login")
+    @engagement_namespace.response(401, "Bad Token, need to re-login")
+    @engagement_namespace.response(400, "Already exists")
     def post(self, content_id):
+        """Unlike this content"""
         status_code, user_id, exception_message = get_user(request)
         if exception_message:
             engagement_namespace.abort(status_code, exception_message)
@@ -138,7 +154,12 @@ class UnLike(Resource):
 class UnDislike(Resource):
     @engagement_namespace.expect(parser)
     @engagement_namespace.marshal_with(set_engagement)
+    @engagement_namespace.response(200, "Success")
+    @engagement_namespace.response(403, "Need To Login")
+    @engagement_namespace.response(401, "Bad Token, need to re-login")
+    @engagement_namespace.response(400, "Already exists")
     def post(self, content_id):
+        """UnDislike this content"""
         status_code, user_id, exception_message = get_user(request)
         if exception_message:
             engagement_namespace.abort(status_code, exception_message)
