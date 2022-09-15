@@ -124,7 +124,7 @@ class App extends Component {
         )}
         <Routes>
           <Route exact path="/feed" element={<Feed seed={this.state.seed} />} />
-          <Route></Route>
+          <Route />
           <Route exact path="/about" element={<About />} />
           <Route
             exact
