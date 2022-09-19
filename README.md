@@ -15,7 +15,9 @@ Running the docker app will add `docker` and `docker-compose` to your PATH so yo
 
 To do everything at once, open up a terminal and run the following command:
 
-_WARNING_ running this command WILL delete all data in the local database
+_WARNING_ running this command WILL delete all data in the local database, such as local likes/content views.
+
+Use this command if you want a clean database back to the original seed.
 
 ```bash
 docker-compose up --build --force-recreate

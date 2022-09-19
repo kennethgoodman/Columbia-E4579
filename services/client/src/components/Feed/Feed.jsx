@@ -13,12 +13,28 @@ const Feed = (props) => {
   const [fetchParams, setFetchParams] = useState({
     page: 0,
     controller: "RANDOM",
+    starting_content_id: undefined,
   });
+
+  const handleSeeMore = (content_id) => {
+    if (content_id === fetchParams["starting_content_id"]) {
+      return;
+    }
+    setData([]);
+    setFetchParams((previousFetchParams) => {
+      return {
+        page: 0,
+        controller: previousFetchParams["controller"],
+        starting_content_id: content_id,
+      };
+    });
+  };
 
   const observer = useRef();
   const lastElementRef = useCallback(
     (node) => {
       if (isLoading) return;
+      console.log("running lastElementRef", data.length);
       if (observer.current) observer.current.disconnect();
 
       observer.current = new IntersectionObserver((entries) => {
@@ -30,6 +46,7 @@ const Feed = (props) => {
             return {
               page: previousFetchParams["page"] + 1,
               controller: previousFetchParams["controller"],
+              starting_content_id: previousFetchParams["starting_content_id"],
             };
           });
         }
@@ -55,7 +72,7 @@ const Feed = (props) => {
       };
       options[
         "url"
-      ] = `${process.env.REACT_APP_API_SERVICE_URL}/content?page=${fetchParams["page"]}&limit=50&seed=${props.seed}&controller=${fetchParams["controller"]}`;
+      ] = `${process.env.REACT_APP_API_SERVICE_URL}/content?page=${fetchParams["page"]}&limit=50&seed=${props.seed}&controller=${fetchParams["controller"]}&content_id=${fetchParams["starting_content_id"]}`;
       setLoading(true);
       axios(options)
         .then((response) => {
@@ -65,6 +82,7 @@ const Feed = (props) => {
         })
         .catch((error) => {
           console.log(error);
+          setLoading(false);
         });
     };
 
@@ -73,9 +91,12 @@ const Feed = (props) => {
 
   const handleChange = (event) => {
     setData([]);
-    setFetchParams({
-      page: 0,
-      controller: event.target.value,
+    setFetchParams((previousFetchParams) => {
+      return {
+        page: 0,
+        controller: previousFetchParams["controller"],
+        starting_content_id: content_id,
+      };
     });
   };
 
@@ -88,20 +109,32 @@ const Feed = (props) => {
           <option value="STATIC">Static</option>
         </select>
       </label>
+      {fetchParams["starting_content_id"] !== undefined && (
+        <button onClick={() => handleSeeMore(undefined)}>
+          Seeing more for {fetchParams["starting_content_id"]}, Click Here To Go
+          Back
+        </button>
+      )}
       {data?.map((post, index) => {
-        // we request a new set of images
-        // when the second to last image is on the screen
-        // kenny knows why index + 2 ???
+        // we request a new set of images when the second to last image is on the screen
         if (data.length === index + 2) {
           return (
             <div key={post.id} ref={lastElementRef}>
-              <Post content_id={post.id} post={post} />
+              <Post
+                content_id={post.id}
+                post={post}
+                handleSeeMore={handleSeeMore}
+              />
             </div>
           );
         }
         return (
           <div key={post.id}>
-            <Post content_id={post.id} post={post} />
+            <Post
+              content_id={post.id}
+              post={post}
+              handleSeeMore={handleSeeMore}
+            />
           </div>
         );
       })}

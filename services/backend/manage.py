@@ -1,5 +1,6 @@
 import csv
 import os
+import pickle
 import random
 
 from flask.cli import FlaskGroup
@@ -12,7 +13,6 @@ from src.api.content.models import (
 )
 from src.api.users.models import User
 
-app = create_app()
 cli = FlaskGroup(create_app=create_app)
 
 
@@ -26,12 +26,17 @@ def recreate_db():
 @cli.command("seed_db")
 def seed_db():
     users = []
+    print("seeding users")
     with open("seed_data/data/users.csv") as csvfile:
         reader = csv.DictReader(csvfile, delimiter=",")
         for row in reader:
             user = User(**row)
             users.append(user)
             db.session.add(user)
+    print("reading embeddings")
+    with open("seed_data/data/prompt_to_embedding.64.100.1000.pkl", "rb") as f:
+        prompt_to_embedding = pickle.load(f)
+    print("seeded content with metadata")
     with open("seed_data/data/content_with_metadata.csv") as csvfile:
         reader = csv.DictReader(csvfile, delimiter=chr(255))
         for row in reader:
@@ -55,9 +60,12 @@ def seed_db():
                 generated_type=row["generated_type"],
                 model=ModelType.StableDiffusion,  # TODO: read this, don't hardcode
                 model_version="1.4",  # TODO: read this, don't hardcode
+                prompt_embedding=list(prompt_to_embedding.get(row["prompt"], []))
+                or None,
             )
             db.session.add(metadata)
-    db.session.commit()
+    print("committing data")
+    db.session.commit()  # TODO: explore committing more often
 
 
 if __name__ == "__main__":

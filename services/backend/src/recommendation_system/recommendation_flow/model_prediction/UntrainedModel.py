@@ -24,7 +24,7 @@ class UntrainedModel(AbstractModel):
             )
         ).reshape((len(content_ids), 2))
 
-    def predict_probabilities(self, content_ids, user_id, seed=None):
+    def predict_probabilities(self, content_ids, user_id, seed=None, **kwargs):
         predictions = model(self._create_all_data(content_ids, user_id)).numpy()
         predictions = tf.nn.softmax(predictions).numpy()
         return list(
@@ -34,6 +34,7 @@ class UntrainedModel(AbstractModel):
                     "p_engage": predictions[i][
                         0
                     ],  # hard coding that first output is p(Engage | data)
+                    "score": kwargs.get("score", None),
                 },
                 range(len(content_ids)),
             )

@@ -148,3 +148,4 @@ tmp.err
 tmp.out
 tmp.sql
 data/
+logs/

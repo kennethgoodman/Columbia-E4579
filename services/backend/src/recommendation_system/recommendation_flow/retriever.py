@@ -29,12 +29,17 @@ def content_to_response(content):
         "download_url": get_url(content),
         "author": generated_content_metadata.source,  # TODO: change to a query?
         "text": f"""{generated_content_metadata.original_prompt}\n In the style of {generated_content_metadata.artist_style}""",
+        "prompt": generated_content_metadata.prompt,
+        "style": generated_content_metadata.artist_style,
+        "original_prompt": generated_content_metadata.original_prompt,
     }
 
 
-def get_content_data(controller, user_id, limit, offset, seed):
+def get_content_data(controller, user_id, limit, offset, seed, starting_point=None):
     if controller in [ControllerEnum.RANDOM, ControllerEnum.STATIC]:
-        content_ids = controller.value().get_content_ids(user_id, limit, offset, seed)
+        content_ids = controller.value().get_content_ids(
+            user_id, limit, offset, seed, starting_point
+        )
     else:
         raise ValueError(f"don't support that controller: {controller}")
     all_content = Content.query.filter(Content.id.in_(content_ids)).all()

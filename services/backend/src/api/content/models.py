@@ -84,6 +84,7 @@ class GeneratedContentMetadata(BaseModel):
     generated_type = db.Column(SqlEnum(GeneratedType))
     model = db.Column(SqlEnum(ModelType), nullable=False)
     model_version = db.Column(db.String(10), nullable=False)
+    prompt_embedding = db.Column(db.JSON, nullable=True)
 
 
 class NonGeneratedContentMetadata(BaseModel):
@@ -96,3 +97,8 @@ class NonGeneratedContentMetadata(BaseModel):
 
     source = db.Column(db.String(100))
     text = db.Column(db.String(1000), nullable=True)  # text on the post
+
+
+class ContentEmbedding:
+    def __init__(self, content_id, prompt_embedding, photo_embedding):
+        self.content_id = content_id

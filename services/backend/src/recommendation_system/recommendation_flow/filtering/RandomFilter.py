@@ -4,7 +4,7 @@ from .AbstractFilter import AbstractFilter
 
 
 class RandomFilter(AbstractFilter):
-    def filter_ids(self, content_ids, seed):
+    def filter_ids(self, content_ids, seed, starting_point):
         # choose 10% randomly
         if seed:
             random.seed(seed)
