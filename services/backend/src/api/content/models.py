@@ -84,6 +84,7 @@ class GeneratedContentMetadata(BaseModel):
     generated_type = db.Column(SqlEnum(GeneratedType))
     model = db.Column(SqlEnum(ModelType), nullable=False)
     model_version = db.Column(db.String(10), nullable=False)
+    prompt_embedding = db.Column(db.JSON, nullable=True)
 
 
 class NonGeneratedContentMetadata(BaseModel):

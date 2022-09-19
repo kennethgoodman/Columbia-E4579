@@ -38,6 +38,9 @@ content = content_namespace.model(
         "user_likes": fields.Boolean(required=False),
         "user_dislikes": fields.Boolean(required=False),
         "text": fields.String(required=False),
+        "original_prompt": fields.String(required=False),
+        "style": fields.String(required=False),
+        "prompt": fields.String(requied=False),
         "author": fields.String(required=False),
         "width": fields.Integer(required=False),
         "height": fields.Integer(required=False),
@@ -96,30 +99,31 @@ class ContentPagination(Resource):
             user_id = 0  # if error, do a logged out user, not great, TODO: ensure this is right
         page = int(request.args.get("page", 0))
         limit = int(request.args.get("limit", 10))
+        content_id = request.args.get("content_id", None)
+        if content_id == "undefined":
+            content_id = None
         controller = ControllerEnum.string_to_controller(
             request.args.get("controller", ControllerEnum.RANDOM.human_string())
             or ControllerEnum.RANDOM.human_string()
         )
         seed = float(request.args.get("seed", random.random()))
         offset = page * limit
-        if int(os.environ.get("USE_PICSUM", "0")) == 1:
-            import requests  # type: ignore[import]
-
-            response = requests.get(
-                f"https://picsum.photos/v2/list?page={page}&limit={limit}"
-            )
-            return add_content_data(response.json(), user_id), 200
         # logged-out user is 0
         # don't need page for random (most of the time)
+        starting_point = None
+        if content_id is not None:
+            starting_point = {"content_id": int(content_id)}
         responses = get_content_data(
             controller=controller,
             user_id=user_id,
             limit=limit,
             offset=offset,
             seed=seed,
+            starting_point=starting_point,
         )
         return add_content_data(responses, user_id), 200
 
 
 content_namespace.add_resource(ContentPagination, "")
+content_namespace.add_resource(ContentPagination, "/similarcontent/<int:content_id>")
 content_namespace.add_resource(ListControllers, "/listcontrollers")

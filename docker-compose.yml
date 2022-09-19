@@ -15,7 +15,6 @@ services:
       - APP_SETTINGS=src.config.DevelopmentConfig
       - DATABASE_URL=mysql://mysql:mysql@api-db/api_dev
       - DATABASE_TEST_URL=mysql://mysql:mysql@api-db/api_test
-      - USE_PICSUM=0
     depends_on:
       - api-db
 

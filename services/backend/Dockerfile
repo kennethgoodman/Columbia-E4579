@@ -12,7 +12,7 @@ RUN pip install mysql-connector-python
 
 # install system dependencies
 RUN apt-get update \
-  && apt-get -y install gnupg netcat gcc build-essential python-dev \
+  && apt-get -y install gnupg netcat g++ gcc build-essential python-dev \
   && apt-get clean
 
 # install mysql
@@ -23,6 +23,9 @@ RUN pip install --upgrade pip
 COPY ./requirements.txt .
 COPY ./requirements-dev.txt .
 RUN pip install -r requirements-dev.txt
+
+# install mrpt for approximate NN
+RUN pip install git+https://github.com/vioshyvo/mrpt/
 
 # add app
 COPY . .

@@ -16,12 +16,20 @@ from src.recommendation_system.recommendation_flow.ranking.RandomRanker import (
 
 
 class StaticController(AbstractController):
-    def get_content_ids(self, user_id, limit, offset, _):
+    def get_content_ids(self, user_id, limit, offset, seed, starting_point):
         seed = 0.25  # static random seed
-        candidates = RandomGenerator().get_content_ids(limit, offset, seed)
+        candidates, scores = RandomGenerator().get_content_ids(
+            limit, offset, seed, starting_point
+        )
         filtered_candidates = RandomFilter().filter_ids(candidates, seed)
         predictions = RandomModel().predict_probabilities(
-            filtered_candidates, user_id, seed
+            filtered_candidates,
+            user_id,
+            seed=seed,
+            scores={
+                content_id: {"score": score}
+                for content_id, score in zip(candidates, scores or [])
+            },
         )
-        rank = RandomRanker().rank_ids(predictions, seed)
+        rank = RandomRanker().rank_ids(predictions, seed, starting_point)
         return rank

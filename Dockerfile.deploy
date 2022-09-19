@@ -16,7 +16,6 @@ FROM nginx:stable-alpine as production
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 ENV FLASK_ENV=production
-ENV USE_PICSUM=0
 ENV APP_SETTINGS=src.config.ProductionConfig
 WORKDIR /app
 RUN apk update && \

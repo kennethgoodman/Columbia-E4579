@@ -17,6 +17,17 @@ admin = Admin(template_mode="bootstrap3")
 def create_app(script_info=None):
     # instantiate the app
     app = Flask(__name__)
+
+    def f():
+        from src.data_structures.approximate_nearest_neighbor import (
+            instantiate,
+            read_data,
+        )
+
+        read_data()
+        instantiate(0.9)
+
+    app.before_first_request(f)
     app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_port=1)
 
     # set config
