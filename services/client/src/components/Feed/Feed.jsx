@@ -34,7 +34,6 @@ const Feed = (props) => {
   const lastElementRef = useCallback(
     (node) => {
       if (isLoading) return;
-      console.log("running lastElementRef", data.length);
       if (observer.current) observer.current.disconnect();
 
       observer.current = new IntersectionObserver((entries) => {
@@ -94,8 +93,8 @@ const Feed = (props) => {
     setFetchParams((previousFetchParams) => {
       return {
         page: 0,
-        controller: previousFetchParams["controller"],
-        starting_content_id: content_id,
+        controller: event.target.value,
+        starting_content_id: previousFetchParams["starting_content_id"],
       };
     });
   };
@@ -107,6 +106,7 @@ const Feed = (props) => {
         <select value={fetchParams["controller"]} onChange={handleChange}>
           <option value="RANDOM">Random</option>
           <option value="STATIC">Static</option>
+          <option value="ENGAGEMENT_TIME">Engagement Time</option>
         </select>
       </label>
       {fetchParams["starting_content_id"] !== undefined && (

@@ -8,7 +8,7 @@ from .AbstractGenerator import AbstractGenerator
 
 
 class RandomGenerator(AbstractGenerator):
-    def get_content_ids(self, limit, offset, seed, starting_point):
+    def get_content_ids(self, user_id, limit, offset, seed, starting_point):
         if starting_point is None:
             results = (
                 Content.query.with_entities(Content.id)

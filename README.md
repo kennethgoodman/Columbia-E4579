@@ -57,6 +57,17 @@ docker-compose exec api python manage.py recreate_db
 docker-compose exec api python manage.py seed_db
 ```
 
+#### Deploy To AWS
+
+##### Build Frontend
+
+##### Docker ECS
+
+```bash
+docker context create ecs e4579
+docker context use e4579
+```
+
 ## Thanks
 
 1. [testdrivenio](https://github.com/testdrivenio/flask-react-aws) for a template for docker + flask + react

@@ -1,5 +1,5 @@
-from src.recommendation_system.recommendation_flow.candidate_generators.RandomGenerator import (
-    RandomGenerator,
+from src.recommendation_system.recommendation_flow.candidate_generators.EngagementTimeGenerator import (
+    EngagementTimeGenerator,
 )
 from src.recommendation_system.recommendation_flow.controllers.AbstractController import (
     AbstractController,
@@ -15,12 +15,12 @@ from src.recommendation_system.recommendation_flow.ranking.RandomRanker import (
 )
 
 
-class RandomController(AbstractController):
+class EngagementTimeController(AbstractController):
     def get_content_ids(self, user_id, limit, offset, seed, starting_point):
         candidates_limit = (
             limit * 10 * 10
         )  # 10% gets filtered out and take top 10% of rank
-        candidates, scores = RandomGenerator().get_content_ids(
+        candidates, scores = EngagementTimeGenerator().get_content_ids(
             user_id, candidates_limit, offset, seed, starting_point
         )
         filtered_candidates = RandomFilter().filter_ids(

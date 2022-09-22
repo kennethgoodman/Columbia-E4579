@@ -60,7 +60,9 @@ def ann(content_id, target_recall, k=25, return_distances=False):
         data_indexes, scores = rtn
     else:
         data_indexes = rtn
-    content_ids = list(map(lambda index: INDEX_TO_CONTENT_ID[index], data_indexes))
+    content_ids = list(
+        filter(None, map(lambda index: INDEX_TO_CONTENT_ID.get(index), data_indexes))
+    )
     return content_ids, scores
 
 

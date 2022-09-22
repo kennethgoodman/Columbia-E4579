@@ -167,8 +167,30 @@ class UnDislike(Resource):
         return post_remove_likedislike(user_id, content_id, LikeDislike.Dislike)
 
 
+class ElapsedTime(Resource):
+    @engagement_namespace.expect(parser)
+    @engagement_namespace.marshal_with(set_engagement)
+    @engagement_namespace.response(200, "Success")
+    @engagement_namespace.response(403, "Need To Login")
+    @engagement_namespace.response(401, "Bad Token, need to re-login")
+    @engagement_namespace.response(400, "Already exists")
+    def post(self, content_id):
+        status_code, user_id, exception_message = get_user(request)
+        if exception_message:
+            engagement_namespace.abort(status_code, exception_message)
+            return status_code, exception_message
+        add_engagement(
+            user_id,
+            content_id,
+            EngagementType.MillisecondsEngagedWith,
+            request.json["elapsed_time"],
+        )
+        return {"message": "Success"}, 200
+
+
 engagement_namespace.add_resource(Like, "/like/<int:content_id>")
 engagement_namespace.add_resource(UnLike, "/unlike/<int:content_id>")
 engagement_namespace.add_resource(Dislike, "/dislike/<int:content_id>")
 engagement_namespace.add_resource(UnDislike, "/undislike/<int:content_id>")
 engagement_namespace.add_resource(LikeCount, "/likecount/<int:content_id>")
+engagement_namespace.add_resource(ElapsedTime, "/elapsed_time/<int:content_id>")

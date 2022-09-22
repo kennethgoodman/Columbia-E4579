@@ -1,3 +1,3 @@
 class AbstractRanker:
-    def rank_ids(self, probabilities, seed, starting_point):
+    def rank_ids(self, limit, probabilities, seed, starting_point):
         pass
