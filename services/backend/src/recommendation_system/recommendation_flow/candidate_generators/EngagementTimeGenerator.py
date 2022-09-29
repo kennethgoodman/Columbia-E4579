@@ -44,6 +44,10 @@ class EngagementTimeGenerator(AbstractGenerator):
                 new_result.extend(content_ids)
                 # TODO: score and ms should probably be normalized so multiplication makes sense
                 new_scores.extend(map(lambda score: score * ms, scores))
+            if len(new_result) == 0:
+                return RandomGenerator().get_content_ids(
+                    user_id, limit, offset, seed, starting_point
+                )
             results_with_scores = sorted(
                 list(zip(new_result, new_scores)), key=operator.itemgetter(1)
             )[:limit]

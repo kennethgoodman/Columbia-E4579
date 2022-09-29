@@ -15,12 +15,18 @@ Running the docker app will add `docker` and `docker-compose` to your PATH so yo
 
 To do everything at once, open up a terminal and run the following command:
 
-_WARNING_ running this command WILL delete all data in the local database, such as local likes/content views.
+_WARNING_ running this command WILL delete all data in the local database, such as local likes/content views. It will then reseed the DB
 
-Use this command if you want a clean database back to the original seed.
+Use this command if you want a clean database back to the original seed (see seed_data folder).
 
 ```bash
 docker-compose up --build --force-recreate
+```
+
+You only need to seed the DB once, afterwards you can:
+
+```bash
+docker-compose -f docker-compose.yml -f docker-compose.override.no.recreate.yaml up
 ```
 
 The website will be at http://127.0.0.1:3007/feed
@@ -28,6 +34,28 @@ The website will be at http://127.0.0.1:3007/feed
 If you want to see the API docs, you can go to http://localhost:5004/doc
 
 You can use `control-c` to kill the local servers
+
+If you don't want to re-seed the DB, you can:
+
+If you want to do things separately there are 3 commands:
+
+#### Bring Down Containers
+
+```bash
+docker-compose down
+```
+
+#### Build containers (without a cache)
+
+```
+docker-compose build --no-cache
+```
+
+#### Bring up the containers
+
+```bash
+docker-compose up
+```
 
 ### Access the dev database
 
@@ -43,6 +71,12 @@ docker exec -it $(docker ps | grep columbia-e4579_api-db | awk '{print $1}') mys
 
 ```bash
 docker-compose exec api python manage.py shell
+```
+
+#### Accessing terminal of api backend
+
+```bash
+docker exec -it $(docker ps | grep "/usr/src/app/entryp…" | awk '{print $1}') /bin/bash
 ```
 
 #### Recreating DB

@@ -1,0 +1,3 @@
+services:
+  api:
+    entrypoint: ["/usr/src/app/entrypoint.sh", "-r"]

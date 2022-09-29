@@ -17,6 +17,16 @@ def read_data():
     ).all()
     np_data = []
     i = 0
+    if len(data) == 0:
+        raise ValueError(
+            """
+            You probably don't have the prompt_to_embedding file:
+            https://github.com/kennethgoodman/Columbia-E4579/blob/main/services/backend/seed_data/data/prompt_to_embedding.64.100.1000.pkl
+            You have 2 options:
+            1) manually download the file from the link above and put it in /services/backend/seed_data/data/ folder
+            2) install git lfs and use that to pull the file, running "git lfs pull" (preferred but more effort)
+        """
+        )
     for (content_id, embedding) in data:
         if embedding is None:
             continue
@@ -52,7 +62,7 @@ def ann(content_id, target_recall, k=25, return_distances=False):
     model = INDEXES[target_recall]
     idx = CONTENT_ID_TO_INDEX.get(content_id, None)
     if idx is None:
-        return None
+        return None, None
     q = read_data()[idx]
     rtn = model.ann(q, k=k, return_distances=return_distances)
     scores = None
@@ -70,6 +80,8 @@ def ann_with_offset(content_id, target_recall, limit, offset, return_distances=F
     content_ids, scores = ann(
         content_id, target_recall, k=limit + offset, return_distances=return_distances
     )
+    if content_ids is None:
+        return [], []
     if offset == 0 and content_ids[0] != content_id:
         content_ids = [content_id] + content_ids
     return content_ids[offset:], (scores[offset:] if scores is not None else None)
