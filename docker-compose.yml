@@ -5,7 +5,7 @@ services:
     build:
       context: ./services/backend
       dockerfile: Dockerfile
-    entrypoint: ["/usr/src/app/entrypoint.sh"]
+    entrypoint: ["/usr/src/app/entrypoint.sh", "-r"]
     volumes:
       - "./services/backend:/usr/src/app"
     ports:
