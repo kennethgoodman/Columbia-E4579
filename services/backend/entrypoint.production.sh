@@ -35,4 +35,4 @@ else
 	download_embedding_file
 fi
 
-gunicorn -b 0.0.0.0:5000 manage:app --daemon
+gunicorn -b 0.0.0.0:5000 manage:app --access-logfile -

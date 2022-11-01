@@ -13,6 +13,8 @@ services:
     environment:
       - FLASK_ENV=production
       - APP_SETTINGS=src.config.ProductionConfig
+      - DATABASE_URL=${DATABASE_URL}
+      - SECRET_KEY=${SECRET_KEY}
 
   redis:
     image: redis:latest
