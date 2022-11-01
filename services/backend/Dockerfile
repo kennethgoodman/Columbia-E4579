@@ -7,6 +7,7 @@ WORKDIR /usr/src/app
 # set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
+ENV APP_SETTINGS src.config.DevelopmentConfig
 
 RUN pip install mysql-connector-python
 

@@ -36,6 +36,11 @@ def create_app(script_info=None):
     # set config
     app_settings = os.getenv("APP_SETTINGS")
     app.config.from_object(app_settings)
+    assert app.config["SQLALCHEMY_DATABASE_URI"] != ""
+    assert app.config["SECRET_KEY"] != ""
+    assert not (
+        app.config["ENV"] == "production" and app.config["SECRET_KEY"] == "my_precious"
+    )
 
     # set up extensions
     db.init_app(app)

@@ -4,7 +4,7 @@ services:
   api:
     build:
       context: ./services/backend
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.prod
     entrypoint: ["/usr/src/app/entrypoint.production.sh"]
     volumes:
       - "./services/backend:/usr/src/app"

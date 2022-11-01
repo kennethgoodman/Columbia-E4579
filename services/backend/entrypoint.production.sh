@@ -35,4 +35,4 @@ else
 	download_embedding_file
 fi
 
-python manage.py run -h 0.0.0.0
+gunicorn -b 0.0.0.0:5000 manage:app --daemon
