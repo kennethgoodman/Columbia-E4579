@@ -24,6 +24,7 @@ class TestingConfig(BaseConfig):
 
 
 class ProductionConfig(BaseConfig):
-    url = os.environ.get("DATABASE_URL")
-    SQLALCHEMY_DATABASE_URI = url
-    SECRET_KEY = os.getenv("SECRET_KEY", "my_precious")
+    SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL", "")
+    assert SQLALCHEMY_DATABASE_URI != "", "need DATABASE_URL"
+    SECRET_KEY = os.getenv("SECRET_KEY", "")
+    assert SECRET_KEY != "", "need SECRET_KEY"
