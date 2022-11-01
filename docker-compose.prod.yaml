@@ -1,0 +1,20 @@
+version: "3.8"
+
+services:
+  api:
+    build:
+      context: ./services/backend
+      dockerfile: Dockerfile.prod
+    entrypoint: ["/usr/src/app/entrypoint.production.sh"]
+    volumes:
+      - "./services/backend:/usr/src/app"
+    ports:
+      - 5004:5000
+    environment:
+      - FLASK_ENV=production
+      - APP_SETTINGS=src.config.ProductionConfig
+
+  redis:
+    image: redis:latest
+    ports:
+      - "127.0.0.1:6379:6379"

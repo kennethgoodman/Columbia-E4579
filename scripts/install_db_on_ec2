@@ -1,0 +1,21 @@
+sudo yum update -y && sudo yum install git mysql gcc gcc-c++ python3-devel docker mysql-devel MySQL-python -y
+sudo amazon-linux-extras install nginx1 -y
+git clone https://github.com/kennethgoodman/Columbia-E4579.git
+cd Columbia-E4579/
+
+
+sudo pip3 install git+https://github.com/vioshyvo/mrpt/
+sudo pip3 uninstall flask
+sudo pip3 uninstall werkzeug
+sudo pip3 install -r requirements.txt
+sudo pip3 install mysql-connector-python pymysql
+
+sudo curl -L https://github.com/docker/compose/releases/download/v2.12.2/docker-compose-linux-x86_64 | sudo tee /usr/local/bin/docker-compose > /dev/null
+sudo chmod +x /usr/local/bin/docker-compose
+sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+sudo service docker start
+
+from src import *
+app = create_app()
+with app.app_context():
+	db.create_all()

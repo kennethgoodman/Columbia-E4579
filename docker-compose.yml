@@ -49,7 +49,7 @@ services:
       - 3007:3000
     environment:
       - NODE_ENV=development
-      - REACT_APP_API_SERVICE_URL=http://localhost:5004
+      - REACT_APP_API_SERVICE_URL=http://localhost:5004/api
       - WDS_SOCKET_PORT=0
     depends_on:
       - api
