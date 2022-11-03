@@ -23,9 +23,8 @@ def test_database():
 def add_user():
     def _add_user(username, password):
         user = User(username=username, password=password)
-        with db.session() as session:
-            session.add(user)
-            session.commit()
+        db.session.add(user)
+        db.session.commit()
         return user
 
     return _add_user
