@@ -45,7 +45,7 @@ class Content(BaseModel):
     media_type = db.Column(SqlEnum(MediaType))
     s3_bucket = db.Column(db.String(200), nullable=True)
     s3_id = db.Column(
-        db.String(200), nullable=True
+        db.String(200), nullable=True, unique=True
     )  # might be only text, if media_type = Text
     created_date = db.Column(db.DateTime, default=func.now(), nullable=False)
 

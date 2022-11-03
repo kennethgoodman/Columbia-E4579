@@ -16,18 +16,21 @@ def get_user_by_username(username):
 
 def add_user(username, password):
     user = User(username=username, password=password)
-    db.session.add(user)
-    db.session.commit()
+    with db.session() as session:
+        session.add(user)
+        session.commit()
     return user
 
 
 def update_user(user, username):
     user.username = username
-    db.session.commit()
+    with db.session() as session:
+        session.commit()
     return user
 
 
 def delete_user(user):
-    db.session.delete(user)
-    db.session.commit()
+    with db.session() as session:
+        session.delete(user)
+        session.commit()
     return user

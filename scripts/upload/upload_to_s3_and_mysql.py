@@ -3,44 +3,54 @@ import os
 
 import boto3
 from botocore.exceptions import ClientError
-from project import create_app, db
-from project.data_models import User, _tables
-from project.data_models.content import Content, MediaType
-from project.data_models.generated_content_metadata import (
+from sqlalchemy.orm import sessionmaker
+
+from services.backend.src import create_app, db
+from services.backend.src.api.content.models import (
+    Content,
     GeneratedContentMetadata,
     GeneratedType,
+    MediaType,
+    ModelType,
 )
+from services.backend.src.api.users.models import User
 
 app = create_app()
 
 s3 = boto3.resource("s3")
 s3_client = boto3.client("s3")
 buckets = list(s3.buckets.all())
+import time
 
 
-def publish_content_for_user(s3_bucket, key, author_id, row, generation_params):
+def publish_content_for_user(author_id, prompt_to_embedding, **kwargs):
     # create new user with the form data. Hash the password so plaintext version isn't saved.
     new_content = Content(
-        media_type=MediaType.Image, s3_bucket=s3_bucket, s3_id=key, author_id=author_id
+        media_type=MediaType.Image,
+        s3_bucket=kwargs["s3_bucket"],
+        s3_id=kwargs["key"],
+        author_id=author_id,
     )
-
     new_metadata = GeneratedContentMetadata(
         content=new_content,
-        seed=generation_params["seed"],
-        num_inference_steps=generation_params["num_inference_steps"],
-        guidance_scale=generation_params["guidance_scale"],
-        prompt=row["prompt"],
-        original_prompt=row["original_prompt"],
-        artist_style=row["artist_style"],
-        source=row["source"],
-        source_img=row.get("source_img", None),
-        generated_type=GeneratedType.HumanTxt2Img,
+        seed=int(kwargs["seed"]),
+        num_inference_steps=int(kwargs["num_inference_steps"]),
+        guidance_scale=kwargs["guidance_scale"],
+        prompt=kwargs["prompt"],
+        original_prompt=kwargs["original_prompt"],
+        artist_style=kwargs["artist_style"],
+        source=kwargs["source"],
+        source_img=kwargs["source_img"],
+        generated_type=GeneratedType(int(kwargs["generation_type"])),
+        model=ModelType.StableDiffusion,
+        model_version="1.4",
+        prompt_embedding=list(prompt_to_embedding.get(kwargs["prompt"], [])) or None,
     )
-
     # add the new user to the database
-    db.session.add(new_content)
-    db.session.add(new_metadata)
-    db.session.commit()
+    with db.session() as session:
+        session.add(new_content)
+        session.add(new_metadata)
+        session.commit()
     print("committed")
 
 
@@ -73,6 +83,29 @@ def get_filename_from_generation_params(idx, generation_params):
 
 def get_object_name_from_generation_params(idx, generation_params):
     return f'{generation_params["num_inference_steps"]}_{generation_params["seed"]}_{generation_params["guidance_scale"]}_{idx}.png'
+
+
+def try_publish(author_id, prompt_to_embedding, info):
+    try:
+        publish_content_for_user(author_id, prompt_to_embedding, **info)
+    except Exception as e:
+        if "Duplicate entry" in str(e):
+            print("duplicate entry, moving on", str(e), str(info))
+            return
+        raise e  # don't know whats wrong
+
+
+def write_to_database(author_id, start_from=0, end_at=None):
+    with open("seed_data/data/prompt_to_embedding.64.100.1000.pkl", "rb") as f:
+        prompt_to_embedding = pickle.load(f)
+    with open("/home/ec2-user/columbia_e4579_images.csv") as csvfile:
+        rows = list(csv.DictReader(csvfile))[start_from:]
+        if end_at:
+            rows = rows[: end_at - start_from]
+    with app.app_context():
+        for i, info in enumerate(rows):
+            print("doing", i + start_from)
+            try_publish(author_id, prompt_to_embedding, info)
 
 
 def main(generation_params):
