@@ -30,3 +30,11 @@ img {
   -khtml-user-select: none; /* webkit (konqueror) browsers */
   -ms-user-select: none; /* IE10+ */
 }
+
+.likesContainer {
+  display: flex;
+  width: 90px;
+  align-items: center;
+  justify-content: space-between;
+  margin: 5px;
+}

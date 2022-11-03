@@ -119,6 +119,7 @@ const Post = (props) => {
             user_likes={likeIsClicked}
             handleLikes={handleLikes}
           />
+          {totalLikes - totalDislikes}
           <DislikeButton
             content_id={props.content_id}
             total_dislikes={totalDislikes}

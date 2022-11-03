@@ -3,13 +3,13 @@ import React from "react";
 
 import "../Likes.css";
 
-const DislikeButton = (props) => {
+const DislikeButton = ({ user_dislikes, handleDislikes }) => {
   return (
     <button
-      className={`likeButton ${props.user_dislikes ? `liked` : ``}`}
-      onClick={props.handleDislikes}
+      className={`likeButton ${user_dislikes ? `disliked` : ``}`}
+      onClick={handleDislikes}
     >
-      <i className="fa fa-thumbs-down">{props.total_dislikes}</i>
+      <i className="fa fa-thumbs-down" />
     </button>
   );
 };

@@ -3,14 +3,16 @@ import React from "react";
 
 import "../Likes.css";
 
-const LikeButton = (props) => {
+const LikeButton = ({ user_likes, handleLikes }) => {
   return (
-    <button
-      className={`likeButton ${props.user_likes ? `liked` : ``}`}
-      onClick={props.handleLikes}
-    >
-      <i className="fa fa-thumbs-up">{props.total_likes}</i>
-    </button>
+    <div>
+      <button
+        className={`likeButton ${user_likes ? `liked` : ``}`}
+        onClick={handleLikes}
+      >
+        <i className="fa fa-thumbs-up" />
+      </button>
+    </div>
   );
 };
 
