@@ -1,4 +1,6 @@
-from functools import cache
+import os
+import pickle
+from functools import lru_cache
 
 import mrpt
 import numpy as np
@@ -9,12 +11,17 @@ INDEX_TO_CONTENT_ID = {}
 CONTENT_ID_TO_INDEX = {}
 
 
-@cache
+@lru_cache(1)
 def read_data():
     global INDEX_TO_CONTENT_ID
-    data = GeneratedContentMetadata.query.with_entities(
-        GeneratedContentMetadata.content_id, GeneratedContentMetadata.prompt_embedding
-    ).all()
+    if os.path.isfile("/usr/src/app/id_to_embedding.pkl"):
+        with open("/usr/src/app/id_to_embedding.pkl", "rb") as f:
+            data = pickle.load(f)
+    else:
+        data = GeneratedContentMetadata.query.with_entities(
+            GeneratedContentMetadata.content_id,
+            GeneratedContentMetadata.prompt_embedding,
+        ).all()
     np_data = []
     i = 0
     if len(data) == 0:

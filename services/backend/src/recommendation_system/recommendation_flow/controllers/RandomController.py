@@ -17,6 +17,8 @@ from src.recommendation_system.recommendation_flow.ranking.RandomRanker import (
 
 class RandomController(AbstractController):
     def get_content_ids(self, user_id, limit, offset, seed, starting_point):
+        if seed <= 1:  # MySql seeds should be [0, # of rows] not [0, 1]
+            seed *= 1000000
         candidates_limit = (
             limit * 10 * 10
         )  # 10% gets filtered out and take top 10% of rank
