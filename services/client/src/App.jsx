@@ -26,7 +26,7 @@ class App extends Component {
       messageType: null,
       messageText: null,
       showModal: false,
-      seed: Math.random(),
+      seed: Math.random() * 1000000,
     };
   }
 

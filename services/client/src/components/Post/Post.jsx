@@ -152,7 +152,7 @@ function useIntersectionObserver(
       return;
     }
     console.log("in handle elapsed", elapsed_time, content_id);
-    let api_uri = "/api/engagement/elapsed_time";
+    let api_uri = `${process.env.REACT_APP_API_SERVICE_URL}/engagement/elapsed_time`;
     axios({
       ...get_options("elapsed_time", content_id),
       data: JSON.stringify({ elapsed_time: elapsed_time }),
@@ -205,52 +205,4 @@ function useIntersectionObserver(
   return entry;
 }
 
-// const defaultRequestOptions = {
-//   headers: {
-//     "Content-Type": "application/json",
-//     Accept: "application/json",
-//   },
-// };
-// const postRequestOptions = {
-//   ...defaultRequestOptions,
-//   method: "POST",
-// };
-// const handleLoad = () => {
-//   if (loaded) return; // only load once for session
-//   setLoaded(true);
-//   let api_uri = "/api/engagement/loaded_content";
-//   // fetch(
-//   //   `${api_uri}?content_id=${content_id}`,
-//   //   postRequestOptions,
-//   // ).then((response) => response.json());
-// };
-// const handle_elapsed = (elapsed_time) => {
-//             if (elapsed_time <= 200) {
-//               return;
-//             }
-//             console.log("in handle elapsed", elapsed_time);
-//             let api_uri = "/api/engagement/elapsed_time";
-//             // fetch(`${api_uri}?content_id=${content_id}`, {
-//             //   ...postRequestOptions,
-//             //   body: JSON.stringify({ elapsed_time: elapsed_time }),
-//             // }).then((response) => response.json());
-//           };
-//
-// function useIsInViewport(ref, content_id) {
-//   const [renderColorSets, setRenderColorSets] = useState(5);
-//   useEffect(() => {
-//     const observer = new IntersectionObserver((entries) => {
-//       if (entries[0].isIntersecting) {
-//         setRenderColorSets((oldRenderColorSets) => oldRenderColorSets + 1);
-//         console.log(content_id, renderColorSets);
-//       }
-//     });
-//
-//     observer.observe(ref.current);
-//   }, []);
-// }
-
 export default Post;
-
-// TODO: on leaving page (or send updates every 100ms?)
-// TODO: update backend

@@ -15,8 +15,3 @@ services:
       - APP_SETTINGS=src.config.ProductionConfig
       - DATABASE_URL=${DATABASE_URL}
       - SECRET_KEY=${SECRET_KEY}
-
-  redis:
-    image: redis:latest
-    ports:
-      - "127.0.0.1:6379:6379"

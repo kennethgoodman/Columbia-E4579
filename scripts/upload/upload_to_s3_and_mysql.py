@@ -4,22 +4,23 @@ import os
 import boto3
 from botocore.exceptions import ClientError
 from sqlalchemy.orm import sessionmaker
-
-from services.backend.src import create_app, db
-from services.backend.src.api.content.models import (
+from src import create_app, db
+from src.api.content.models import (
     Content,
     GeneratedContentMetadata,
     GeneratedType,
     MediaType,
     ModelType,
 )
-from services.backend.src.api.users.models import User
+from src.api.users.models import User
 
 app = create_app()
 
 s3 = boto3.resource("s3")
 s3_client = boto3.client("s3")
 buckets = list(s3.buckets.all())
+import csv
+import pickle
 import time
 
 
@@ -35,7 +36,7 @@ def publish_content_for_user(author_id, prompt_to_embedding, **kwargs):
         content=new_content,
         seed=int(kwargs["seed"]),
         num_inference_steps=int(kwargs["num_inference_steps"]),
-        guidance_scale=kwargs["guidance_scale"],
+        guidance_scale=float(kwargs["guidance_scale"]),
         prompt=kwargs["prompt"],
         original_prompt=kwargs["original_prompt"],
         artist_style=kwargs["artist_style"],
@@ -96,7 +97,7 @@ def try_publish(author_id, prompt_to_embedding, info):
 
 
 def write_to_database(author_id, start_from=0, end_at=None):
-    with open("seed_data/data/prompt_to_embedding.64.100.1000.pkl", "rb") as f:
+    with open("/home/ec2-user/prompt_to_embedding.512.100.1000.pkl", "rb") as f:
         prompt_to_embedding = pickle.load(f)
     with open("/home/ec2-user/columbia_e4579_images.csv") as csvfile:
         rows = list(csv.DictReader(csvfile))[start_from:]
