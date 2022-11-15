@@ -95,11 +95,12 @@ docker-compose exec api python manage.py seed_db
 
 ##### Build Frontend
 
-##### Docker ECS
+Run the scripts/deploy_frontend.sh
+
+##### Docker EC2
 
 ```bash
-docker context create ecs e4579
-docker context use e4579
+docker-compose -f docker-compose.prod.yml up --build
 ```
 
 ## Thanks
@@ -108,4 +109,4 @@ docker context use e4579
 2. [Aveek-Saha](https://github.com/Aveek-Saha/Movie-Script-Database) for their scripts to download movie scripts
 3. [lexica.art](https://lexica.art) for their collection of prompts/images to use as inspiration
 4. [Reddit](https://reddit.com) and all their users for allowing the ability to programmattically download user titles/prompts
-5.
+5. [@SamuelSacco](https://github.com/SamuelSacco) for their work on the frontend
