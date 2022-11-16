@@ -66,6 +66,7 @@ const Post = (props) => {
         setTotalLikes(totalLikes - 1);
       });
     } else {
+      navigator.vibrate(200); // testing haptic feedback on mobile when user likes a post
       like((_) => {
         setLikeIsClicked(true); // click it
         setTotalLikes(totalLikes + 1);
