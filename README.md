@@ -41,13 +41,21 @@ If you want to do things separately there are 3 commands:
 
 #### Running With Engagement Dump (Takes Longer)
 
+You NEED to download `git lfs`. Go to https://git-lfs.github.com/ and download/install git lfs.
+
+Then clone the repo (AFTER you have installed git lfs)
+
+```bash
+git clone https://github.com/kennethgoodman/Columbia-E4579.git
+```
+
 The first time to build the database
 
 ```bash
 docker-compose -f docker-compose.full_db.yml up --build --force-recreate --renew-anon-volumes
 ```
 
-Afterwards you can run:
+Afterwards you can run
 
 ```bash
 docker-compose -f docker-compose.full_db.yml up
