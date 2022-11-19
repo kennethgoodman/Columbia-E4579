@@ -47,13 +47,14 @@ You NEED to download `git lfs`. Go to https://git-lfs.github.com/ and download/i
 
 Then clone the repo (AFTER you have installed git lfs)
 
-Install git lfs and run it
-```
-git lfs install && git lfs pull
-```
-
+Clone repo
 ```bash
 git clone https://github.com/kennethgoodman/Columbia-E4579.git
+```
+
+Then cd into the directory and run git lfs
+```bash
+git lfs install && git lfs pull
 ```
 
 The first time to build the database
