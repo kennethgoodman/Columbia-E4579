@@ -15,6 +15,7 @@ CONTENT_ID_TO_INDEX = {}
 def read_data():
     global INDEX_TO_CONTENT_ID
     if os.path.isfile("/usr/src/app/id_to_embedding.pkl"):
+        print("reading data from id_to_embedding.pkl")
         with open("/usr/src/app/id_to_embedding.pkl", "rb") as f:
             data = pickle.load(f)
     else:

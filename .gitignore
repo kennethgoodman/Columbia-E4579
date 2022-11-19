@@ -149,3 +149,4 @@ tmp.out
 tmp.sql
 data/
 logs/
+mysql_data/

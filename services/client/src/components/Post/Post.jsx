@@ -66,7 +66,6 @@ const Post = (props) => {
         setTotalLikes(totalLikes - 1);
       });
     } else {
-      navigator.vibrate(200); // testing haptic feedback on mobile when user likes a post
       like((_) => {
         setLikeIsClicked(true); // click it
         setTotalLikes(totalLikes + 1);
@@ -149,7 +148,7 @@ function useIntersectionObserver(
   const frozen = entry?.isIntersecting && freezeOnceVisible;
 
   const handle_elapsed = (elapsed_time, content_id) => {
-    if (elapsed_time <= 1000) {
+    if (elapsed_time <= 500) {
       return;
     }
     console.log("in handle elapsed", elapsed_time, content_id);
