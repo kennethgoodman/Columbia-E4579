@@ -10,7 +10,7 @@ services:
     build:
       context: ./services/backend
       dockerfile: Dockerfile
-    entrypoint: ["/usr/src/app/entrypoint.sh", "-r"]
+    entrypoint: ["/usr/src/app/entrypoint.full_db.sh"]
     volumes:
       - "./services/backend:/usr/src/app"
     ports:
@@ -27,13 +27,9 @@ services:
     build:
       context: services/db
       dockerfile: Dockerfile
-    restart: "always"
+    restart: always
     ports:
       - "127.0.0.1:3307:3306"
-    volumes:
-      - ./config/initdb:/docker-entrypoint-initdb.d
-      - ./data/mysql:/var/lib/mysql
-      - ./logs/mysql:/var/log/mysql
     environment:
       MYSQL_ROOT_PASSWORD: mysql
       MYSQL_DATABASE: api_dev
