@@ -47,6 +47,11 @@ You NEED to download `git lfs`. Go to https://git-lfs.github.com/ and download/i
 
 Then clone the repo (AFTER you have installed git lfs)
 
+Install git lfs and run it
+```
+git lfs install && git lfs pull
+```
+
 ```bash
 git clone https://github.com/kennethgoodman/Columbia-E4579.git
 ```
