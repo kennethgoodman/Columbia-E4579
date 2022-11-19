@@ -41,6 +41,8 @@ If you want to do things separately there are 3 commands:
 
 #### Running With Engagement Dump (Takes Longer)
 
+If you're running mac and have HomeBrew installed, then you can run brew install git-lfs
+
 You NEED to download `git lfs`. Go to https://git-lfs.github.com/ and download/install git lfs.
 
 Then clone the repo (AFTER you have installed git lfs)
