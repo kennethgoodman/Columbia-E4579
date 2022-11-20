@@ -1,6 +1,9 @@
 from src.recommendation_system.recommendation_flow.controllers.EngagementTimeController import (
     EngagementTimeController,
 )
+from src.recommendation_system.recommendation_flow.controllers.ExampleController import (
+    ExampleController,
+)
 from src.recommendation_system.recommendation_flow.controllers.RandomController import (
     RandomController,
 )
