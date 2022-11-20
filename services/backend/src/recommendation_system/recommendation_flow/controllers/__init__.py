@@ -7,3 +7,6 @@ from src.recommendation_system.recommendation_flow.controllers.RandomController 
 from src.recommendation_system.recommendation_flow.controllers.StaticController import (
     StaticController,
 )
+from src.recommendation_system.recommendation_flow.controllers.ExampleController import (
+    ExampleController,
+)
