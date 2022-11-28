@@ -8,6 +8,7 @@ def get_user(request):
         try:
             access_token = auth_header.split(" ")[1]
             user_id = User.decode_token(access_token)
+            print("logged in user id:",user_id)
             return 200, user_id, ""
         except jwt.ExpiredSignatureError:
             print("Expired")
