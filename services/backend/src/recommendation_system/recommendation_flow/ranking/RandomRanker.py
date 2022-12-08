@@ -11,4 +11,6 @@ class RandomRanker(AbstractRanker):
         top_k_ids = list(map(lambda x: x["content_id"], top_k))
         if seed:
             random.seed(seed)
+
+        print('return in random ranker',random.sample(top_k_ids, len(top_k_ids)))
         return random.sample(top_k_ids, len(top_k_ids))  # shuffle

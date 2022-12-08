@@ -7,8 +7,8 @@ from src.recommendation_system.recommendation_flow.candidate_generators.AlphaGen
 from src.recommendation_system.recommendation_flow.controllers.AbstractController import (
     AbstractController,
 )
-from src.recommendation_system.recommendation_flow.filtering.RandomFilter import (
-    RandomFilter,
+from src.recommendation_system.recommendation_flow.filtering.AlphaFilter import (
+    AlphaFilter,
 )
 from src.recommendation_system.recommendation_flow.model_prediction.RandomModel import (
     RandomModel,
@@ -28,7 +28,7 @@ class AlphaController(AbstractController):
         candidates, scores = AlphaGenerator().get_content_ids(
             user_id, candidates_limit, offset, seed, starting_point
         )
-        filtered_candidates = RandomFilter().filter_ids(
+        filtered_candidates = AlphaFilter().filter_ids(
             candidates, seed, starting_point
         )
         predictions = RandomModel().predict_probabilities(
@@ -43,4 +43,5 @@ class AlphaController(AbstractController):
             else {},
         )
         rank = RandomRanker().rank_ids(limit, predictions, seed, starting_point)
+        print('rank',rank)
         return rank

@@ -8,4 +8,6 @@ class RandomFilter(AbstractFilter):
         # choose 10% randomly
         if seed:
             random.seed(seed)
+
+        # print('return in randomfilter:',random.sample(content_ids, int(len(content_ids) * 0.1)))
         return random.sample(content_ids, int(len(content_ids) * 0.1))

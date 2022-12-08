@@ -10,6 +10,9 @@ import json
 class AlphaGenerator(AbstractGenerator):
     def get_content_ids(self, user_id, limit, offset, seed, starting_point):
         print("user id from alpha generator:",user_id)
+        # instead of using json file, just query engagement data for this user?
+        # all images that have not been engaged by this user can be a candidate
+        # select content_ids from content where content id not in (select content id from engagement where user id == )
 
         with open("/usr/src/app/src/queue.json", "r") as openfile:
             try:
