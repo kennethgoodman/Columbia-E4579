@@ -2,44 +2,107 @@ import random
 # from sqlalchemy.sql import text
 from src import db
 from .AbstractFilter import AbstractFilter
+import pickle
+import pandas as pd
 
 
 class AlphaFilter(AbstractFilter):
     def filter_ids(self, content_ids, seed, starting_point): # content_ids are the fresh candidates not in queue
 
         # general model: get popular and universally liked images
-        # order by total # likes + total # dislikes, and total # likes / (total # likes + total  dislikes)
-        # get the top ___ images
+        # order by top liked, top engagemet, top engagement time, add add in random ones if needed in cold start
+        # return 1000 images
 
-        # what to do in cold start when there's no engagement? then put some random ones in
-        # get top engagements:
-        sql_statement_top_engagement = """
-    		SELECT content_id
-            FROM engagement 
-            WHERE engagement_type = 'Like' 
-            GROUP BY content_id
-            ORDER BY SUM(ABS(engagement_value)) DESC
-    	"""   # limit ;
-        with db.engine.connect() as con:
-            filtered_content_ids_top_engagement = list(con.execute(sql_statement_top_engagement))
-        filtered_content_ids_top_engagement = [i[0] for i in filtered_content_ids_top_engagement]
-        print('filtered_content_ids_top_engagement',filtered_content_ids_top_engagement)
-
+        nlp_data = pd.read_pickle('/usr/src/app/df_prompt_labeled.pkl')
+        offensive_blacklist = list(set(nlp_data[nlp_data.offensive==True].content_id))
+        print('len(offensive_blacklist)',len(offensive_blacklist))
+        print('len(content_ids)',len(content_ids))
         # get top liked:
-        sql_statement_top_liked = """
+        sql_statement_top_liked = f"""
             SELECT content_id
             FROM engagement 
-            WHERE engagement_type = 'Like' 
+            WHERE engagement_type = 'Like' AND content_id NOT IN {tuple(offensive_blacklist)}
             GROUP BY content_id
-            ORDER BY SUM(engagement_value)/SUM(ABS(engagement_value)) DESC
+            ORDER BY SUM(engagement_value)/SUM(ABS(engagement_value)) DESC;
     	"""  # limit ;
         with db.engine.connect() as con:
             filtered_content_ids_top_liked = list(con.execute(sql_statement_top_liked))
         filtered_content_ids_top_liked = [i[0] for i in filtered_content_ids_top_liked]
-        print('filtered_content_ids_top_liked',filtered_content_ids_top_liked)
+        print('len(filtered_content_ids_top_liked)',len(filtered_content_ids_top_liked))
+        filtered_content_ids_combined = filtered_content_ids_top_liked
+        print('len(filtered_content_ids_combined)',len(filtered_content_ids_combined))
+        # print('filtered_content_ids_top_liked',filtered_content_ids_top_liked)
+
+        # get top engagement 750ms-3000ms engagement time:
+        sql_statement_top_engagement_time = f"""
+            SELECT content_id
+            FROM engagement
+            WHERE engagement_type = 'MillisecondsEngagedWith' AND engagement_value < 25000 AND content_id NOT IN {tuple(filtered_content_ids_combined)} AND content_id NOT IN {tuple(offensive_blacklist)}
+            GROUP BY content_id
+            ORDER BY SUM(engagement_value) DESC;
+        """
+        with db.engine.connect() as con:
+            filtered_content_ids_top_engagement_time = list(con.execute(sql_statement_top_engagement_time))
+        filtered_content_ids_top_engagement_time = [i[0] for i in filtered_content_ids_top_engagement_time]
+        print('len(filtered_content_ids_top_engagement_time)',len(filtered_content_ids_top_engagement_time))
+        filtered_content_ids_combined.extend(filtered_content_ids_top_engagement_time)
+        print('len(filtered_content_ids_combined)',len(filtered_content_ids_combined))
+        # print('filtered_content_ids_top_engagement_time',filtered_content_ids_top_engagement_time)
+
+
+        # get top engagements:
+        sql_statement_top_engagement = f"""
+    		SELECT content_id
+            FROM engagement 
+            WHERE engagement_type = 'Like' AND content_id NOT IN {tuple(filtered_content_ids_combined)} AND content_id NOT IN {tuple(offensive_blacklist)}
+            GROUP BY content_id
+            ORDER BY SUM(ABS(engagement_value)) DESC;
+    	"""   # limit ;
+        with db.engine.connect() as con:
+            filtered_content_ids_top_engagement = list(con.execute(sql_statement_top_engagement))
+        filtered_content_ids_top_engagement = [i[0] for i in filtered_content_ids_top_engagement]
+        print('len(filtered_content_ids_top_engagement)',len(filtered_content_ids_top_engagement))
+        filtered_content_ids_combined.extend(filtered_content_ids_top_engagement)
+        print('len(filtered_content_ids_combined)',len(filtered_content_ids_combined))
+        # print('filtered_content_ids_top_engagement',filtered_content_ids_top_engagement)
+        
+        
+        # to combine top engagement and top liked, want more top liked on top, and more number of top liked 
+        # filtered_content_ids_combined = list(set(filtered_content_ids_top_engagement).union(set(filtered_content_ids_top_liked)).union(set(filtered_content_ids_top_engagement_time)))
+        # print('filtered_content_ids_combined',filtered_content_ids_combined)
         
 
-        # to combine top engagement and top liked, want more top liked on top, and more number of top liked 
-        filtered_content_ids_combined = list(set(filtered_content_ids_top_engagement).union(set(filtered_content_ids_top_liked)))  # union of top engagement and top liked, ratio is 
-        print('filtered_content_ids_combined',filtered_content_ids_combined)
+        # if not enough results (<1000), include the rest of the candidates
+        if len(filtered_content_ids_combined) < 1000:
+            sql_statement_add_ons = f"""
+                SELECT id
+                FROM content
+                WHERE id IN {tuple(content_ids)} AND id NOT IN {tuple(filtered_content_ids_combined)} AND id NOT IN {tuple(offensive_blacklist)}
+                LIMIT {1000-len(filtered_content_ids_combined)};
+            """
+            with db.engine.connect() as con:
+                content_ids_add_ons = list(con.execute(sql_statement_add_ons))
+            content_ids_add_ons = [i[0] for i in content_ids_add_ons]
+            filtered_content_ids_combined.extend(content_ids_add_ons)
+            print('len(filtered_content_ids_combined)',len(filtered_content_ids_combined))
+            # print('content_ids_add_ons',content_ids_add_ons)
+            # filtered_content_ids_combined = list(set(filtered_content_ids_combined).union(set(content_ids_add_ons)))
+            # print('filtered_content_ids_combined after add ons:',filtered_content_ids_combined)
+
         return filtered_content_ids_combined
+
+        # remove bad images based on nlp results
+        # print('OFFENSIVE BLACK LIST:',OFFENSIVE_BLACKLIST)
+        # with open("/usr/src/app/df_prompt_labeled.pkl", "rb") as f:
+        #     data = pickle.load(f)
+        # nlp_data = pd.read_pickle('/usr/src/app/df_prompt_labeled.pkl')
+        # filtered_content_ids_from_nlp = list(set(nlp_data[nlp_data.offensive==False].content_id))
+        # filtered_content_ids_from_nlp.sort()
+        # print('data from df_prompt_labeled.pkl:',data)
+        # print('len(filtered_content_ids_from_nlp)',len(filtered_content_ids_from_nlp))
+        # filtered_content_ids_final = list(set(filtered_content_ids_combined).intersection(set(filtered_content_ids_from_nlp)))
+        # if not filtered_content_ids_final: # when the content ids don't match between dev and prod db
+        #     return filtered_content_ids_combined
+
+        # # in production:
+        # return filtered_content_ids_final

@@ -3,3 +3,5 @@ services/db/02_rest.sql filter=lfs diff=lfs merge=lfs -text
 services/backend/id_to_embedding.pkl filter=lfs diff=lfs merge=lfs -text
 *.sql filter=lfs diff=lfs merge=lfs -text
 *.pkl filter=lfs diff=lfs merge=lfs -text
+services/backend/df_prompt_labeled.pkl !text !filter !merge !diff
+services/backend/src/recommendation_system/recommendation_flow/filtering/df_prompt_labeled.pkl !text !filter !merge !diff

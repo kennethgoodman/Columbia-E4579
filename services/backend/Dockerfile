@@ -1,5 +1,8 @@
 # pull official base image
 FROM python:3.10.3
+# FROM --platform=linux/x86-64 python:3.10.3
+# FROM --platform=macosx/arm64 python:3.10.3
+# FROM python:3.10.7
 
 # set working directory
 WORKDIR /usr/src/app
@@ -27,6 +30,13 @@ RUN pip install -r requirements-dev.txt
 
 # install mrpt for approximate NN
 RUN pip install git+https://github.com/vioshyvo/mrpt/
+
+# RUN pip install tensorflow_decision_forests
+# # build tensorflow decision forests from source
+# RUN git clone https://github.com/tensorflow/decision-forests.git
+# RUN cd decision-forests
+# RUN ./tools/test_bazel.sh
+
 
 # add app
 COPY . .
