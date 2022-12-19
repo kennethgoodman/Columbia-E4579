@@ -3,6 +3,7 @@
 
 # In[1]:
 '''
+
 generate_most_frequent_word(): Takes a dataframe containing prompts as input and output a column of most frequent words
 in each prompt
 
