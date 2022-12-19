@@ -7,7 +7,7 @@ class FoxtrotRanker(AbstractRanker):
     def rank_ids(self, limit, probabilities, seed, starting_point):
         k = limit
         top_t = heapq.nlargest(
-            k, probabilities, key=lambda x: x["score"]
+            k, probabilities, key=lambda x: x["p_engage"]
         )  # find the largest k items with highest scores
         # shuffle top_t by switching selected two items
         i = 0
