@@ -10,7 +10,7 @@ class AlphaFilter(AbstractFilter):
     def filter_ids(self, content_ids, seed, starting_point): # content_ids are the fresh candidates not in queue
 
         # general model: get popular and universally liked images
-        # order by top liked, top engagemet, top engagement time, add add in random ones if needed in cold start
+        # order by top liked, top engagemet, top engagement time, add add in random ones if need more output
         # return 1000 images
 
         nlp_data = pd.read_pickle('/usr/src/app/df_prompt_labeled.pkl')
@@ -66,12 +66,6 @@ class AlphaFilter(AbstractFilter):
         print('len(filtered_content_ids_combined)',len(filtered_content_ids_combined))
         # print('filtered_content_ids_top_engagement',filtered_content_ids_top_engagement)
         
-        
-        # to combine top engagement and top liked, want more top liked on top, and more number of top liked 
-        # filtered_content_ids_combined = list(set(filtered_content_ids_top_engagement).union(set(filtered_content_ids_top_liked)).union(set(filtered_content_ids_top_engagement_time)))
-        # print('filtered_content_ids_combined',filtered_content_ids_combined)
-        
-
         # if not enough results (<1000), include the rest of the candidates
         if len(filtered_content_ids_combined) < 1000:
             sql_statement_add_ons = f"""
@@ -91,18 +85,4 @@ class AlphaFilter(AbstractFilter):
 
         return filtered_content_ids_combined
 
-        # remove bad images based on nlp results
-        # print('OFFENSIVE BLACK LIST:',OFFENSIVE_BLACKLIST)
-        # with open("/usr/src/app/df_prompt_labeled.pkl", "rb") as f:
-        #     data = pickle.load(f)
-        # nlp_data = pd.read_pickle('/usr/src/app/df_prompt_labeled.pkl')
-        # filtered_content_ids_from_nlp = list(set(nlp_data[nlp_data.offensive==False].content_id))
-        # filtered_content_ids_from_nlp.sort()
-        # print('data from df_prompt_labeled.pkl:',data)
-        # print('len(filtered_content_ids_from_nlp)',len(filtered_content_ids_from_nlp))
-        # filtered_content_ids_final = list(set(filtered_content_ids_combined).intersection(set(filtered_content_ids_from_nlp)))
-        # if not filtered_content_ids_final: # when the content ids don't match between dev and prod db
-        #     return filtered_content_ids_combined
 
-        # # in production:
-        # return filtered_content_ids_final
