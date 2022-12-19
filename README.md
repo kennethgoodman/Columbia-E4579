@@ -66,7 +66,7 @@ docker-compose -f docker-compose.full_db.yml up --build --force-recreate --renew
 Afterwards you can run
 
 ```bash
-docker-compose -f docker-compose.full_db.yml up
+docker-compose -f docker-compose.full_db.yaml up
 ```
 
 #### Bring Down Containers

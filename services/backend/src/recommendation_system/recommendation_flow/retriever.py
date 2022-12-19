@@ -16,6 +16,7 @@ class ControllerEnum(Enum):
     ENGAGEMENT_TIME = EngagementTimeController
     ALPHA = AlphaController
 
+
     def human_string(self):
         return str(self).split(".")[1]
 
