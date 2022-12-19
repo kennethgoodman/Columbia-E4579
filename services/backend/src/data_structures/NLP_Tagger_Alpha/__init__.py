@@ -22,7 +22,6 @@ def read_data():
     else:
         print("The NLP Label data is missing")
 
-    return 0
 
 
 

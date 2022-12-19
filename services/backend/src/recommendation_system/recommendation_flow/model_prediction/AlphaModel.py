@@ -20,13 +20,13 @@ class AlphaModel(AbstractModel):
             subprocess.check_call([sys.executable, "-m", "pip", "install", "tensorflow_decision_forests"])
             import tensorflow_decision_forests as tfdf
 
-            with open('/usr/src/app/gbdt_model_v3.pickle', 'rb') as f:
+            with open('/usr/src/app/src/alpha/gbdt_model_v3.pickle', 'rb') as f:
                 GBDT_model = pickle.load(f)
-            with open('/usr/src/app/content_artist_style_dic.pickle', 'rb') as f:
+            with open('/usr/src/app/src/alpha/content_artist_style_dic.pickle', 'rb') as f:
                 dic_id_style = pickle.load(f)
-            with open('/usr/src/app/prediction_prep_dic.pickle', 'rb') as f:
+            with open('/usr/src/app/src/alpha/prediction_prep_dic.pickle', 'rb') as f:
                 prep_dic = pickle.load(f)
-            with open('/usr/src/app/dic_id_to_embedding.pickle', 'rb') as f:
+            with open('/usr/src/app/src/alpha/dic_id_to_embedding.pickle', 'rb') as f:
                 dic_id_embed = pickle.load(f)
 
             df = pd.DataFrame(content_ids,columns=['content_id'])
@@ -82,7 +82,7 @@ class AlphaModel(AbstractModel):
             
         except:
             print('except: use random')
-            with open('/usr/src/app/content_artist_style_dic.pickle', 'rb') as f:
+            with open('/usr/src/app/src/alpha/content_artist_style_dic.pickle', 'rb') as f:
                 dic_id_style = pickle.load(f)
             if seed:
                 random.seed(seed)

@@ -7,13 +7,13 @@ import pandas as pd
 
 
 class AlphaFilter(AbstractFilter):
-    def filter_ids(self, content_ids, seed, starting_point): # content_ids are the fresh candidates not in queue
+    def filter_ids(self, content_ids): # content_ids are the fresh candidates not in queue
 
         # general model: get popular and universally liked images
         # order by top liked, top engagemet, top engagement time, add add in random ones if need more output
         # return 1000 images
 
-        nlp_data = pd.read_pickle('/usr/src/app/df_prompt_labeled.pkl')
+        nlp_data = pd.read_pickle('/usr/src/app/src/alpha/df_prompt_labeled.pkl')
         offensive_blacklist = list(set(nlp_data[nlp_data.offensive==True].content_id))
         print('len(offensive_blacklist)',len(offensive_blacklist))
         print('len(content_ids)',len(content_ids))

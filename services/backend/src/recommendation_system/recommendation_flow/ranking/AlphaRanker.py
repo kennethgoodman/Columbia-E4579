@@ -18,11 +18,6 @@ class AlphaRanker(AbstractRanker):
                 if i['style'] not in style:
                     others.append(i)
             top_other = heapq.nlargest(other, others, key=lambda x: x["explore"])
-            # if len(top_other) < other:
-            #     handle = top_other + top_limit[k:limit]
-            #     handle2 = sorted(set(handle), key=handle.index)
-            #     top_other = handle2[:other]
-
             top_all = top_k + top_other
 
         except KeyError:
