@@ -2,6 +2,14 @@
 
 Fall 2022 Class At Columbia. Modern Recommendation Systems
 
+### Group Alpha
+
+Karthik Challa, Angi He, Xuanyu Li, Xiaoling Pang, Ellen Wang, Chuyang Xiao, Sandra Zhong, Difei Jin, Stuti Mishra, Jugal Shah
+
+Credits: 
+
+Ideas: everyone; Generator code: Angi; Filter code: Chuyang, Angi; Prediction Model code: Sandra; Ranker code: Difei
+
 ### Setup
 
 #### Install Docker

@@ -1,0 +1,17 @@
+.likeButton {
+  height: 28px;
+  border: 1px solid white;
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: #c4c4c4;
+}
+
+.liked {
+  color: white;
+  background-color: #6dda73;
+}
+
+.disliked {
+  color: white;
+  background-color: #da706d;
+}
