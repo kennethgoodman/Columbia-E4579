@@ -6,3 +6,4 @@ services/backend/id_to_embedding.pkl filter=lfs diff=lfs merge=lfs -text
 services/backend/df_prompt_labeled.pkl !text !filter !merge !diff
 services/backend/src/recommendation_system/recommendation_flow/filtering/df_prompt_labeled.pkl !text !filter !merge !diff
 services/backend/src/alpha/df_prompt_labeled.pkl !text !filter !merge !diff
+services/backend/seed_data/data/prompt_to_embedding.64.100.1000.pkl !text !filter !merge !diff
