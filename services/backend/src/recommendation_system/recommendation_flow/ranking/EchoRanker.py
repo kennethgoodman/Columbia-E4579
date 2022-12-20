@@ -11,7 +11,7 @@ engine = create_engine('mysql://mysql:mysql@127.0.0.1:3307/api_dev')
 engagement = pd.read_sql('select * from api_dev.engagement', engine)
 metadata = pd.read_sql('select * from api_dev.generated_content_metadata', engine)
 
-class EchoRanker(AbstractRanker):
+class EchoRanker:
     def rank_ids(self, limit, probabilities, user_id, seed, starting_point) -> List[int]:
         uuid = user_id
         like = engagement.loc[(engagement['user_id']==uuid) 
@@ -28,49 +28,47 @@ class EchoRanker(AbstractRanker):
         # take the subset are mutually exclusive to the other categories
         not_interested = list(set(not_interested) - set(like) - set(dislike))
         
-        content_ids = {
-            'like':like,
-            'dislike':dislike,
-            'not_interested':not_interested
-        }
+        # content_ids = {
+        #     'like':like,
+        #     'dislike':dislike,
+        #     'not_interested':not_interested
+        # }
         
-        like_embeddings = list(
-            map(
-                lambda content_id:
-                json.loads(metadata.loc[metadata['content_id']==content_id,'prompt_embedding'].values[0])
-                ,content_ids['like']
-                )
-            )
-        dislike_embeddings = list(
-            map(
-                lambda content_id:
-                json.loads(metadata.loc[metadata['content_id']==content_id,'prompt_embedding'].values[0])
-                ,content_ids['dislike']
-                )
-            )
-        not_interested_embeddings = list(
-            map(
-                lambda content_id:
-                json.loads(metadata.loc[metadata['content_id']==content_id,'prompt_embedding'].values[0])
-                ,content_ids['not_interested']
-                )
-            )
-        total_embeddings = np.vstack((
-            like_embeddings,
-            dislike_embeddings,
-            not_interested_embeddings
-        ))
+        # like_embeddings = list(
+        #     map(
+        #         lambda content_id:
+        #         json.loads(metadata.loc[metadata['content_id']==content_id,'prompt_embedding'].values[0])
+        #         ,content_ids['like']
+        #         )
+        #     )
+        # dislike_embeddings = list(
+        #     map(
+        #         lambda content_id:
+        #         json.loads(metadata.loc[metadata['content_id']==content_id,'prompt_embedding'].values[0])
+        #         ,content_ids['dislike']
+        #         )
+        #     )
+        # not_interested_embeddings = list(
+        #     map(
+        #         lambda content_id:
+        #         json.loads(metadata.loc[metadata['content_id']==content_id,'prompt_embedding'].values[0])
+        #         ,content_ids['not_interested']
+        #         )
+        #     )
+        # total_embeddings = np.vstack((
+        #     like_embeddings,
+        #     dislike_embeddings,
+        #     not_interested_embeddings
+        # ))
         
-        like_cos_sim = cosine_similarity(like_embeddings)
-        dislike_cos_sim = cosine_similarity(dislike_embeddings)
-        not_interested_cos_sim = cosine_similarity(not_interested_embeddings)
-        total_cos_sim = cosine_similarity(total_embeddings)
+        # like_cos_sim = cosine_similarity(like_embeddings)
+        # dislike_cos_sim = cosine_similarity(dislike_embeddings)
+        # not_interested_cos_sim = cosine_similarity(not_interested_embeddings)
+        # total_cos_sim = cosine_similarity(total_embeddings)
 
-        like2total_cos_sim_std = like_cos_sim.std() / total_cos_sim.std()
-        dislike2total_cos_sim_std = dislike_cos_sim.std() / total_cos_sim.std()
-        not_interested2total_cos_sim_std = not_interested_cos_sim.std() / total_cos_sim.std()
-
-
+        # like2total_cos_sim_std = like_cos_sim.std() / total_cos_sim.std()
+        # dislike2total_cos_sim_std = dislike_cos_sim.std() / total_cos_sim.std()
+        # not_interested2total_cos_sim_std = not_interested_cos_sim.std() / total_cos_sim.std()
 
         # ------------------------- rank by popularity score --------------------
         all_content_ids = list(map(lambda x: x["content_id"], probabilities))
