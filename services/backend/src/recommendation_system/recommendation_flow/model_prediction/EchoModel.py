@@ -54,23 +54,12 @@ class EchoModel:
 
     def predict_probabilities(self, user_id, content_ids, seed=None, **kwargs):
         predictions = self.model.predict_proba(self._create_all_data(content_ids, user_id))
-        return list(
-            map(
-                lambda i: {
-                    "content_id": content_ids[i],
-                    "p_engage": predictions[i][
-                        1
-                    ],  # hard coding that first output is p(Engage | data)
-                    "score": kwargs.get("score", None),
-                },
-                range(len(content_ids)),
-            )
-        )
 
+        return list(zip(content_ids, predictions[:, 1]))
 
-user_id = 1
-content_ids = [28598, 28599]
-model_prediction = EchoModel()
-prob = model_prediction.predict_probabilities(user_id, content_ids)
-print(prob)
+# user_id = 1
+# content_ids = [28598, 28599]
+# model_prediction = EchoModel()
+# prob = model_prediction.predict_probabilities(user_id, content_ids)
+# print(prob)
 
