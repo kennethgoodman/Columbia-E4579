@@ -149,5 +149,6 @@ tmp.out
 tmp.sql
 data/
 logs/
-/services/db/02_rest.sql
 /services/backend/id_to_embedding.pkl
+/services/db/
+/services/db/02_rest.sql
