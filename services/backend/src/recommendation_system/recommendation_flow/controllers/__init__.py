@@ -10,3 +10,6 @@ from src.recommendation_system.recommendation_flow.controllers.StaticController 
 from src.recommendation_system.recommendation_flow.controllers.CharlieController import (
     CharlieController,
 )
+from src.recommendation_system.recommendation_flow.controllers.BetaController import (
+    BetaController,
+)
