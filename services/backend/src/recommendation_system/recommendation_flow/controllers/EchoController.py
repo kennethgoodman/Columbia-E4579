@@ -25,10 +25,10 @@ class EchoController(AbstractController):
         self.ranker = EchoRanker()
 
     def get_content_ids(self, user_id, limit=None, offset=None, seed=None, starting_point=None):
-
+        user_id = user_id % 59 # For test on locally, the user_id on local webapp can exceed the actual number (59)
         candidates = self.candidate_generator.get_content_ids(user_id, limit=1000)
         filtered = self.filter.filter(candidates)
-        predictions = self.predictor.predict_probabilities(filtered, candidates)
+        predictions = self.predictor.predict_probabilities(user_id, filtered)
         recs = self.ranker.rank_ids(predictions, limit, seed, starting_point)
 
         return recs
