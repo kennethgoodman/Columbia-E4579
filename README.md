@@ -2,10 +2,6 @@
 
 Fall 2022 Class At Columbia. Modern Recommendation Systems
 
-### Group Charlie
-
-Team Members: Mayank Dugar, Jessica Hung, Yingxue Liu, Emily Ann Rooney, Kate Wang, Mingyan Xu, Rusheng Duan, Yuheng Lin, Zhaoyao Qian, Ruqian Wang
-
 ### Setup
 
 #### Install Docker

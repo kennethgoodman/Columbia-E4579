@@ -105,8 +105,8 @@ const Feed = (props) => {
         Which Controller Do You Want To Use:
         <select value={fetchParams["controller"]} onChange={handleChange}>
           <option value="RANDOM">Random</option>
-          <option value="STATIC">Static</option>
           <option value="EXAMPLE">Example</option>
+          <option value="ALPHA">Alpha</option>
           <option value="BETA">Beta</option>
           <option value="CHARLIE">Charlie</option>
         </select>
