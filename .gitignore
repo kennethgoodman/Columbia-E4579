@@ -149,3 +149,5 @@ tmp.out
 tmp.sql
 data/
 logs/
+/services/backend/processed_data/Content_Features.parquet
+/services/backend/id_to_embedding.pkl

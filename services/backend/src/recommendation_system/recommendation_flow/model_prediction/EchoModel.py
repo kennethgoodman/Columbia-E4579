@@ -1,25 +1,34 @@
 import numpy as np
 import pandas as pd
 import pickle
-from .AbstractModel import AbstractModel
 from numpy import dot
 from numpy.linalg import norm
-
+import joblib
 # load model and features once
-model_path = "./services/backend/src/recommendation_system/ml_models/Lightgbm_model_1219.sav"
-model = pickle.load(open(model_path, 'rb'))
-user_path = "./services/backend/processed_data/Content_Features.parquet"
-content_path = "./services/backend/processed_data/Content_Features.parquet"
-user_features = pd.read_parquet(user_path)
-content_features = pd.read_parquet(content_path)
 
-class EchoModel(AbstractModel):
-    def _create_idv_data(self, content_id, user_id, content_features, user_features):
+
+class EchoModel:
+
+    def __init__(self):
+
+        model_path = "services/backend/src/recommendation_system/ml_models/lgbm.pkl"
+        self.model = joblib.load(model_path)
+        user_path = "services/backend/processed_data/User_Features.parquet"
+        content_path = "./services/backend/processed_data/Content_Features.parquet"
+        user_features = pd.read_parquet(user_path)
+        content_features = pd.read_parquet(content_path)
+        self.user_features = pd.concat(
+            [user_features, pd.DataFrame(user_features["embed_combined"].tolist()).add_prefix('emb_')], axis=1)
+        self.content_features = pd.concat(
+            [content_features, pd.DataFrame(content_features["prompt_embedding"].tolist()).add_prefix('emb_')], axis=1)
+
+
+    def _create_idv_data(self, content_id, user_id):
         '''
         return user features, content features and their consine similarities
         '''
-        slct_user_feature = user_features[user_features["user_id"]== user_id]
-        slct_content_feature = content_features[content_features["content_id"]== content_id]
+        slct_user_feature = self.user_features[self.user_features["user_id"]== user_id]
+        slct_content_feature = self.content_features[self.content_features["content_id"]== content_id]
         user_embedding_lst = slct_user_feature["embed_combined"].tolist()[0]
         content_feature_lst = slct_content_feature["prompt_embedding"].tolist()[0]
         a,b = user_embedding_lst, content_feature_lst
@@ -41,10 +50,10 @@ class EchoModel(AbstractModel):
                     content_ids,
                 )
             )
-        ).reshape((len(content_ids), 1037))
+        ).reshape((len(content_ids), -1))
 
-    def predict_probabilities(self, content_ids, user_id, seed=None, **kwargs):
-        predictions = model.predict_proba(self._create_all_data(content_ids, user_id))
+    def predict_probabilities(self, user_id, content_ids, seed=None, **kwargs):
+        predictions = self.model.predict_proba(self._create_all_data(content_ids, user_id))
         return list(
             map(
                 lambda i: {
@@ -56,4 +65,12 @@ class EchoModel(AbstractModel):
                 },
                 range(len(content_ids)),
             )
-        )   
+        )
+
+
+user_id = 1
+content_ids = [28598, 28599]
+model_prediction = EchoModel()
+prob = model_prediction.predict_probabilities(user_id, content_ids)
+print(prob)
+
