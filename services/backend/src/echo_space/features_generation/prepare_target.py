@@ -78,7 +78,7 @@ def split_data(target_df: pd.DataFrame,
     return train, test
 
 
-target_df = generate_target('../../../../../services/backend/seed_data/data/nov_19_dump/engagement.csv',
-                            '../../../../../services/backend/processed_data/target.csv')
+target_df = generate_target('../../../seed_data/data/nov_19_dump/engagement.csv',
+                            '../../echo_space/processed_data/target.csv')
 
 train, test = split_data(target_df, '../../../../../services/backend/processed_data')

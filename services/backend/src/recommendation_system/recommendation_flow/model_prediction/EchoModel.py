@@ -1,20 +1,18 @@
 import numpy as np
 import pandas as pd
-import pickle
 from numpy import dot
 from numpy.linalg import norm
 import joblib
-# load model and features once
 
 
 class EchoModel:
 
     def __init__(self):
 
-        model_path = "services/backend/src/recommendation_system/ml_models/lgbm.pkl"
+        model_path = "src/echo_space/models/lgbm.pkl"
         self.model = joblib.load(model_path)
-        user_path = "services/backend/processed_data/User_Features.parquet"
-        content_path = "./services/backend/processed_data/Content_Features.parquet"
+        user_path = "src/echo_space/processed_data/User_Features.parquet"
+        content_path = "src/echo_space/processed_data/Content_Features.parquet"
         user_features = pd.read_parquet(user_path)
         content_features = pd.read_parquet(content_path)
         self.user_features = pd.concat(

@@ -1,4 +1,4 @@
-from services.backend.src.recommendation_system.ml_models.als import ALSEstimator
+from services.backend.src.echo_space.features_generation.als import ALSEstimator
 import pandas as pd
 import json
 

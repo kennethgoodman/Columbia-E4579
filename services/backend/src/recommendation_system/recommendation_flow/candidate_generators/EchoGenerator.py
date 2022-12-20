@@ -1,14 +1,15 @@
 import json
+from .AbstractGenerator import AbstractGenerator
 
 
-class EchoGenerator:
+class EchoGenerator(AbstractGenerator):
 
     def get_content_ids(self, user_id, limit=None, offset=None, seed=None, starting_point=None):
 
-        cb = open('services/backend/output/cg_cb_recs.json')
+        cb = open('src/echo_space/output/cg_cb_recs.json')
         recs_cb = json.load(cb)[str(user_id)]
 
-        cf = open('services/backend/output/cg_cf_recs.json')
+        cf = open('src/echo_space/output/cg_cf_recs.json')
         recs_cf = json.load(cf)[str(user_id)]
 
         if not limit:
@@ -16,6 +17,6 @@ class EchoGenerator:
 
         ratio = len(recs_cf) / (len(recs_cf) + len(recs_cb))
 
-        cf_limit = int(ratio * len(recs_cf))
+        cf_limit = int(ratio * limit)
 
         return recs_cf[:cf_limit] + recs_cb[:(limit - cf_limit)]

@@ -10,3 +10,6 @@ from src.recommendation_system.recommendation_flow.controllers.StaticController 
 from src.recommendation_system.recommendation_flow.controllers.ExampleController import (
     ExampleController,
 )
+from src.recommendation_system.recommendation_flow.controllers.EchoController import (
+    EchoController,
+)
