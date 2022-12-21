@@ -42,3 +42,4 @@ class Engagement(BaseModel):
         db.Integer, nullable=True
     )  # the value of the engagement_type
     created_date = db.Column(db.DateTime, default=func.now(), nullable=False)
+    engagement_metadata = db.Column(db.JSON, nullable=True)

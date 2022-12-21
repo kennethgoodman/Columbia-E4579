@@ -3,9 +3,7 @@ from sqlalchemy.sql.expression import func
 from src import db
 import numpy as np
 from src.api.content.models import Content
-from src.data_structures.approximate_nearest_neighbor import ann_with_offset
-from src.data_structures.approximate_nearest_neighbor import read_data
-from src.data_structures.approximate_nearest_neighbor import get_embedding
+from src.data_structures.approximate_nearest_neighbor import ann_with_offset, get_embedding
 from .AbstractGenerator import AbstractGenerator
 from src.api.content.models import Content, GeneratedContentMetadata
 from transformers import AutoModelForSequenceClassification
@@ -17,10 +15,6 @@ model = AutoModelForSequenceClassification.from_pretrained(MODEL)
 from transformers import pipeline
 
 sentiment_score = pipeline("sentiment-analysis", model=model, tokenizer=tokenizer)
-#sentiment_score("Covid cases are increasing fast!")
-#data=read_data()
-#data['sen_score']=df['prompt_embedding'].apply(sentiment_score)
-
 def get_prompt(content_id):
     # Explore keeping data in memory for all embeddings if this is too slow
     return np.array(

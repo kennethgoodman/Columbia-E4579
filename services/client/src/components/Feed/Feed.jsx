@@ -12,7 +12,7 @@ const Feed = (props) => {
   const [data, setData] = useState([]);
   const [fetchParams, setFetchParams] = useState({
     page: 0,
-    controller: "RANDOM",
+    controller: "EXAMPLE",
     starting_content_id: undefined,
   });
 
@@ -80,7 +80,7 @@ const Feed = (props) => {
           setLoading(false);
         })
         .catch((error) => {
-          console.log(error);
+          alert(error);
           setLoading(false);
         });
     };
@@ -105,10 +105,13 @@ const Feed = (props) => {
         Which Controller Do You Want To Use:
         <select value={fetchParams["controller"]} onChange={handleChange}>
           <option value="RANDOM">Random</option>
-          <option value="STATIC">Static</option>
           <option value="EXAMPLE">Example</option>
+          <option value="ALPHA">Alpha</option>
           <option value="BETA">Beta</option>
           <option value="CHARLIE">Charlie</option>
+          <option value="DELTA">Delta</option>
+          <option value="ECHO">Echo</option>
+          <option value="FOXTROT">Foxtrot</option>
         </select>
       </label>
       {fetchParams["starting_content_id"] !== undefined && (
@@ -126,6 +129,7 @@ const Feed = (props) => {
                 content_id={post.id}
                 post={post}
                 handleSeeMore={handleSeeMore}
+                controller={fetchParams["controller"]}
               />
             </div>
           );
@@ -136,6 +140,7 @@ const Feed = (props) => {
               content_id={post.id}
               post={post}
               handleSeeMore={handleSeeMore}
+              controller={fetchParams["controller"]}
             />
           </div>
         );

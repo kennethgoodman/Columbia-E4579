@@ -1,5 +1,7 @@
 import os
 import random
+import pprint
+import traceback
 
 import jwt
 from flask import jsonify, request
@@ -24,6 +26,11 @@ content_namespace = Namespace("content")
 
 parser = content_namespace.parser()
 parser.add_argument("Authorization", location="headers")
+parser.add_argument("page")
+parser.add_argument("limit")
+parser.add_argument("controller")
+parser.add_argument("content_id")
+parser.add_argument("seed")
 
 controllers = content_namespace.model(
     "Controllers", {"controller": fields.String(required=True)}
@@ -46,6 +53,8 @@ content = content_namespace.model(
         "height": fields.Integer(required=False),
         "url": fields.String(required=False),
         "download_url": fields.String(required=False),
+        "errors": fields.String(required=False),
+        "traceback": fields.String(required=False),
     },
 )
 
@@ -88,7 +97,8 @@ class ListControllers(Resource):
 
 class ContentPagination(Resource):
     @content_namespace.marshal_with(content, as_list=True)
-    @content_namespace.response(200, "Success")
+    @content_namespace.response(200, "Success", model=content, as_list=True)
+    @content_namespace.response(500, "ERROR")
     def get(self):
         """
         This API should be used for content pagination. Do not NEED to be signed in, but better experience if signed in
@@ -113,14 +123,17 @@ class ContentPagination(Resource):
         starting_point = None
         if content_id is not None:
             starting_point = {"content_id": int(content_id)}
-        responses = get_content_data(
-            controller=controller,
-            user_id=user_id,
-            limit=limit,
-            offset=offset,
-            seed=seed,
-            starting_point=starting_point,
-        )
+        try:
+            responses = get_content_data(
+                controller=controller,
+                user_id=user_id,
+                limit=limit,
+                offset=offset,
+                seed=seed,
+                starting_point=starting_point,
+            )
+        except Exception as e:
+            return [{ "errors": str(e), "id": 0, "traceback": traceback.format_exc()}], 500 
         return add_content_data(responses, user_id), 200
 
 

@@ -11,7 +11,7 @@ from .RandomGenerator import RandomGenerator
 
 
 class BetaGenerator(AbstractGenerator):
-    def get_content_ids(self, _, limit, offset, seed, starting_point):
+    def get_content_ids(self, user_id, limit, offset, seed, starting_point):
         if starting_point is None:
             
             #1. generate based on like number
@@ -58,9 +58,9 @@ class BetaGenerator(AbstractGenerator):
                 where source IN 
                 (select distinct source from engagement e JOIN generated_content_metadata g 
                 ON e.content_id = g.content_id 
-                where user_id = {_} and engagement_type = 'Like' and engagement_value = 1) and 
+                where user_id = {user_id} and engagement_type = 'Like' and engagement_value = 1) and 
                 content_id NOT IN (select content_id from engagement 
-                where user_id = {_} and engagement_type = 'Like' and engagement_value = 1)
+                where user_id = {user_id} and engagement_type = 'Like' and engagement_value = 1)
                 LIMIT {str(limit * 0.2).split('.')[0]}
                 OFFSET {offset};
             """)
@@ -69,23 +69,9 @@ class BetaGenerator(AbstractGenerator):
                 content_ids_user_liked_source = list(con.execute(get_content_ids_user_liked_source))
 
             content_ids_user_liked_source = [tuple(i) + (1,) for i in content_ids_user_liked_source] # make it tuple for score
-            #print(len(content_ids_user_liked_source))
-            #print(content_ids_user_liked_source[:10])
-
-
-            # re_test non-duplicate  
-            results_a = results_like
-            results_a.extend(results_random)
-            results_a.extend(results_engage_time)
-            results_a.extend(content_ids_user_liked_source)
-
-
-            results = list(set(results_like + results_random + results_engage_time + content_ids_user_liked_source))
-            print('Num without de-duplicate:', len(results_a))
-            print('Num of Generator:', len(results))
-
-            return list(map(lambda x: x[0], results)), list(map(lambda x: x[1], results)) #number of like as score
             
+            results = list(set(results_like + results_random + results_engage_time + content_ids_user_liked_source))
+            return list(map(lambda x: x[0], results)), list(map(lambda x: x[1], results)) #number of like as score
         elif starting_point.get("content_id", False):
             content_ids, scores = ann_with_offset(
                 starting_point["content_id"], 0.9, limit, offset, return_distances=True

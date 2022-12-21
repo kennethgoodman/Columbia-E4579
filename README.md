@@ -2,10 +2,6 @@
 
 Fall 2022 Class At Columbia. Modern Recommendation Systems
 
-### Group Charlie
-
-Team Members: Mayank Dugar, Jessica Hung, Yingxue Liu, Emily Ann Rooney, Kate Wang, Mingyan Xu, Rusheng Duan, Yuheng Lin, Zhaoyao Qian, Ruqian Wang
-
 ### Setup
 
 #### Install Docker
@@ -64,13 +60,13 @@ git lfs install && git lfs pull
 The first time to build the database
 
 ```bash
-docker-compose -f docker-compose.full_db.yml up --build --force-recreate --renew-anon-volumes
+docker-compose -f docker-compose.full_db.yaml up --build --force-recreate --renew-anon-volumes
 ```
 
 Afterwards you can run
 
 ```bash
-docker-compose -f docker-compose.full_db.yml up
+docker-compose -f docker-compose.full_db.yaml up
 ```
 
 #### Bring Down Containers
