@@ -17,12 +17,14 @@ from src.recommendation_system.recommendation_flow.ranking.RandomRanker import (
 
 class ExampleController(AbstractController):
     def get_content_ids(self, user_id, limit, offset, seed, starting_point):
+        print("in example")
         candidates_limit = (
             limit * 10 * 10
         )  # 10% gets filtered out and take top 10% of rank
         candidates, scores = ExampleGenerator().get_content_ids(
             user_id, candidates_limit, offset, seed, starting_point
         )
+        print("example candidates", candidates[:10])
         filtered_candidates = ExampleFilter().filter_ids(
             candidates, seed, starting_point
         )

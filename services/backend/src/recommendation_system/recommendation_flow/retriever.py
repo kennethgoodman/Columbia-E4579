@@ -58,6 +58,7 @@ def get_content_data(controller, user_id, limit, offset, seed, starting_point=No
         ControllerEnum.ECHO,
         ControllerEnum.FOXTROT
     ]:
+        print(f"using controller: {controller.human_string()}")
         content_ids = controller.value().get_content_ids(
             user_id, limit, offset, seed, starting_point
         )
