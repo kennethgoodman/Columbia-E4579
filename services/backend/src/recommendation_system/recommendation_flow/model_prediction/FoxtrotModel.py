@@ -21,13 +21,13 @@ USER_FEATURES = pd.DataFrame()
 @lru_cache(1)
 def read_feature():
     global CONTENT_FEATURES, USER_FEATURES
-    if os.path.isfile("content_features.pkl"):
-        print("reading data from content_features.pkl")
-        with open("content_features.pkl", "rb") as f:
+    if os.path.isfile("Foxtrot_content_features.pkl"):
+        print("reading data from Foxtrot_content_features.pkl")
+        with open("Foxtrot_content_features.pkl", "rb") as f:
             CONTENT_FEATURES = pickle.load(f)
-    if os.path.isfile("user_features.pkl"):
-        print("reading data from user_features.pkl")
-        with open("user_features.pkl", "rb") as f:
+    if os.path.isfile("Foxtrot_user_features.pkl"):
+        print("reading data from Foxtrot_user_features.pkl")
+        with open("Foxtrot_user_features.pkl", "rb") as f:
             USER_FEATURES = pickle.load(f)
 
 
