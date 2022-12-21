@@ -12,7 +12,7 @@ const Feed = (props) => {
   const [data, setData] = useState([]);
   const [fetchParams, setFetchParams] = useState({
     page: 0,
-    controller: "RANDOM",
+    controller: "EXAMPLE",
     starting_content_id: undefined,
   });
 
