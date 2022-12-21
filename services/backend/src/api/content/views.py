@@ -52,6 +52,7 @@ content = content_namespace.model(
         "height": fields.Integer(required=False),
         "url": fields.String(required=False),
         "download_url": fields.String(required=False),
+        "errors": fields.String(required=False),
     },
 )
 
@@ -129,8 +130,8 @@ class ContentPagination(Resource):
                 seed=seed,
                 starting_point=starting_point,
             )
-        except:
-            return [], 500 
+        except Exception as e:
+            return [{ "errors": str(e), "id": 0}], 500 
         return add_content_data(responses, user_id), 200
 
 
