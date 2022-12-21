@@ -59,17 +59,21 @@ def get_engagement_by_content_and_user_and_type(user_id, content_id, engagement_
     ).first()
 
 
-def add_engagement(user_id, content_id, engagement_type, engagement_value):
+def add_engagement(user_id, content_id, engagement_type, engagement_value, metadata=None):
     if engagement_value is not None:
         engagement = Engagement(
             user_id=user_id,
             content_id=content_id,
             engagement_type=engagement_type,
             engagement_value=engagement_value,
+            engagement_metadata=metadata,
         )
     else:
         engagement = Engagement(
-            user_id=user_id, content_id=content_id, engagement_type=engagement_type
+            user_id=user_id, 
+            content_id=content_id, 
+            engagement_type=engagement_type,
+            engagement_metadata=metadata,
         )
     db.session.add(engagement)
     db.session.commit()

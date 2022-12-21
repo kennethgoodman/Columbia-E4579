@@ -60,13 +60,13 @@ git lfs install && git lfs pull
 The first time to build the database
 
 ```bash
-docker-compose -f docker-compose.full_db.yml up --build --force-recreate --renew-anon-volumes
+docker-compose -f docker-compose.full_db.yaml up --build --force-recreate --renew-anon-volumes
 ```
 
 Afterwards you can run
 
 ```bash
-docker-compose -f docker-compose.full_db.yml up
+docker-compose -f docker-compose.full_db.yaml up
 ```
 
 #### Bring Down Containers

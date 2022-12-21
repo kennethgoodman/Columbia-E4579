@@ -126,6 +126,7 @@ const Feed = (props) => {
                 content_id={post.id}
                 post={post}
                 handleSeeMore={handleSeeMore}
+                controller={fetchParams["controller"]}
               />
             </div>
           );
@@ -136,6 +137,7 @@ const Feed = (props) => {
               content_id={post.id}
               post={post}
               handleSeeMore={handleSeeMore}
+              controller={fetchParams["controller"]}
             />
           </div>
         );

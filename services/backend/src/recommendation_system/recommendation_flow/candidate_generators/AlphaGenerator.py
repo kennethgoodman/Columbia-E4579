@@ -21,6 +21,4 @@ class AlphaGenerator(AbstractGenerator):
         with db.engine.connect() as con:
             candidates = list(con.execute(sql_statement_candidates))
         candidates = [i[0] for i in candidates]
-        # print('candidates from sql:',candidates)
-        
         return candidates, None
