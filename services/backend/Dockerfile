@@ -19,6 +19,9 @@ RUN apt-get update \
 # install mysql
 RUN pip install mysqlclient
 
+# install torch
+RUN pip3 install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cpu
+
 # install dependencies
 RUN pip install --upgrade pip
 COPY ./requirements.txt .

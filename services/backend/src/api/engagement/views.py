@@ -184,6 +184,9 @@ class ElapsedTime(Resource):
             content_id,
             EngagementType.MillisecondsEngagedWith,
             request.json["elapsed_time"],
+            {
+                "controller": request.json.get("controller", None)
+            }
         )
         return {"message": "Success"}, 200
 
