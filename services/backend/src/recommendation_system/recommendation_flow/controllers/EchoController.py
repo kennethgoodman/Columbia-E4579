@@ -2,7 +2,7 @@ from src.recommendation_system.recommendation_flow.controllers.AbstractControlle
     AbstractController,
 )
 
-from src.recommendation_system.recommendation_flow.controller.ExampleController import (
+from src.recommendation_system.recommendation_flow.controllers.ExampleController import (
     ExampleController,
 )
 
