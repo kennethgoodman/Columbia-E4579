@@ -90,7 +90,9 @@ class AlphaModel(AbstractModel):
             )
             
         except Exception as e:
+            import traceback
             print(f'except {str(e)}: use random')
+            print(f'tb: {traceback.format_exc()}')
             if seed:
                 random.seed(seed)
             try: # in dev dic_id_style[content_id] has key error
