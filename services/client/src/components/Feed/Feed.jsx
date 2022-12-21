@@ -106,9 +106,8 @@ const Feed = (props) => {
         <select value={fetchParams["controller"]} onChange={handleChange}>
           <option value="RANDOM">Random</option>
           <option value="STATIC">Static</option>
-          <option value="EXAMPLE">Example</option>
-          <option value="BETA">Beta</option>
-          <option value="CHARLIE">Charlie</option>
+          <option value="ENGAGEMENT_TIME">Engagement Time</option>
+          <option value="ALPHA">Alpha</option>
         </select>
       </label>
       {fetchParams["starting_content_id"] !== undefined && (
