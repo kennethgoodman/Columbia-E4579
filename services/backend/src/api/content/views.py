@@ -95,6 +95,7 @@ class ListControllers(Resource):
 class ContentPagination(Resource):
     @content_namespace.marshal_with(content, as_list=True)
     @content_namespace.response(200, "Success")
+    @content_namespace.response(500, "ERROR")
     def get(self):
         """
         This API should be used for content pagination. Do not NEED to be signed in, but better experience if signed in
@@ -108,7 +109,6 @@ class ContentPagination(Resource):
         content_id = request.args.get("content_id", None)
         if content_id == "undefined":
             content_id = None
-        print(f"args: {pprint.pformat(request.__dict__, depth=5)}")
         controller = ControllerEnum.string_to_controller(
             request.args.get("controller", ControllerEnum.RANDOM.human_string())
             or ControllerEnum.RANDOM.human_string()
@@ -120,14 +120,17 @@ class ContentPagination(Resource):
         starting_point = None
         if content_id is not None:
             starting_point = {"content_id": int(content_id)}
-        responses = get_content_data(
-            controller=controller,
-            user_id=user_id,
-            limit=limit,
-            offset=offset,
-            seed=seed,
-            starting_point=starting_point,
-        )
+        try:
+            responses = get_content_data(
+                controller=controller,
+                user_id=user_id,
+                limit=limit,
+                offset=offset,
+                seed=seed,
+                starting_point=starting_point,
+            )
+        except:
+            return [], 500 
         return add_content_data(responses, user_id), 200
 
 
