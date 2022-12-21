@@ -72,7 +72,7 @@ class FoxtrotGenerator(AbstractGenerator):
 
             # get ANN for the items found
             for liked_content_id in liked_by_user:
-                if liked_content is None:
+                if liked_content_id is None:
                     continue
                 content_ids, scores = ann_with_offset(
                     liked_content_id,
