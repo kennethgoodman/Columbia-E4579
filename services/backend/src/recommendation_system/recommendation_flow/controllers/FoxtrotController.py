@@ -25,7 +25,7 @@ class FoxtrotController(AbstractController):
             user_id, candidates_limit, offset, seed, starting_point
         )
         filtered_candidates = FoxtrotFilter().filter_ids(
-            candidates, seed
+            candidates, user_id, seed, starting_point
         )
         predictions = FoxtrotModel().predict_probabilities(
             filtered_candidates,

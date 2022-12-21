@@ -35,6 +35,6 @@ class RuleBasedRanker(AbstractRanker):
         top_score0k_ids = list(map(lambda x: x["content_id"], top_score0k))
 
         #add selected img together 
-        top_k_ids=top_score2k_ids+top_score1k_ids+top_score0k_ids
+        top_k_ids=list(set(top_score2k_ids+top_score1k_ids+top_score0k_ids))
         
         return random.sample(top_k_ids, len(top_k_ids))

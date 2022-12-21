@@ -102,4 +102,4 @@ class DeltaController(AbstractController):
         print(f"CONTROLLER: Finished ranking in {time.time() - start_time}s.")
         start_time = time.time()
 
-        return list(set(rank))
+        return rank
