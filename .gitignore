@@ -148,8 +148,7 @@ tmp.err
 tmp.out
 tmp.sql
 logs/
-/services/db/
-/services/db/02_rest.sql
+/data/
 /services/backend/seed_data/data/nov_19_dump/content.csv
 /services/backend/seed_data/data/nov_19_dump/engagement.csv
 /services/backend/seed_data/data/nov_19_dump/generated_content_metadata.csv
