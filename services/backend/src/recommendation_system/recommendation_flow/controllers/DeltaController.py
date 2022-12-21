@@ -26,6 +26,8 @@ from src.recommendation_system.recommendation_flow.ranking.DeltaRanker import (
     RuleBasedRanker,
 )
 
+import time
+
 class DeltaController(AbstractController):
     def get_content_ids(self, user_id, limit, offset, seed, starting_point):
         candidates_limit = (
@@ -33,6 +35,9 @@ class DeltaController(AbstractController):
         )
 
         print(f"CONTROLLER: user id: {user_id}")
+
+        start_time = time.time()
+
         if user_id == 0:
             candidates, scores = RandomGenerator().get_content_ids(
                 user_id, candidates_limit, offset, seed, starting_point
@@ -42,17 +47,26 @@ class DeltaController(AbstractController):
                 user_id, candidates_limit, offset, seed, starting_point
             )
 
+            print(f"CONTROLLER: Finished CG1 in {time.time() - start_time}s.")
+            start_time = time.time()
+
             candidates_2, scores_2 = CFGenerator().get_content_ids(
                 user_id, candidates_limit, offset, seed, starting_point
             )
+
+            print(f"CONTROLLER: Finished CG2 in {time.time() - start_time}s.")
+            start_time = time.time()
 
             candidates_3, scores_3 = PopularCategoryGenerator().get_content_ids(
                 user_id, candidates_limit, offset, seed, starting_point
             )
 
-            print(f"num candidates (user preference): {len(candidates_1)}")
-            print(f"num candidates (cf) : {len(candidates_2)}")
-            print(f"num candidates (popular) : {len(candidates_3)}")
+            print(f"CONTROLLER: Finished CG3 in {time.time() - start_time}s.")
+            start_time = time.time()
+
+            print(f"CONTROLLER: num candidates (user preference): {len(candidates_1)}")
+            print(f"CONTROLLER: num candidates (cf) : {len(candidates_2)}")
+            print(f"CONTROLLER: num candidates (popular) : {len(candidates_3)}")
 
             candidates = candidates_1 + candidates_2 + candidates_3
 
@@ -62,6 +76,8 @@ class DeltaController(AbstractController):
 
         filtered_candidates = filtered_candidates_scores.keys()
 
+        print(f"CONTROLLER: Finished filtering in {time.time() - start_time}s.")
+        start_time = time.time()
 
         if user_id == 0:
             predictor_model = RandomModel()
@@ -78,10 +94,12 @@ class DeltaController(AbstractController):
             }
         )
 
-        print("CONTROLLER: Prediction done")
+        print(f"CONTROLLER: Finished prediction in {time.time() - start_time}s.")
+        start_time = time.time()
 
         rank = RuleBasedRanker().rank_ids(limit, predictions, seed, starting_point)
 
-        print("CONTROLLER: Ranking done")
+        print(f"CONTROLLER: Finished ranking in {time.time() - start_time}s.")
+        start_time = time.time()
 
         return list(set(rank))
