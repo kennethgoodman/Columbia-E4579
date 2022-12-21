@@ -55,7 +55,7 @@ def get_content_data(controller, user_id, limit, offset, seed, starting_point=No
         ControllerEnum.BETA,
         ControllerEnum.CHARLIE,
         ControllerEnum.DELTA,
-        ControllerEnum.Echo,
+        ControllerEnum.ECHO,
         ControllerEnum.FOXTROT
     ]:
         content_ids = controller.value().get_content_ids(
