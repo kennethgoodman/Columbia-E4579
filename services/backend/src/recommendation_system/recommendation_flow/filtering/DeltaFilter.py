@@ -22,8 +22,6 @@ class QualityFilter(AbstractFilter):
                 f"AND engagement_value > 0) " \
                 f"GROUP BY 1;"
 
-            print(sql_statement)
-
             with db.engine.connect() as con:
                 ids_to_filter_out = list(con.execute(sql_statement))
                 ids_to_filter_out = set(map(lambda x: x[0], ids_to_filter_out))
