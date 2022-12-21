@@ -59,12 +59,12 @@ class AlphaModel(AbstractModel):
             # attach embed matrix
             train_content_ids = df.content_id.tolist()
 
-            inv_map = {v: k for k, v in INDEX_TO_CONTENT_ID.items()}
+            dic_id_to_embeddings = {v[0]:v[1] for v in dic_id_embed}
 
             embed_matrix = []
             for content_id in train_content_ids:
-                my_index = inv_map[content_id]
-                embed_matrix.append(dic_id_embed[my_index][1])
+
+                embed_matrix.append(dic_id_to_embeddings[content_id])
 
             embed_matrix = pd.DataFrame(embed_matrix)
 
