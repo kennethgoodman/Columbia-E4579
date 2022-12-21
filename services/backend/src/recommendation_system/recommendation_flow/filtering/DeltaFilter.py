@@ -96,11 +96,12 @@ class QualityFilter(AbstractFilter):
 
         start = time.time()
         ids_to_filter_out1 = remove_user_dislikes()
-        print(f'Stage 1 no. of images to filter: {len(ids_to_filter_out1)}, Time: {(time.time() - start)}')
+        print(f'FILTERING: Stage 1 no. of images to filter: {len(ids_to_filter_out1)}, Time: {(time.time() - start)}')
 
         scores_filtered = remove_low_quality_images(content_ids)
         ids_to_filter_out4 = set(scores_filtered.keys())
-        print(f'Stage 4 no. of images to filter: {len(ids_to_filter_out4)}, Time: {(time.time() - start)}')
+
+        print(f'FILTERING: Stage 4 no. of images to filter: {len(ids_to_filter_out4)}, Time: {(time.time() - start)}')
 
         total_ids_to_drop = set.union(ids_to_filter_out1,
                                       ids_to_filter_out4)
@@ -108,8 +109,9 @@ class QualityFilter(AbstractFilter):
         filtered_content_ids = set.difference(set(content_ids),
                                                   total_ids_to_drop)
 
-        print(f'no. of images (before): {len(content_ids)}')
-        print(f'no. of images (after): {len(filtered_content_ids)}')
+        print(f'FILTERING: no. of images (before): {len(content_ids)}')
+        print(f'FILTERING: no. of images (after): {len(filtered_content_ids)}')
+
         return scores_filtered
 
         # return filtered_content_ids
