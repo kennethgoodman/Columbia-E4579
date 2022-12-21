@@ -4,7 +4,6 @@ from src import db
 from .AbstractFilter import AbstractFilter
 import pickle
 import pandas as pd
-import csv
 
 
 class AlphaFilter(AbstractFilter):
@@ -14,10 +13,8 @@ class AlphaFilter(AbstractFilter):
         # order by top liked, top engagemet, top engagement time, add add in random ones if need more output
         # return 1000 images
 
-        with open('/usr/src/app/src/alpha/offensive_blacklist.csv') as f:
-            df_list = list(csv.reader(f))
-            offensive_blacklist = list(map(lambda x: int(x[0]),df_list[1:]))
-        
+        nlp_data = pd.read_pickle('/usr/src/app/src/alpha/df_prompt_labeled.pkl')
+        offensive_blacklist = list(set(nlp_data[nlp_data.offensive==True].content_id))
         print('len(offensive_blacklist)',len(offensive_blacklist))
         print('len(content_ids)',len(content_ids))
         # get top liked:
