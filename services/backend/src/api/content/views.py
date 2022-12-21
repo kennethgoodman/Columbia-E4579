@@ -1,5 +1,6 @@
 import os
 import random
+import pprint
 
 import jwt
 from flask import jsonify, request
@@ -107,7 +108,7 @@ class ContentPagination(Resource):
         content_id = request.args.get("content_id", None)
         if content_id == "undefined":
             content_id = None
-        print(f"args: {request.values.to_dict()}")
+        print(f"args: {pprint.pformat(request.__dict__, depth=5)}")
         controller = ControllerEnum.string_to_controller(
             request.args.get("controller", ControllerEnum.RANDOM.human_string())
             or ControllerEnum.RANDOM.human_string()
