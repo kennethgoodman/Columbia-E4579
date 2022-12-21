@@ -87,7 +87,7 @@ class FGenerator:
         # print(df_user_clusters_like)
 
         # write resulting file in csv format
-        df_user_clusters_like.to_csv("users_clusters2.csv")
+        df_user_clusters_like.to_csv("foxtrot_users_clusters2.csv")
 
         return None
 
@@ -132,12 +132,6 @@ class FGenerator:
         li = [float(a) for a in li]
 
         return li
-
-    # def retrieve_cluster(self, user):
-    # 	df = pd.read_csv(r'users_clusters2.csv', nrows=100)
-    # 	cluster_nb = df.loc[df['user_id'] == user]['cluster_number'].iloc[0]
-    # 	users_in_cluster = df.loc[df['cluster_number'] == cluster_nb]['user_id'].to_list()
-    # 	return users_in_cluster
 
 
 if __name__ == "__main__":

@@ -15,7 +15,7 @@ from src.recommendation_system.recommendation_flow.ranking.FoxtrotRanker import 
 )
 
 
-class StaticController(AbstractController):
+class FoxtrotController(AbstractController):
     def get_content_ids(self, user_id, limit, offset, seed, starting_point):
         seed = 0.25  # static random seed
         candidates_limit = (

@@ -110,6 +110,8 @@ const Feed = (props) => {
           <option value="BETA">Beta</option>
           <option value="CHARLIE">Charlie</option>
           <option value="DELTA">Delta</option>
+          <option value="ECHO">Delta</option>
+          <option value="FOXTROT">Delta</option>
         </select>
       </label>
       {fetchParams["starting_content_id"] !== undefined && (
