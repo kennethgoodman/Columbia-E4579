@@ -147,8 +147,9 @@ flask_session/
 tmp.err
 tmp.out
 tmp.sql
-data/
 logs/
-/services/backend/id_to_embedding.pkl
 /services/db/
 /services/db/02_rest.sql
+/services/backend/seed_data/data/nov_19_dump/content.csv
+/services/backend/seed_data/data/nov_19_dump/engagement.csv
+/services/backend/seed_data/data/nov_19_dump/generated_content_metadata.csv
