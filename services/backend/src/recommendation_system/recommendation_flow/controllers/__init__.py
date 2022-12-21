@@ -25,6 +25,6 @@ from src.recommendation_system.recommendation_flow.controllers.DeltaController i
 from src.recommendation_system.recommendation_flow.controllers.EchoController import (
     EchoController,
 )
-from src.recommendation_system.recommendation_flow.controllers.FoxtroController import (
+from src.recommendation_system.recommendation_flow.controllers.FoxtrotController import (
     FoxtrotController,
 )

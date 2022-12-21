@@ -3,7 +3,7 @@ from src import db
 import pandas as pd
 import numpy as np
 
-df_user_clusters_like = pd.read_csv(r"foxtrot_users_clusters2.csv", nrows=100)
+df_user_clusters_like = pd.read_csv(r"/usr/src/app/foxtrot/foxtrot_users_clusters2.csv", nrows=100)
 
 class FoxtrotFilter(AbstractFilter):
     def filter_ids(self, content_ids, user_id):
