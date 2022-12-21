@@ -2,9 +2,7 @@ from sqlalchemy import text
 from sqlalchemy.sql.expression import func
 from src import db
 from src.api.content.models import Content
-from src.data_structures.approximate_nearest_neighbor import ann_with_offset
-from src.data_structures.approximate_nearest_neighbor import read_data
-from src.data_structures.approximate_nearest_neighbor import get_embedding
+from src.data_structures.approximate_nearest_neighbor import ann_with_offset, get_embedding
 from .AbstractGenerator import AbstractGenerator
 from transformers import AutoModelForSequenceClassification
 from transformers import AutoTokenizer
@@ -15,9 +13,6 @@ model = AutoModelForSequenceClassification.from_pretrained(MODEL)
 from transformers import pipeline
 
 sentiment_score = pipeline("sentiment-analysis", model=model, tokenizer=tokenizer)
-#sentiment_score("Covid cases are increasing fast!")
-#data=read_data()
-#data['sen_score']=df['prompt_embedding'].apply(sentiment_score)
 class RandomGenerator(AbstractGenerator):
     def get_content_ids(self, user_id, limit, offset, seed, starting_point):
         if starting_point is None:

@@ -89,8 +89,8 @@ class AlphaModel(AbstractModel):
                 )
             )
             
-        except:
-            print('except: use random')
+        except Exception as e:
+            print(f'except {str(e)}: use random')
             if seed:
                 random.seed(seed)
             try: # in dev dic_id_style[content_id] has key error
