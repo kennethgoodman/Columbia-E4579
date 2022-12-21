@@ -9,7 +9,7 @@ from src.data_structures.approximate_nearest_neighbor import ann_with_offset
 from .AbstractGenerator import AbstractGenerator
 from .RandomGenerator import RandomGenerator
 
-df_user_clusters = pd.read_csv(r"/usr/src/app/foxtrot/foxtrot_users_clusters2.csv", nrows=100)
+df_user_clusters = pd.read_csv(r"/usr/src/app/src/foxtrot/foxtrot_users_clusters2.csv", nrows=100)
 
 class FoxtrotGenerator(AbstractGenerator):
     def get_content_ids(self, user_id, limit, offset, _seed, starting_point):
