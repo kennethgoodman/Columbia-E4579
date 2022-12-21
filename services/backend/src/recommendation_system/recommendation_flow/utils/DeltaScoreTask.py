@@ -2,6 +2,7 @@
 Adds image scores to the database
 """
 
+from src import create_app
 from src import db
 from sqlalchemy import MetaData, Table, create_engine
 
@@ -27,3 +28,11 @@ def add_image_scores(score_file):
         db.engine.execute(table.insert(), scores)
 
     return
+
+if __name__ == '__main__':
+    app = create_app()
+    print("Adding image scores")
+    with app.app_context():
+        score_file = "/usr/src/app/src/delta/image_quality.csv"
+        add_image_scores(score_file)
+    print("Finished adding image scores")
