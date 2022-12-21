@@ -27,10 +27,10 @@ try:
         "keras",
         "tensorflow_decision_forests"
     ])
-    GBDT_model = try_load_model('/usr/src/app/src/alpha/gbdt_model_v3.pickle')
+    # GBDT_model = try_load_model('/usr/src/app/src/alpha/gbdt_model_v3.pickle')
     prep_dic = try_load_model('/usr/src/app/src/alpha/prediction_prep_dic.pickle')
-
     dic_id_embed = try_load_model("/usr/src/app/id_to_embedding.pkl")
+    
 
 except:
     pass
@@ -75,8 +75,8 @@ class AlphaModel(AbstractModel):
             df.columns = [str(c) for c in df.columns]
             print("df.shape:", df.shape)
             
-            tf_data = tfdf.keras.pd_dataframe_to_tf_dataset(df,task=tfdf.keras.Task.REGRESSION)
-            pred_series = GBDT_model.predict(tf_data)
+            # tf_data = tfdf.keras.pd_dataframe_to_tf_dataset(df,task=tfdf.keras.Task.REGRESSION)
+            # pred_series = GBDT_model.predict(tf_data)
 
             content_to_engage_dic = dict(zip(content_ids, pred_series))
             
