@@ -102,7 +102,7 @@ class ContentPagination(Resource):
         content_id = request.args.get("content_id", None)
         if content_id == "undefined":
             content_id = None
-        print(f"controller from request is: f{request.args.get('controller', 'NA')}")
+        print(f"args: {request.args.to_dict()}")
         controller = ControllerEnum.string_to_controller(
             request.args.get("controller", ControllerEnum.RANDOM.human_string())
             or ControllerEnum.RANDOM.human_string()
