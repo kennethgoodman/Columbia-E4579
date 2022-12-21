@@ -28,7 +28,7 @@ class Preprocessing:
             return max(word_dict, key=lambda key: word_dict[key])
         df['frequent_word'] = df['prompt'].apply(lambda x: get_most_frequent_word(x))
         return df
-    
+   
     def get_sentiment_score(df):
         sentimentAnalyser = SentimentIntensityAnalyzer()
         df['sentiment'] = df['prompt'].apply(lambda x: sentimentAnalyser.polarity_scores(x)['compound'])
