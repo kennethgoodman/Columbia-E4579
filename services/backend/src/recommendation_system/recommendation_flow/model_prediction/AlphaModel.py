@@ -27,9 +27,11 @@ class AlphaModel(AbstractModel):
                 dic_id_style = pickle.load(f)
             with open('/usr/src/app/src/alpha/prediction_prep_dic.pickle', 'rb') as f:
                 prep_dic = pickle.load(f)
-        #    with open('/usr/src/app/src/alpha/dic_id_to_embedding.pickle', 'rb') as f:
-        #        dic_id_embed = pickle.load(f)
-
+            #with open('/usr/src/app/src/alpha/dic_id_to_embedding.pickle', 'rb') as f:
+            #    dic_id_embed = pickle.load(f)
+            with open("/usr/src/app/id_to_embedding.pkl", "rb") as f:
+                dic_id_embed = pickle.load(f)
+                
             df = pd.DataFrame(content_ids,columns=['content_id'])
             df['user_id'] = str(user_id)  
             df['style'] = df['content_id'].apply(lambda x: dic_id_style[x])
@@ -49,9 +51,11 @@ class AlphaModel(AbstractModel):
             # attach embed matrix
             train_content_ids = df.content_id.tolist()
             embed_matrix = []
+            inv_map = {v: k for k, v in INDEX_TO_CONTENT_ID.items()}
+            
             for content_id in train_content_ids:
-                this_embedded_content_id = list(get_embedding(content_id))
-                embed_matrix.append(this_embedded_content_id)
+                index_in_embedded = inv_map[content_id]
+                embed_matrix.append(dic_id_embed[index_in_embedded][1])
             embed_matrix = pd.DataFrame(embed_matrix)
 
             df = pd.concat([df, embed_matrix], axis=1)
@@ -82,17 +86,17 @@ class AlphaModel(AbstractModel):
                 )
             )
             
-<<<<<<< HEAD
+
         except:
             print('except: use random')
             with open('/usr/src/app/src/alpha/content_artist_style_dic.pickle', 'rb') as f:
                 dic_id_style = pickle.load(f)
-=======
+
         except Exception as e:
             import traceback
             print(f'except {str(e)}: use random')
             print(f'tb: {traceback.format_exc()}')
->>>>>>> 4d1db7740e6824f330bbb5e4496fea94f6fcf2ae
+
             if seed:
                 random.seed(seed)
             try: # in dev dic_id_style[content_id] has key error
