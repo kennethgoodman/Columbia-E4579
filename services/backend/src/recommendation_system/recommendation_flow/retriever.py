@@ -3,19 +3,23 @@ from enum import Enum
 from src.api.content.models import Content, get_url
 from src.api.users.models import User
 from src.recommendation_system.recommendation_flow.controllers import (
-    EngagementTimeController,
     RandomController,
-    StaticController,
     ExampleController,
+    AlphaController,
+    BetaController,
+    CharlieController,
+    DeltaController,
     EchoController
 )
 
 
 class ControllerEnum(Enum):
     RANDOM = RandomController
-    STATIC = StaticController
-    ENGAGEMENT_TIME = EngagementTimeController
     EXAMPLE = ExampleController
+    ALPHA = AlphaController
+    BETA = BetaController
+    CHARLIE = CharlieController
+    DELTA = DeltaController
     Echo = EchoController
 
     def human_string(self):
@@ -44,9 +48,11 @@ def content_to_response(content):
 def get_content_data(controller, user_id, limit, offset, seed, starting_point=None):
     if controller in [
         ControllerEnum.RANDOM,
-        ControllerEnum.STATIC,
-        ControllerEnum.ENGAGEMENT_TIME,
         ControllerEnum.EXAMPLE,
+        ControllerEnum.ALPHA,
+        ControllerEnum.BETA,
+        ControllerEnum.CHARLIE,
+        ControllerEnum.DELTA,
         ControllerEnum.Echo
     ]:
         content_ids = controller.value().get_content_ids(

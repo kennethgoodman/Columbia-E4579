@@ -28,7 +28,7 @@ const Post = (props) => {
   const [isAuthenticated, _] = useState(getRefreshTokenIfExists() !== null);
 
   const image_ref = useRef(null);
-  useIntersectionObserver(props.content_id, image_ref, {});
+  useIntersectionObserver(props.controller, props.content_id, image_ref, {});
 
   const like = (callback) => {
     axios(get_options("like", props.content_id))
@@ -133,6 +133,7 @@ const Post = (props) => {
 };
 
 function useIntersectionObserver(
+  controller,
   content_id,
   elementRef,
   {
@@ -155,7 +156,7 @@ function useIntersectionObserver(
     let api_uri = `${process.env.REACT_APP_API_SERVICE_URL}/engagement/elapsed_time`;
     axios({
       ...get_options("elapsed_time", content_id),
-      data: JSON.stringify({ elapsed_time: elapsed_time }),
+      data: JSON.stringify({ elapsed_time: elapsed_time, controller: controller }),
     }).catch(function (error) {
       console.log(error);
     });
