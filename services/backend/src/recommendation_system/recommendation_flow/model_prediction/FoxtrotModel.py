@@ -3,7 +3,7 @@ import pandas as pd
 import os
 from sklearn.metrics.pairwise import cosine_similarity
 import pickle
-from src.recommendation_system.ml_models.foxtrot_lgb_model.lgb_model import (
+from src.recommendation_system.ml_models.foxtrot_lgb_model.Foxtrotlgb_model import (
     ModelController,
 )
 from functools import lru_cache
@@ -17,6 +17,7 @@ model = ModelController("lgb", load_model=True).model
 CONTENT_FEATURES = pd.DataFrame()
 USER_FEATURES = pd.DataFrame()
 
+
 @lru_cache(1)
 def read_feature():
     global CONTENT_FEATURES, USER_FEATURES
@@ -28,8 +29,6 @@ def read_feature():
         print("reading data from user_features.pkl")
         with open("user_features.pkl", "rb") as f:
             USER_FEATURES = pickle.load(f)
-    
-
 
 
 class FoxtrotModel(AbstractModel):
@@ -43,19 +42,27 @@ class FoxtrotModel(AbstractModel):
         user_feature = self.user_features.loc[user_id]
         item_feature = self.content_features.loc[content_id]
 
-        user_embedding = np.array(user_feature['embedding'])
+        user_embedding = np.array(user_feature["embedding"])
         user_embedding_feature = user_embedding[[5, 25, 66]]
 
-        item_embedding = np.array(item_feature['embedding'])
+        item_embedding = np.array(item_feature["embedding"])
         item_embedding_feature = user_embedding[[0, 11]]
 
-        similarity = cosine_similarity(user_embedding.reshape(-1,512), item_embedding.reshape(-1,512))[0]
+        similarity = cosine_similarity(
+            user_embedding.reshape(-1, 512), item_embedding.reshape(-1, 512)
+        )[0]
 
-        feature = np.hstack([similarity, user_feature.values[:-1], item_feature.values[:-1], user_embedding_feature, item_embedding_feature])
+        feature = np.hstack(
+            [
+                similarity,
+                user_feature.values[:-1],
+                item_feature.values[:-1],
+                user_embedding_feature,
+                item_embedding_feature,
+            ]
+        )
 
         return feature
-
-
 
     def _create_all_data(self, content_ids, user_id):
         return np.array(
@@ -80,4 +87,4 @@ class FoxtrotModel(AbstractModel):
                 },
                 range(len(content_ids)),
             )
-        )   
+        )
