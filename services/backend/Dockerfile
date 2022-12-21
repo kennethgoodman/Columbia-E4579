@@ -37,7 +37,4 @@ COPY . .
 # add entrypoint.sh
 COPY ./entrypoint.sh .
 COPY seed_data .
-COPY delta .
-COPY echo_space .
-COPY foxtrot .
 RUN chmod +x /usr/src/app/entrypoint.sh
