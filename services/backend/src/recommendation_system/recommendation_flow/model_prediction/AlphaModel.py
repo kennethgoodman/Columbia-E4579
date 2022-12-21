@@ -1,43 +1,37 @@
 import random
+# from src import db
 import pandas as pd 
 import numpy as np
 from collections import defaultdict
+# from sqlalchemy.sql import text
 import os
 import pickle
 import sys
 import subprocess
 from .AbstractModel import AbstractModel
-
-def try_load_model(fn):
-    try:
-        with open(fn, 'rb') as f:
-            return pickle.load(f)
-    except:
-        pass
-
-dic_id_style = try_load_model('/usr/src/app/src/alpha/content_artist_style_dic.pickle')
-
-try:
-    subprocess.check_call([
-        sys.executable, 
-        "-m", 
-        "pip", 
-        "install", 
-        "tensorflow",
-        "keras",
-        "tensorflow_decision_forests"
-    ])
-    GBDT_model = try_load_model('/usr/src/app/src/alpha/gbdt_model_v3.pickle')
-    prep_dic = try_load_model('/usr/src/app/src/alpha/prediction_prep_dic.pickle')
-    dic_id_embed = try_load_model('/usr/src/app/src/alpha/dic_id_to_embedding.pickle')
-except:
-    pass
+from src.data_structures.approximate_nearest_neighbor import ann_with_offset, get_embedding
 
 
 class AlphaModel(AbstractModel):
     def predict_probabilities(self, content_ids, user_id, seed=None, **kwargs):
+        
         try:
+            print('try use tfdf')
+        #     # import tensorflow_decision_forests as tfdf
+            subprocess.check_call([sys.executable, "-m", "pip", "install", "tensorflow_decision_forests"])
             import tensorflow_decision_forests as tfdf
+
+            with open('/usr/src/app/src/alpha/gbdt_model_v3.pickle', 'rb') as f:
+                GBDT_model = pickle.load(f)
+            with open('/usr/src/app/src/alpha/content_artist_style_dic.pickle', 'rb') as f:
+                dic_id_style = pickle.load(f)
+            with open('/usr/src/app/src/alpha/prediction_prep_dic.pickle', 'rb') as f:
+                prep_dic = pickle.load(f)
+            #with open('/usr/src/app/src/alpha/dic_id_to_embedding.pickle', 'rb') as f:
+            #    dic_id_embed = pickle.load(f)
+            with open("/usr/src/app/id_to_embedding.pkl", "rb") as f:
+                dic_id_embed = pickle.load(f)
+                
             df = pd.DataFrame(content_ids,columns=['content_id'])
             df['user_id'] = str(user_id)  
             df['style'] = df['content_id'].apply(lambda x: dic_id_style[x])
@@ -57,8 +51,11 @@ class AlphaModel(AbstractModel):
             # attach embed matrix
             train_content_ids = df.content_id.tolist()
             embed_matrix = []
+            inv_map = {v: k for k, v in INDEX_TO_CONTENT_ID.items()}
+            
             for content_id in train_content_ids:
-                embed_matrix.append(dic_id_embed[content_id])
+                index_in_embedded = inv_map[content_id]
+                embed_matrix.append(dic_id_embed[index_in_embedded][1])
             embed_matrix = pd.DataFrame(embed_matrix)
 
             df = pd.concat([df, embed_matrix], axis=1)
@@ -89,10 +86,17 @@ class AlphaModel(AbstractModel):
                 )
             )
             
+
+        except:
+            print('except: use random')
+            with open('/usr/src/app/src/alpha/content_artist_style_dic.pickle', 'rb') as f:
+                dic_id_style = pickle.load(f)
+
         except Exception as e:
             import traceback
             print(f'except {str(e)}: use random')
             print(f'tb: {traceback.format_exc()}')
+
             if seed:
                 random.seed(seed)
             try: # in dev dic_id_style[content_id] has key error
@@ -115,6 +119,7 @@ class AlphaModel(AbstractModel):
                         lambda content_id: {
                             "content_id": content_id,
                             "p_engage": random.random(),
+                            # "style": dic_id_style[content_id],
                             "score": kwargs.get("scores", {})
                             .get(content_id, {})
                             .get("score", None),
