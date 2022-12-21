@@ -67,7 +67,4 @@ else
 	echo "not recreating because didn't pass -r"
 fi
 
-# create CF embedding
-echo "creating CF embedding"
-
 python manage.py run -h 0.0.0.0
