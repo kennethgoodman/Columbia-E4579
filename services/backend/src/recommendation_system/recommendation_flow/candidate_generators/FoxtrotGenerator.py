@@ -36,8 +36,6 @@ class FoxtrotGenerator(AbstractGenerator):
             list_engagement = list(map(lambda x: x[0], results_engagement))
             # get content most engaged with by user
             results_ANN = []
-            results_ANN = []
-
             # for likes
 
             table_ann_likes = (
@@ -73,16 +71,17 @@ class FoxtrotGenerator(AbstractGenerator):
             )
 
             # get ANN for the items found
-
-            for liked_content in liked_by_user:
+            for liked_content_id in liked_by_user:
+                if liked_content_id is None:
+                    continue
                 content_ids, scores = ann_with_offset(
-                    liked_content["content_id"],
+                    liked_content_id,
                     0.9,
                     limit,
                     offset,
                     return_distances=True,
                 )
-            results_ANN.append(content_ids)
+                results_ANN.append(content_ids)
 
             # Collaborative filtering: use users clusters to find similar users from user_id, then find most liked items
             # for similar users in cluster.
@@ -109,7 +108,10 @@ class FoxtrotGenerator(AbstractGenerator):
     # return list of all users in cluster from csv
     def retrieve_cluster(self, user):
         df = df_user_clusters
-        cluster_nb = df.loc[df["user_id"] == user]["cluster_number"].iloc[0]
+        cluster_nbs = df.loc[df["user_id"] == user]["cluster_number"]
+        if len(cluster_nbs) == 0:
+            return []
+        cluster_nb = cluster_nbs.iloc[0]
         users_in_cluster = df.loc[df["cluster_number"] == cluster_nb][
             "user_id"
         ].to_list()

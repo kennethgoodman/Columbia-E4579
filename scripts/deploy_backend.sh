@@ -10,6 +10,9 @@ sudo curl -L https://github.com/docker/compose/releases/download/1.22.0/docker-c
 sudo curl -L https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
 sudo amazon-linux-extras install nginx1 -y
+sudo amazon-linux-extras install epel -y
+sudo yum-config-manager --enable epel -y
+sudo yum install git-lfs -y
 sudo nano /etc/nginx/nginx.conf
 cd Columbia-E4579
 
