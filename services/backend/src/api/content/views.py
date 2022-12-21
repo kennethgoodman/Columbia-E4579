@@ -24,6 +24,11 @@ content_namespace = Namespace("content")
 
 parser = content_namespace.parser()
 parser.add_argument("Authorization", location="headers")
+parser.add_argument("page")
+parser.add_argument("limit")
+parser.add_argument("controller")
+parser.add_argument("content_id")
+parser.add_argument("seed")
 
 controllers = content_namespace.model(
     "Controllers", {"controller": fields.String(required=True)}
