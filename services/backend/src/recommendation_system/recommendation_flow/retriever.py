@@ -6,7 +6,9 @@ from src.recommendation_system.recommendation_flow.controllers import (
     EngagementTimeController,
     RandomController,
     StaticController,
-    AlphaController
+    AlphaController,
+    BetaController,
+    CharlieController
 )
 
 
