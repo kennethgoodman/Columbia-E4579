@@ -1,6 +1,7 @@
 import os
 import random
 import pprint
+import traceback
 
 import jwt
 from flask import jsonify, request
@@ -53,6 +54,7 @@ content = content_namespace.model(
         "url": fields.String(required=False),
         "download_url": fields.String(required=False),
         "errors": fields.String(required=False),
+        "traceback": fields.String(required=False),
     },
 )
 
@@ -95,7 +97,7 @@ class ListControllers(Resource):
 
 class ContentPagination(Resource):
     @content_namespace.marshal_with(content, as_list=True)
-    @content_namespace.response(200, "Success")
+    @content_namespace.response(200, "Success", model=content, as_list=True)
     @content_namespace.response(500, "ERROR")
     def get(self):
         """
@@ -131,7 +133,7 @@ class ContentPagination(Resource):
                 starting_point=starting_point,
             )
         except Exception as e:
-            return [{ "errors": str(e), "id": 0}], 500 
+            return [{ "errors": str(e), "id": 0, "traceback": traceback.format_exc()}], 500 
         return add_content_data(responses, user_id), 200
 
 
