@@ -1,3 +1,5 @@
+from .AbstractFilter import AbstractFilter
+
 from sqlalchemy.sql import text
 from src import db
 import pandas as pd
