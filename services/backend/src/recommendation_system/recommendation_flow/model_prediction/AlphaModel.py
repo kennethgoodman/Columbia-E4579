@@ -62,7 +62,7 @@ class AlphaModel(AbstractModel):
             embed_matrix = []
             for content_id in train_content_ids:
                 my_index = inv_map[content_id]
-                embed_matrix.append(dic_id_embed[my_index])
+                embed_matrix.append(dic_id_embed[my_index][1])
             embed_matrix = pd.DataFrame(embed_matrix)
 
             df = pd.concat([df, embed_matrix], axis=1)
