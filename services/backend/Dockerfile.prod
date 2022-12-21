@@ -38,4 +38,7 @@ COPY . .
 COPY ./entrypoint.production.sh .
 COPY ./id_to_embedding.pkl .
 COPY seed_data .
+COPY delta .
+COPY echo_space .
+COPY foxtrot .
 RUN chmod +x /usr/src/app/entrypoint.production.sh
