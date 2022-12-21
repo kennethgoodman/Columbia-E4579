@@ -13,18 +13,21 @@ class QualityFilter(AbstractFilter):
 
         ### 1. Remove images that user disliked previously
         def remove_user_dislikes():
-            sql_statement = text(f"""
-                -- 1. User dislike
-                SELECT engagement.content_id
-                FROM engagement 
-                    WHERE engagement_type = 'Like' 
-                    and user_id = {user_id}
-                    and engagement_value = -1 
-                GROUP BY 1
-            """)
+            sql_statement = f"SELECT engagement.content_id " \
+                f"FROM engagement " \
+                f"WHERE (engagement_type = 'Like' " \
+                f"AND user_id = {user_id}) " \
+                f"OR (engagement_type = 'MillisecondsEngagedWith' " \
+                f"AND user_id = {user_id} " \
+                f"AND engagement_value > 0) " \
+                f"GROUP BY 1;"
+
+            print(sql_statement)
+
             with db.engine.connect() as con:
                 ids_to_filter_out = list(con.execute(sql_statement))
                 ids_to_filter_out = set(map(lambda x: x[0], ids_to_filter_out))
+
             return ids_to_filter_out
 
         ### 2. Remove images from artist style that user disliked previously
