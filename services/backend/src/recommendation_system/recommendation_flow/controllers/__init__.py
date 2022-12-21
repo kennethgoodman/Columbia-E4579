@@ -19,7 +19,9 @@ from src.recommendation_system.recommendation_flow.controllers.BetaController im
 from src.recommendation_system.recommendation_flow.controllers.CharlieController import (
     CharlieController,
 )
-
 from src.recommendation_system.recommendation_flow.controllers.DeltaController import (
     DeltaController
+)
+from src.recommendation_system.recommendation_flow.controllers.EchoController import (
+    EchoController,
 )

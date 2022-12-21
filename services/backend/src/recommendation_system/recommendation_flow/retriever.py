@@ -8,7 +8,8 @@ from src.recommendation_system.recommendation_flow.controllers import (
     AlphaController,
     BetaController,
     CharlieController,
-    DeltaController
+    DeltaController,
+    EchoController
 )
 
 
@@ -19,6 +20,7 @@ class ControllerEnum(Enum):
     BETA = BetaController
     CHARLIE = CharlieController
     DELTA = DeltaController
+    Echo = EchoController
 
     def human_string(self):
         return str(self).split(".")[1]
@@ -50,7 +52,8 @@ def get_content_data(controller, user_id, limit, offset, seed, starting_point=No
         ControllerEnum.ALPHA,
         ControllerEnum.BETA,
         ControllerEnum.CHARLIE,
-        ControllerEnum.DELTA
+        ControllerEnum.DELTA,
+        ControllerEnum.Echo
     ]:
         content_ids = controller.value().get_content_ids(
             user_id, limit, offset, seed, starting_point
