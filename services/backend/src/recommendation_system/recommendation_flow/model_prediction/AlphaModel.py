@@ -29,7 +29,9 @@ try:
     ])
     GBDT_model = try_load_model('/usr/src/app/src/alpha/gbdt_model_v3.pickle')
     prep_dic = try_load_model('/usr/src/app/src/alpha/prediction_prep_dic.pickle')
-    dic_id_embed = try_load_model('/usr/src/app/src/alpha/dic_id_to_embedding.pickle')
+
+    dic_id_embed = try_load_model("/usr/src/app/id_to_embedding.pkl")
+
 except:
     pass
 
@@ -56,9 +58,14 @@ class AlphaModel(AbstractModel):
 
             # attach embed matrix
             train_content_ids = df.content_id.tolist()
+
+            dic_id_to_embeddings = {v[0]:v[1] for v in dic_id_embed}
+
             embed_matrix = []
             for content_id in train_content_ids:
-                embed_matrix.append(dic_id_embed[content_id])
+
+                embed_matrix.append(dic_id_to_embeddings[content_id])
+
             embed_matrix = pd.DataFrame(embed_matrix)
 
             df = pd.concat([df, embed_matrix], axis=1)
