@@ -7,6 +7,8 @@ import pickle
 import sys
 import subprocess
 from .AbstractModel import AbstractModel
+import joblib
+from sklearn.ensemble import RandomForestRegressor
 
 def try_load_model(fn):
     try:
@@ -27,10 +29,10 @@ try:
         "keras",
         "tensorflow_decision_forests"
     ])
-    GBDT_model = try_load_model('/usr/src/app/src/alpha/gbdt_model_v3.pickle')
+    # GBDT_model = try_load_model('/usr/src/app/src/alpha/gbdt_model_v3.pickle')
     prep_dic = try_load_model('/usr/src/app/src/alpha/prediction_prep_dic.pickle')
-
     dic_id_embed = try_load_model("/usr/src/app/id_to_embedding.pkl")
+    
 
 except:
     pass
@@ -40,9 +42,11 @@ class AlphaModel(AbstractModel):
     def predict_probabilities(self, content_ids, user_id, seed=None, **kwargs):
         try:
             import tensorflow_decision_forests as tfdf
+            import joblib
+            from sklearn.ensemble import RandomForestRegressor
             df = pd.DataFrame(content_ids,columns=['content_id'])
-            df['user_id'] = str(user_id)  
-            df['style'] = df['content_id'].apply(lambda x: dic_id_style[x])
+            df['user_id'] = user_id
+            # df['style'] = df['content_id'].apply(lambda x: dic_id_style[x])
 
             df['content_total_likes'] = df['content_id'].apply(lambda x: prep_dic['content_total_likes'][x])
             content_total_likes_dic = dict(zip(df['content_id'], df['content_total_likes']))
@@ -70,14 +74,21 @@ class AlphaModel(AbstractModel):
 
             df = pd.concat([df, embed_matrix], axis=1)
             df = df.drop(['content_id'], axis=1)
-            df['user_id'] = df['user_id'].astype(str)
-            df['style'] = df['style'].astype(str)
+            
+            # df['user_id'] = df['user_id'].astype(str)
+            # df['style'] = df['style'].astype(str)
+            
             df.columns = [str(c) for c in df.columns]
             print("df.shape:", df.shape)
             
-            tf_data = tfdf.keras.pd_dataframe_to_tf_dataset(df,task=tfdf.keras.Task.REGRESSION)
-            pred_series = GBDT_model.predict(tf_data)
+            # tf_data = tfdf.keras.pd_dataframe_to_tf_dataset(df,task=tfdf.keras.Task.REGRESSION)
+            # pred_series = GBDT_model.predict(tf_data)
 
+            # load the random forest model
+            loaded_rf = joblib.load("/usr/src/app/src/alpha/rfmodel.joblib")
+            
+            pred_series = list(loaded_rf.predict(df))
+            
             content_to_engage_dic = dict(zip(content_ids, pred_series))
             
             return_val = list(
