@@ -4,7 +4,7 @@ import random
 from .AbstractRanker import AbstractRanker
 
 
-class RandomRanker(AbstractRanker):
+class CharlieRanker(AbstractRanker):
     def rank_ids(self, limit, probabilities, seed, starting_point):
         k = limit
         double = 2*k
