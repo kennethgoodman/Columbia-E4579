@@ -143,15 +143,29 @@ class CharlieModel(AbstractModel):
                 ## append to scores
                 scores.append(score)
 
-        return list(
-            map(
-                lambda content_id: {
-                    "content_id": content_id,
-                    "p_engage": scores, ## what is this?
-                    "score": kwargs.get("scores", {scores})
-                    .get(content_id, {})
-                    .get("score", None),
-                },
-                content_ids,
-            )
-        )
+        returned = []
+        try:
+                returned = list(
+                    map(
+                        lambda content_id: {
+                            "content_id": content_id,
+                            "p_engage": random.random(), ## what is this?
+                            "score": kwargs.get("scores", {scores})
+                            .get(content_id, {})
+                            .get("score", None),
+                        },
+                        content_ids,
+                    )
+                )
+        except TypeError:
+                returned = list(
+                        map(
+                            lambda content_id: {
+                                "content_id": content_id,
+                                "p_engage": random.random(), ## what is this?
+                                "score": random.random(),
+                            },
+                            content_ids,
+                        )
+                    )
+         return returned
