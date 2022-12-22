@@ -21,7 +21,7 @@ class FoxtrotFilter(AbstractFilter):
         )
         with db.engine.connect() as con:
             df_engagement = list(con.execute(engagement_sql_statement))
-        df_engagement = pd.DataFrame(df_engagement).T
+        df_engagement = pd.DataFrame(df_engagement)
         df_engagement.columns = ["user_id", "engagement_value", "engagement_type"]
         df_cluster_dislike = df_engagement[
             (df_engagement["engagement_value"] == -1)
