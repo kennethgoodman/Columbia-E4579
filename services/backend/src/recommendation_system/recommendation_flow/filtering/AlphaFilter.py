@@ -6,20 +6,15 @@ import pickle
 import pandas as pd
 import csv
 
+with open('/usr/src/app/src/alpha/offensive_blacklist.csv') as f:
+    df_list = list(csv.reader(f))
+    offensive_blacklist = list(map(lambda x: int(x[0]),df_list[1:]))
 
 class AlphaFilter(AbstractFilter):
     def filter_ids(self, content_ids): # content_ids are the fresh candidates not in queue
-
         # general model: get popular and universally liked images
         # order by top liked, top engagemet, top engagement time, add add in random ones if need more output
         # return 1000 images
-
-        with open('/usr/src/app/src/alpha/offensive_blacklist.csv') as f:
-            df_list = list(csv.reader(f))
-            offensive_blacklist = list(map(lambda x: int(x[0]),df_list[1:]))
-        
-        print('len(offensive_blacklist)',len(offensive_blacklist))
-        print('len(content_ids)',len(content_ids))
         # get top liked:
         sql_statement_top_liked = f"""
             SELECT content_id
@@ -31,11 +26,7 @@ class AlphaFilter(AbstractFilter):
         with db.engine.connect() as con:
             filtered_content_ids_top_liked = list(con.execute(sql_statement_top_liked))
         filtered_content_ids_top_liked = [i[0] for i in filtered_content_ids_top_liked]
-        print('len(filtered_content_ids_top_liked)',len(filtered_content_ids_top_liked))
         filtered_content_ids_combined = filtered_content_ids_top_liked
-        print('len(filtered_content_ids_combined)',len(filtered_content_ids_combined))
-        # print('filtered_content_ids_top_liked',filtered_content_ids_top_liked)
-
         # get top engagement 750ms-3000ms engagement time:
         sql_statement_top_engagement_time = f"""
             SELECT content_id
@@ -47,12 +38,8 @@ class AlphaFilter(AbstractFilter):
         with db.engine.connect() as con:
             filtered_content_ids_top_engagement_time = list(con.execute(sql_statement_top_engagement_time))
         filtered_content_ids_top_engagement_time = [i[0] for i in filtered_content_ids_top_engagement_time]
-        print('len(filtered_content_ids_top_engagement_time)',len(filtered_content_ids_top_engagement_time))
         filtered_content_ids_combined.extend(filtered_content_ids_top_engagement_time)
-        print('len(filtered_content_ids_combined)',len(filtered_content_ids_combined))
-        # print('filtered_content_ids_top_engagement_time',filtered_content_ids_top_engagement_time)
-
-
+        
         # get top engagements:
         sql_statement_top_engagement = f"""
     		SELECT content_id
@@ -64,10 +51,7 @@ class AlphaFilter(AbstractFilter):
         with db.engine.connect() as con:
             filtered_content_ids_top_engagement = list(con.execute(sql_statement_top_engagement))
         filtered_content_ids_top_engagement = [i[0] for i in filtered_content_ids_top_engagement]
-        print('len(filtered_content_ids_top_engagement)',len(filtered_content_ids_top_engagement))
         filtered_content_ids_combined.extend(filtered_content_ids_top_engagement)
-        print('len(filtered_content_ids_combined)',len(filtered_content_ids_combined))
-        # print('filtered_content_ids_top_engagement',filtered_content_ids_top_engagement)
         
         # if not enough results (<1000), include the rest of the candidates
         if len(filtered_content_ids_combined) < 1000:
@@ -81,11 +65,6 @@ class AlphaFilter(AbstractFilter):
                 content_ids_add_ons = list(con.execute(sql_statement_add_ons))
             content_ids_add_ons = [i[0] for i in content_ids_add_ons]
             filtered_content_ids_combined.extend(content_ids_add_ons)
-            print('len(filtered_content_ids_combined)',len(filtered_content_ids_combined))
-            # print('content_ids_add_ons',content_ids_add_ons)
-            # filtered_content_ids_combined = list(set(filtered_content_ids_combined).union(set(content_ids_add_ons)))
-            # print('filtered_content_ids_combined after add ons:',filtered_content_ids_combined)
-
         return filtered_content_ids_combined
 
 

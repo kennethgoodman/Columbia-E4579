@@ -45,8 +45,6 @@ class FoxtrotGenerator(AbstractGenerator):
                     engagement_type=EngagementType.Like,
                     engagement_value=1,
                 )
-                # .where(Engagement.engagement_value==1)
-                # .order_by(Engagement.engagement_value.desc())
                 .limit(limit)
                 .offset(offset)
                 .all()
@@ -120,7 +118,6 @@ class FoxtrotGenerator(AbstractGenerator):
     # auxilliary function: returns content liked by a user_id in the same cluster
     def get_content_ids_auxilliary(self, user_id, limit, offset, _seed, starting_point):
         if starting_point is None:
-
             # content found according to engagement metrics
             results_engagement = (
                 Engagement.query.with_entities(Engagement.content_id, func.count())
@@ -139,7 +136,6 @@ class FoxtrotGenerator(AbstractGenerator):
             results_ANN = []
 
             # for likes
-
             table_ann_likes = (
                 Engagement.query.with_entities(Engagement.content_id, func.count())
                 .filter_by(
@@ -147,8 +143,6 @@ class FoxtrotGenerator(AbstractGenerator):
                     engagement_type=EngagementType.Like,
                     engagement_value=1,
                 )
-                # .where(Engagement.engagement_value==1)
-                # .order_by(Engagement.engagement_value.desc())
                 .limit(limit)
                 .offset(offset)
                 .all()
@@ -183,7 +177,6 @@ class FoxtrotGenerator(AbstractGenerator):
                     return_distances=True,
                 )
             results_ANN.append(content_ids)
-
             return list_engagement + results_ANN, None
         elif starting_point.get("content_id", False):
             content_ids, scores = ann_with_offset(

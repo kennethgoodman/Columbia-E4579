@@ -10,10 +10,8 @@ df_user_clusters_like = pd.read_csv(
     r"/usr/src/app/src/foxtrot/foxtrot_users_clusters2.csv", nrows=100
 )
 
-
 class FoxtrotFilter(AbstractFilter):
     def filter_ids(self, content_ids, user_id, seed, starting_point):
-        # df_user_clusters_like = pd.read_csv(r"users_clusters2.csv", nrows=100)
         engagement_sql_statement = text(f"""SELECT * FROM engagement""")
         with db.engine.connect() as con:
             df_engagement = list(con.execute(engagement_sql_statement))

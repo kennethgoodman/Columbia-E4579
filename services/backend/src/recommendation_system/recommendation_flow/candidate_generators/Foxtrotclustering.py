@@ -6,13 +6,10 @@ from sklearn.cluster import KMeans
 
 # some auxiliary code we used to generate the csv with users clusters:
 class FGenerator:
-
     # cluster all images from prompt embeddings
     def cluster_items_from_embeddings(self, number_rows, nb_clusters):
-
         # read images data
         df = pd.read_csv(r"generated_content_metadata.csv", nrows=number_rows)
-
         # put embeddings in right format
         x = pd.DataFrame(df["prompt_embedding"])
         x["embedding"] = x.apply(generator.convert_to_list, axis=1)
@@ -26,11 +23,9 @@ class FGenerator:
 
         # insert additional column with value equal to cluster number
         df.insert(loc=0, column="clusters", value=identified_clusters)
-
         return df
 
     def cluster_users(self):
-
         # nb of users and items clusters
         nb_clusters_items = 10
         nb_clusters_users = 6
@@ -42,14 +37,11 @@ class FGenerator:
             row_items_offset, nb_clusters_items
         )
 
-        # print(df_items['content_id'])
-
         users_df = pd.read_csv(r"engagement.csv", nrows=row_users_offset)
         users_df = users_df.loc[users_df["engagement_type"] == "Like"]
 
         nb_users = users_df["user_id"].nunique()
         users_id = pd.unique(users_df["user_id"])
-        # print(nb_users, users_id)
 
         df_liked = users_df.loc[users_df["engagement_value"] == 1]
         df_disliked = users_df.loc[users_df["engagement_value"] == -1]
@@ -75,20 +67,15 @@ class FGenerator:
 
         # cluster users based on similarities in proportions of likes for each cluster
         df3 = pd.DataFrame(df_user_clusters_like["clusters_portion_liked"].to_list())
-        # df4 = pd.DataFrame(df_user_clusters_like['clusters_portion_disliked'].to_list())
-        # df3 = pd.concat([df3, df4])
-
+        
         kmeans = KMeans(nb_clusters_users)
         kmeans.fit(df3)
         identified_clusters = kmeans.fit_predict(df3)
-        # print(identified_clusters)
 
         df_user_clusters_like["cluster_number"] = identified_clusters
-        # print(df_user_clusters_like)
 
         # write resulting file in csv format
         df_user_clusters_like.to_csv("foxtrot_users_clusters2.csv")
-
         return None
 
     # return list with fraction of clusters liked (or disliked) by user
@@ -98,7 +85,6 @@ class FGenerator:
 
         # replace the content_ids by their cluster number
         df2 = df_liked.apply(lambda x: self.get_cluster_from_content_id(df_items, x))
-        # print(df2)
 
         # add 1 row if cluster never liked
         df2 = pd.DataFrame(df2)
@@ -115,12 +101,10 @@ class FGenerator:
         if len(list_clusters) <= nb_clusters_items:
             for i in range(nb_clusters_items - len(list_clusters)):
                 list_clusters.append(0.0)
-
         return list_clusters
 
     # get the cluster number corresponding to a given content_id
     def get_cluster_from_content_id(self, df_items, content):
-        # print('here', content)
         cluster = df_items.loc[df_items["content_id"] == content]["clusters"].iloc[0]
         return cluster
 
@@ -130,7 +114,6 @@ class FGenerator:
         str = str.replace("]", "")
         li = list(str.split(","))
         li = [float(a) for a in li]
-
         return li
 
 

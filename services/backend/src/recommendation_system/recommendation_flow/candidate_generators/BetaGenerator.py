@@ -13,7 +13,6 @@ from .RandomGenerator import RandomGenerator
 class BetaGenerator(AbstractGenerator):
     def get_content_ids(self, user_id, limit, offset, seed, starting_point):
         if starting_point is None:
-            
             #1. generate based on like number
             results_like = (
                 Engagement.query.with_entities(

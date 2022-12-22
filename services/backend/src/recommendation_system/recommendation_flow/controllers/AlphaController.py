@@ -17,7 +17,6 @@ from src.recommendation_system.recommendation_flow.ranking.AlphaRanker import (
 
 class AlphaController(AbstractController):
     def get_content_ids(self, user_id, limit, offset, seed, starting_point):
-        print('limit from AlphaController get_content_ids():',limit)
         candidates, scores = AlphaGenerator().get_content_ids(
             user_id
         )
@@ -36,7 +35,5 @@ class AlphaController(AbstractController):
             if scores is not None
             else {},
         )
-        # print('predictions:',predictions)
         rank = AlphaRanker().rank_ids(limit, predictions, seed, starting_point)
-        print('rank',rank)
         return rank

@@ -19,11 +19,8 @@ from src.recommendation_system.recommendation_flow.ranking.BetaRanker import (
 
 
 class BetaController(AbstractController):
-    shown=[]
-
+    shown = []
     def get_content_ids(self, user_id, limit, offset, seed, starting_point):
-        print(self.shown)
-        print(limit, offset)
         candidates_limit = (
             limit * 10 * 10
         )  # 10% gets filtered out and take top 10% of rank
@@ -46,8 +43,4 @@ class BetaController(AbstractController):
         )
         rank = BetaRanker().rank_ids(limit, predictions, seed, starting_point)
         BetaController.shown.extend(rank)
-
-        #print(BetaController.shown)
-        #print('controller final 1-10th ids:', rank[:])
-        
         return rank

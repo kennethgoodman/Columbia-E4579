@@ -5,7 +5,6 @@ from .AbstractModel import AbstractModel
 class RuleBasedModel(AbstractModel):
     def liked_same_style(self, con, content_id, user_id):
         # If the user has liked images from this category +1 to the score, else 0
-
         # first get the style
         style_query = 'SELECT artist_style '\
                 'FROM generated_content_metadata '\
@@ -20,7 +19,6 @@ class RuleBasedModel(AbstractModel):
                                 'engagement.engagement_value=1 AND '\
                                 f'generated_content_metadata.artist_style="{style}";'
         result = con.execute(liked_same_style_query).one()[0]
-
         return result > 0
     
     def popularity_score(self, con, content_id):
@@ -50,13 +48,11 @@ class RuleBasedModel(AbstractModel):
         return score
 
     def predict_probabilities(self, content_ids, user_id, seed=None, **kwargs):
-
         # content id string
         content_id_str = '(' + ','.join(list(map(str, content_ids))) + ')'
 
         # liked same style
         p_engage = dict()
-
         with db.engine.connect() as con:
 
             for content_id in content_ids:
@@ -96,10 +92,8 @@ class RuleBasedModel(AbstractModel):
 
             for (content_id, total_likes) in same_style_total_likes:
                 total_likes = 0 if total_likes is None else int(total_likes)
-
                 if total_likes > 0:
                     p_engage[content_id] = p_engage[content_id] + 1
-
 
         # popularity score
         return list(

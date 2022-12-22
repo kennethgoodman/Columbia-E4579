@@ -97,16 +97,10 @@ class BetaModel(AbstractModel):
             results2 = con.execute(get_sources_user_has_liked)
             sources_user_has_liked = set(map(lambda x: x[0], results2))
 
-            # results_num_like = con.execute(get_likes_content_ids)
-            # num_like = set(map(lambda x: x[0], results_num_like))
-
-
             num_like_content_ids = list(con.execute(get_likes_content_ids))
             content_id_to_num_like = {}
             for (content_id, num_like) in num_like_content_ids:
                 content_id_to_num_like[content_id] = num_like
-
-
         return list(
             map(
                 lambda content_id: {
@@ -115,7 +109,6 @@ class BetaModel(AbstractModel):
                                 0.67519*float(content_id_to_style_map[content_id] in styles_user_has_liked) + 
                                 0.40762*float(content_id_to_source_map[content_id] in sources_user_has_liked) 
                                 - 0.95513 * (content_id_to_len_map[content_id]-15)/1518,
-                    # "p_engage" : - content_id_to_len_map[content_id],
                     "score": kwargs.get("scores", {})
                     .get(content_id, {})
                     .get("score", None),
