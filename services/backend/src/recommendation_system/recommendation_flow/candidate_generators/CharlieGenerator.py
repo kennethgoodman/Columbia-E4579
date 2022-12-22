@@ -17,24 +17,29 @@ from transformers import pipeline
 sentiment_score = pipeline("sentiment-analysis", model=model, tokenizer=tokenizer)
 def get_prompt(content_id):
     # Explore keeping data in memory for all embeddings if this is too slow
-    return str(
+    return np.array(
         GeneratedContentMetadata.query.with_entities(
             GeneratedContentMetadata.prompt
         )
         .filter_by(content_id=content_id)
-        .first()
+        .first(),
+        dtype=np.float32,
     )
 
 class RandomGenerator(AbstractGenerator):
     def get_content_ids(self, user_id, limit, offset, seed, starting_point):
         if starting_point is None:
-            results = (
+            Content_ids = (
                 Content.query.with_entities(Content.id)
                 .order_by(func.random(seed))
                 .limit(limit)
                 .offset(offset)
                 .all()
             )
+            results=[]
+            for cid in Content_ids:
+                if sentiment_score(get_prompt(cid))<50:
+                    results.append(cid)
             return list(map(lambda x: x[0], results)), None
         elif starting_point.get("content_id", False):
             content_ids, scores = ann_with_offset(
