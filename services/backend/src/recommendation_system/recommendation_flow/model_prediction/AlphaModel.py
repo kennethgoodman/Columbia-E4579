@@ -76,7 +76,8 @@ class AlphaModel(AbstractModel):
                     lambda content_id: {
                         "content_id": content_id,
                         # probability 0~1
-                        "p_engage": float(content_to_engage_dic[content_id]),
+                        # added some variability
+                        "p_engage": float(content_to_engage_dic[content_id] + random.uniform(-0.25, 0.25)),
                         "style": dic_id_style[content_id],
                         "total_likes": content_total_likes_dic[content_id],
                         "total_dislikes": content_total_dislikes_dic[content_id],
