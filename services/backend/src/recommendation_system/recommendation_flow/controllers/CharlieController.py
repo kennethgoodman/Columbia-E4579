@@ -1,5 +1,5 @@
 from src.recommendation_system.recommendation_flow.candidate_generators.CharlieGenerator import (
-    RandomGenerator,
+    CharlieGenerator,
 )
 from src.recommendation_system.recommendation_flow.controllers.AbstractController import (
     AbstractController,
@@ -8,10 +8,10 @@ from src.recommendation_system.recommendation_flow.filtering.CharlieFilter1 impo
     DislikeRatioFilter,
 )
 from src.recommendation_system.recommendation_flow.model_prediction.CharlieModel import (
-    ExampleModel,
+    CharlieModel,
 )
 from src.recommendation_system.recommendation_flow.ranking.CharlieRanking import (
-    RandomRanker,
+    CharlieRanker,
 )
 
 
@@ -20,13 +20,13 @@ class CharlieController(AbstractController):
         candidates_limit = (
             limit * 10 * 10
         )  # 10% gets filtered out and take top 10% of rank
-        candidates, scores = RandomGenerator().get_content_ids(
+        candidates, scores = CharlieGenerator().get_content_ids(
             user_id, candidates_limit, offset, seed, starting_point
         )
         filtered_candidates = DislikeRatioFilter().filter_ids(
             candidates, seed, starting_point
         )
-        predictions = ExampleModel().predict_probabilities(
+        predictions = CharlieModel().predict_probabilities(
             filtered_candidates,
             user_id,
             seed=seed,
@@ -37,5 +37,5 @@ class CharlieController(AbstractController):
             if scores is not None
             else {},
         )
-        rank = RandomRanker().rank_ids(limit, predictions, seed, starting_point)
+        rank = CharlieRanker().rank_ids(limit, predictions, seed, starting_point)
         return rank

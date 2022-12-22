@@ -7,7 +7,7 @@ import pandas as pd
 from .AbstractModel import AbstractModel
 
 
-class ExampleModel(AbstractModel):
+class CharlieModel(AbstractModel):
     def predict_probabilities(self, content_ids, user_id, seed=None, **kwargs):
         ## use the user_id to get all engagement of this
 
