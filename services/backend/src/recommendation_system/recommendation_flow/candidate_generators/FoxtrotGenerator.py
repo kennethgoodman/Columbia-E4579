@@ -118,7 +118,10 @@ class FoxtrotGenerator(AbstractGenerator):
     # return list of all users in cluster from csv
     def retrieve_cluster(self, user):
         df = df_user_clusters
-        cluster_nb = df.loc[df["user_id"] == user]["cluster_number"].iloc[0]
+        tmp = df.loc[df["user_id"] == user]["cluster_number"]
+        if len(tmp) == 0:
+            return []
+        cluster_nb = tmp.iloc[0]
         users_in_cluster = df.loc[df["cluster_number"] == cluster_nb][
             "user_id"
         ].to_list()
