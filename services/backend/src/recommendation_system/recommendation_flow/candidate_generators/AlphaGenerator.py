@@ -9,7 +9,6 @@ import json
 
 class AlphaGenerator(AbstractGenerator):
     def get_content_ids(self, user_id):
-        print("user id from alpha generator:",user_id)
         # all images that have not been engaged by this user can be a candidate
         sql_statement_candidates = f"""
         SELECT id 

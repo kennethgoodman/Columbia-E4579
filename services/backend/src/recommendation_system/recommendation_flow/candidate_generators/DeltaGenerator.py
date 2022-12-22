@@ -25,12 +25,10 @@ class CFGenerator(AbstractGenerator):
                     f'where generated_content_metadata.artist_style IN({prefs[1:-1]});'
 
             ids = list(map(lambda x: x[0], con.execute(query).all()))
-
             return ids, None
 
 class UserPreferenceGenerator(AbstractGenerator):
     def get_content_ids(self, user_id, limit, offset, seed, starting_point):
-
         if starting_point is None:
             # get the preference from the user
             with db.engine.connect() as con:
@@ -99,21 +97,15 @@ class UserPreferenceGenerator(AbstractGenerator):
                             limit
                                 """ + str(limit) + """;
                             """
-
                 results = con.execute(query).all()
-
             num_results = len(results)
-
             # if no previous record then do random cg
             if num_results == 0:
                 return RandomGenerator().get_content_ids(
                     user_id, limit, offset, seed, starting_point
                 )
-
             ids = list(map(lambda x: x[0], results))
-
             return ids, None
-
         elif starting_point.get("content_id", False):
             content_ids, scores = ann_with_offset(
                 starting_point["content_id"], 0.9, limit, offset, return_distances=True
@@ -123,7 +115,6 @@ class UserPreferenceGenerator(AbstractGenerator):
 
 class PopularCategoryGenerator(AbstractGenerator):
     def get_content_ids(self, user_id, limit, offset, seed, starting_point):
-
         if starting_point is None:
             # get the preference from the user
             with db.engine.connect() as con:
@@ -175,21 +166,15 @@ class PopularCategoryGenerator(AbstractGenerator):
                             where
                                 engagement.engagement_type = 'Like' and engagement.engagement_value != -1;
                             """
-
                 results = con.execute(query).all()
-
             num_results = len(results)
-
             # if no previous record then do random cg
             if num_results == 0:
                 return RandomGenerator().get_content_ids(
                     user_id, limit, offset, seed, starting_point
                 )
-
             ids = list(map(lambda x: x[0], results))
-
             return ids, None
-
         elif starting_point.get("content_id", False):
             content_ids, scores = ann_with_offset(
                 starting_point["content_id"], 0.9, limit, offset, return_distances=True

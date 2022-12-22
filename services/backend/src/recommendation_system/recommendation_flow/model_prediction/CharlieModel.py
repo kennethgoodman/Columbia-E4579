@@ -39,9 +39,7 @@ class CharlieModel(AbstractModel):
 
         ## for content_ids, get artist style and source, 
         ## map 50/50 score based on like and dislike INT
-
         with db.engine.connect() as con:
-
             all_sql_statement = """
             SELECT c.content_id, user_id, engagement_type, engagement_value, artist_style, source
             FROM engagement as e
@@ -80,8 +78,7 @@ class CharlieModel(AbstractModel):
                 ## when doing the aggregation, check if user_id is the same as input, if yes, then keep the code
                 ## if not, += weight * 1
 
-                if user ==  user_id:
-                    
+                if user ==  user_id: 
                     if style not in artist_style:
                         artist_style[style] = { 'Like' : 0, 'Dislike' : 0, 'Neutral': 0, 'Agg': 0}
                     if source not in source_dict: 
