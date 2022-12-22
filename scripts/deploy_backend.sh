@@ -9,18 +9,23 @@ sudo chkconfig docker on
 sudo curl -L https://github.com/docker/compose/releases/download/1.22.0/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
 sudo curl -L https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
+alias sudo='sudo '
+alias docker-compose=/usr/local/bin/docker-compose
 sudo amazon-linux-extras install nginx1 -y
 sudo amazon-linux-extras install epel -y
 sudo yum-config-manager --enable epel -y
 sudo yum install git-lfs -y
+git lfs pull
+sudo systemctl enable nginx
+sudo systemctl start nginx
 sudo nano /etc/nginx/nginx.conf
-cd Columbia-E4579
+sudo vi ~/Columbia-E4579/.env
 
 sudo /usr/local/bin/docker-compose -f docker-compose.prod.yaml up --build --force-recreate --remove-orphans -d
 
 
 # add the below under "server.include"
-# location /{
-#    proxy_pass http://localhost:5004/;
-# }
+location /{
+    proxy_pass http://localhost:5004/;
+}
 

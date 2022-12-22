@@ -18,6 +18,10 @@ def try_load_model(fn):
         pass
 
 dic_id_style = try_load_model('/usr/src/app/src/alpha/content_artist_style_dic.pickle')
+try:
+    dic_id_to_embeddings = {v[0]:v[1] for v in dic_id_embed}
+except:
+    dic_id_to_embeddings = None
 
 try:
     subprocess.check_call([
@@ -59,7 +63,6 @@ class AlphaModel(AbstractModel):
 
             # attach embed matrix
             train_content_ids = df.content_id.tolist()
-            dic_id_to_embeddings = {v[0]:v[1] for v in dic_id_embed}
             embed_matrix = []
             for content_id in train_content_ids:
                 embed_matrix.append(dic_id_to_embeddings[content_id])

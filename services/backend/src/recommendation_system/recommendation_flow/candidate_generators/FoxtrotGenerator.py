@@ -188,7 +188,7 @@ class FoxtrotGenerator(AbstractGenerator):
 
             for liked_content in liked_by_user:
                 content_ids, scores = ann_with_offset(
-                    liked_content["content_id"],
+                    liked_content,
                     0.9,
                     limit,
                     offset,

@@ -7,12 +7,32 @@ import { getRefreshTokenIfExists } from "../../utils/tokenHandler";
 
 import "./Feed.css";
 
+function shuffleArray(array) {
+    for (var i = array.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+    }
+}
+
+let selection_values = [
+  {key:"Alpha", value:"ALPHA"},
+  {key:"Beta", value:"BETA"},
+  {key:"Charlie", value:"CHARLIE"},
+  {key:"Delta", value:"DELTA"},
+  {key:"Echo", value:"ECHO"},
+  {key:"Foxtrot", value:"FOXTROT"},
+];
+
+shuffleArray(selection_values);
+
 const Feed = (props) => {
   const [isLoading, setLoading] = useState(true);
   const [data, setData] = useState([]);
   const [fetchParams, setFetchParams] = useState({
     page: 0,
-    controller: "EXAMPLE",
+    controller: selection_values[0]['value'],
     starting_content_id: undefined,
   });
 
@@ -104,14 +124,11 @@ const Feed = (props) => {
       <label>
         Which Controller Do You Want To Use:
         <select value={fetchParams["controller"]} onChange={handleChange}>
-          <option value="RANDOM">Random</option>
-          <option value="EXAMPLE">Example</option>
-          <option value="ALPHA">Alpha</option>
-          <option value="BETA">Beta</option>
-          <option value="CHARLIE">Charlie</option>
-          <option value="DELTA">Delta</option>
-          <option value="ECHO">Echo</option>
-          <option value="FOXTROT">Foxtrot</option>
+          {
+            selection_values.map(el => {
+              return <option value={el['value']} key={el['key']}>{el['key']}</option>
+            })
+          }
         </select>
       </label>
       {fetchParams["starting_content_id"] !== undefined && (

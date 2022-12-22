@@ -1,4 +1,5 @@
 from enum import Enum
+import time
 
 from src.api.content.models import Content, get_url
 from src.api.users.models import User
@@ -58,9 +59,11 @@ def get_content_data(controller, user_id, limit, offset, seed, starting_point=No
         ControllerEnum.ECHO,
         ControllerEnum.FOXTROT
     ]:
+        start = time.time()
         content_ids = controller.value().get_content_ids(
             user_id, limit, offset, seed, starting_point
         )
+        print(f"{controller} took {round(time.time() - start, 2)} seconds")
     else:
         raise ValueError(f"don't support that controller: {controller}")
     all_content = Content.query.filter(Content.id.in_(content_ids)).all()

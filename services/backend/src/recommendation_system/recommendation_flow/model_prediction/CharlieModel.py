@@ -60,9 +60,9 @@ class CharlieModel(AbstractModel):
             mapping_sql_statement = mapping_sql_statement.bindparams(bindparam('contentids', expanding=True))
 
             mapping_df = pd.read_sql_query(
-            mapping_sql_statement,
-            con=con,
-            params=params
+                mapping_sql_statement,
+                con=con,
+                params=params
             )
             
             engagementtime = table_df[table_df['engagement_type']=='MillisecondsEngagedWith']
@@ -142,30 +142,29 @@ class CharlieModel(AbstractModel):
 
                 ## append to scores
                 scores.append(score)
-
         returned = []
         try:
-                returned = list(
+            returned = list(
+                map(
+                    lambda content_id: {
+                        "content_id": content_id,
+                        "p_engage": random.random(), ## what is this?
+                        "score": kwargs.get("scores", {scores})
+                        .get(content_id, {})
+                        .get("score", None),
+                    },
+                    content_ids,
+                )
+            )
+        except TypeError:
+            returned = list(
                     map(
                         lambda content_id: {
                             "content_id": content_id,
                             "p_engage": random.random(), ## what is this?
-                            "score": kwargs.get("scores", {scores})
-                            .get(content_id, {})
-                            .get("score", None),
+                            "score": random.random(),
                         },
                         content_ids,
                     )
                 )
-        except TypeError:
-                returned = list(
-                        map(
-                            lambda content_id: {
-                                "content_id": content_id,
-                                "p_engage": random.random(), ## what is this?
-                                "score": random.random(),
-                            },
-                            content_ids,
-                        )
-                    )
-         return returned
+        return returned
