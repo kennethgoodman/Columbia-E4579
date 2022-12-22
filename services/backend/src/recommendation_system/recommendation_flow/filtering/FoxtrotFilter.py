@@ -16,8 +16,8 @@ class FoxtrotFilter(AbstractFilter):
 
         engagement_sql_statement = text(
             f"""SELECT 
-                                            user_id, engagement_value, engagement_type
-                                            FROM engagement"""
+                    user_id, engagement_value, engagement_type
+                FROM engagement"""
         )
         with db.engine.connect() as con:
             df_engagement = list(con.execute(engagement_sql_statement))
