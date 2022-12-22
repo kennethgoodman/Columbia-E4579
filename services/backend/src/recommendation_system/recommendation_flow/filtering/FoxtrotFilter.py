@@ -17,16 +17,16 @@ class FoxtrotFilter(AbstractFilter):
         engagement_sql_statement = text(
             f"""SELECT 
                     user_id, engagement_value, engagement_type
-                FROM engagement"""
+                FROM engagement
+                Where engagement_value = -1
+                AND engagement_type = "Like"
+                """
         )
         with db.engine.connect() as con:
             df_engagement = list(con.execute(engagement_sql_statement))
         df_engagement = pd.DataFrame(df_engagement)
         df_engagement.columns = ["user_id", "engagement_value", "engagement_type"]
-        df_cluster_dislike = df_engagement[
-            (df_engagement["engagement_value"] == -1)
-            & (df_engagement["engagement_type"] == "Like")
-        ].merge(
+        df_cluster_dislike = df_engagement.merge(
             df_user_clusters_like[["user_id", "cluster_number"]],
             how="outer",
             on="user_id",
