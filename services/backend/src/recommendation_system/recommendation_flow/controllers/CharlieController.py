@@ -11,7 +11,7 @@ from src.recommendation_system.recommendation_flow.model_prediction.CharlieModel
     ExampleModel,
 )
 from src.recommendation_system.recommendation_flow.ranking.CharlieRanking import (
-    RandomRanker,
+    CharlieRanker,
 )
 
 
@@ -37,5 +37,5 @@ class CharlieController(AbstractController):
             if scores is not None
             else {},
         )
-        rank = RandomRanker().rank_ids(limit, predictions, seed, starting_point)
+        rank = CharlieRanker().rank_ids(limit, predictions, seed, starting_point)
         return rank
