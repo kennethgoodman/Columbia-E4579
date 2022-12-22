@@ -10,18 +10,16 @@ from .AbstractFilter import AbstractFilter
 
 class QualityFilter(AbstractFilter):
     def filter_ids(self, content_ids, _, starting_point, user_id):
-
         ### 1. Remove images that user disliked previously
         def remove_user_dislikes():
-            sql_statement = text(f"""
-                -- 1. User dislike
-                SELECT engagement.content_id
-                FROM engagement 
-                    WHERE engagement_type = 'Like' 
-                    and user_id = {user_id}
-                    and engagement_value = -1 
-                GROUP BY 1
-            """)
+            sql_statement = f"SELECT engagement.content_id " \
+                f"FROM engagement " \
+                f"WHERE (engagement_type = 'Like' " \
+                f"AND user_id = {user_id}) " \
+                f"OR (engagement_type = 'MillisecondsEngagedWith' " \
+                f"AND user_id = {user_id} " \
+                f"AND engagement_value > 0) " \
+                f"GROUP BY 1;"
             with db.engine.connect() as con:
                 ids_to_filter_out = list(con.execute(sql_statement))
                 ids_to_filter_out = set(map(lambda x: x[0], ids_to_filter_out))
@@ -91,27 +89,14 @@ class QualityFilter(AbstractFilter):
 
             scores_sorted = list(sorted(scores, key = lambda x : float(x[1])))
             scores_filtered = scores_sorted[:int(0.90*len(scores_sorted))]
-
             return dict(scores_filtered)
 
         start = time.time()
         ids_to_filter_out1 = remove_user_dislikes()
-        print(f'FILTERING: Stage 1 no. of images to filter: {len(ids_to_filter_out1)}, Time: {(time.time() - start)}')
-
         scores_filtered = remove_low_quality_images(content_ids)
         ids_to_filter_out4 = set(scores_filtered.keys())
-
-        print(f'FILTERING: Stage 4 no. of images to filter: {len(ids_to_filter_out4)}, Time: {(time.time() - start)}')
-
         total_ids_to_drop = set.union(ids_to_filter_out1,
                                       ids_to_filter_out4)
-
         filtered_content_ids = set.difference(set(content_ids),
                                                   total_ids_to_drop)
-
-        print(f'FILTERING: no. of images (before): {len(content_ids)}')
-        print(f'FILTERING: no. of images (after): {len(filtered_content_ids)}')
-
         return scores_filtered
-
-        # return filtered_content_ids

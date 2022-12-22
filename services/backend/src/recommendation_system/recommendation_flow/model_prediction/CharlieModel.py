@@ -39,9 +39,7 @@ class CharlieModel(AbstractModel):
 
         ## for content_ids, get artist style and source, 
         ## map 50/50 score based on like and dislike INT
-
         with db.engine.connect() as con:
-
             all_sql_statement = """
             SELECT c.content_id, user_id, engagement_type, engagement_value, artist_style, source
             FROM engagement as e
@@ -86,7 +84,6 @@ class CharlieModel(AbstractModel):
                     source_dict[source] = { 'Like' : 0, 'Dislike' : 0, 'Neutral': 0, 'Agg': 0} 
 
                 if user ==  user_id:
-                    
                     if row['content_id'] in like_list:  
                         artist_style[style]['Like'] += 1
                         artist_style[style]['Agg'] += 1
