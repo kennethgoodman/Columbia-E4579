@@ -17,13 +17,6 @@ df_user_clusters = pd.read_csv(
 class FoxtrotGenerator(AbstractGenerator):
     def get_content_ids(self, user_id, limit, offset, _seed, starting_point):
         if starting_point is None:
-            # 40% of the content will be found according to engagement metrics
-            # 30% through (approximate) nearest neighbours search of liked content
-            # 30% from content liked by similar users
-
-            # TODO: should discount by creation_time so closer events have more weight
-
-            # content found according to engagement metrics
             results_engagement = (
                 Engagement.query.with_entities(Engagement.content_id, func.count())
                 .filter_by(
@@ -35,24 +28,7 @@ class FoxtrotGenerator(AbstractGenerator):
                 .offset(offset)
                 .all()
             )
-
-            list_engagement = list(map(lambda x: x[0], results_engagement))
-
-            # Collaborative filtering: use users clusters to find similar users from user_id, then find most liked items
-            # for similar users in cluster.
-            results_colaborative = []
-
-            # retrieve users clusters from csv
-            users_in_cluster = self.retrieve_cluster(user_id)
-
-            for user in users_in_cluster:
-                results, scores = self.get_content_ids_auxilliary(
-                    user, limit, offset, _seed, starting_point
-                )
-                if results is not None:
-                    results_colaborative.append(results)
-
-            return list_engagement + results_colaborative, None
+            return list_engagement, None
         elif starting_point.get("content_id", False):
             content_ids, scores = ann_with_offset(
                 starting_point["content_id"], 0.9, limit, offset, return_distances=True
