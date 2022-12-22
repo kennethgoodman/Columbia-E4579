@@ -37,61 +37,6 @@ class FoxtrotGenerator(AbstractGenerator):
             )
 
             list_engagement = list(map(lambda x: x[0], results_engagement))
-            # get content most engaged with by user
-            results_ANN = []
-            results_ANN = []
-
-            # for likes
-
-            table_ann_likes = (
-                Engagement.query.with_entities(Engagement.content_id, func.count())
-                .filter_by(
-                    user_id=user_id,
-                    engagement_type=EngagementType.Like,
-                    engagement_value=1,
-                )
-                .group_by(Engagement.content_id)
-                # .where(Engagement.engagement_value==1)
-                # .order_by(Engagement.engagement_value.desc())
-                .limit(limit)
-                .offset(offset)
-                .all()
-            )
-
-            # for engagement time
-
-            table_ann_engagement_time = (
-                Engagement.query.with_entities(
-                    Engagement.content_id,
-                    func.sum(Engagement.engagement_value) / func.count(),
-                )
-                .filter_by(
-                    user_id=user_id,
-                    engagement_type=EngagementType.MillisecondsEngagedWith,
-                )
-                .group_by(Engagement.content_id)
-                .order_by((func.sum(Engagement.engagement_value) / func.count()).desc())
-                .limit(limit)
-                .offset(offset)
-                .all()
-            )
-
-            liked_by_user = list(map(lambda x: x[0], table_ann_likes)) + list(
-                map(lambda x: x[0], table_ann_engagement_time)
-            )
-
-            # get ANN for the items found
-
-            for liked_content in liked_by_user:
-                content_ids, scores = ann_with_offset(
-                    liked_content,
-                    0.9,
-                    limit,
-                    offset,
-                    return_distances=True,
-                )
-            if liked_by_user:
-                results_ANN.append(content_ids)
 
             # Collaborative filtering: use users clusters to find similar users from user_id, then find most liked items
             # for similar users in cluster.
@@ -107,7 +52,7 @@ class FoxtrotGenerator(AbstractGenerator):
                 if results is not None:
                     results_colaborative.append(results)
 
-            return list_engagement + results_ANN + results_colaborative, None
+            return list_engagement + results_colaborative, None
         elif starting_point.get("content_id", False):
             content_ids, scores = ann_with_offset(
                 starting_point["content_id"], 0.9, limit, offset, return_distances=True
