@@ -20,6 +20,7 @@ class FoxtrotFilter(AbstractFilter):
                 FROM engagement
                 Where engagement_value = -1
                 AND engagement_type = "Like"
+                
                 """
         )
         with db.engine.connect() as con:
