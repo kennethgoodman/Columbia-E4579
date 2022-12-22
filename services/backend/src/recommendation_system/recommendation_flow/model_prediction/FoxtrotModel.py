@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import os
+import random
 from sklearn.metrics.pairwise import cosine_similarity
 import pickle
 from src.recommendation_system.ml_models.foxtrot_lgb_model.Foxtrotlgb_model import (
@@ -75,14 +76,11 @@ class FoxtrotModel(AbstractModel):
         ).reshape((len(content_ids), 12))
 
     def predict_probabilities(self, content_ids, user_id, seed=None, **kwargs):
-        predictions = model.predict_proba(self._create_all_data(content_ids, user_id))
         return list(
             map(
                 lambda i: {
                     "content_id": content_ids[i],
-                    "p_engage": predictions[i][
-                        1
-                    ],  # hard coding that first output is p(Engage | data)
+                    "p_engage": random.random(),  # hard coding that first output is p(Engage | data)
                     "score": kwargs.get("score", None),
                 },
                 range(len(content_ids)),
