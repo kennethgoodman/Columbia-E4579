@@ -9,7 +9,10 @@ from src.data_structures.approximate_nearest_neighbor import ann_with_offset
 from .AbstractGenerator import AbstractGenerator
 from .RandomGenerator import RandomGenerator
 
-df_user_clusters = pd.read_csv(r"/usr/src/app/src/foxtrot/foxtrot_users_clusters2.csv", nrows=100)
+df_user_clusters = pd.read_csv(
+    r"/usr/src/app/src/foxtrot/foxtrot_users_clusters2.csv", nrows=100
+)
+
 
 class FoxtrotGenerator(AbstractGenerator):
     def get_content_ids(self, user_id, limit, offset, _seed, starting_point):
@@ -36,6 +39,8 @@ class FoxtrotGenerator(AbstractGenerator):
             list_engagement = list(map(lambda x: x[0], results_engagement))
             # get content most engaged with by user
             results_ANN = []
+            results_ANN = []
+
             # for likes
 
             table_ann_likes = (
@@ -45,6 +50,9 @@ class FoxtrotGenerator(AbstractGenerator):
                     engagement_type=EngagementType.Like,
                     engagement_value=1,
                 )
+                .group_by(Engagement.content_id)
+                # .where(Engagement.engagement_value==1)
+                # .order_by(Engagement.engagement_value.desc())
                 .limit(limit)
                 .offset(offset)
                 .all()
@@ -53,12 +61,16 @@ class FoxtrotGenerator(AbstractGenerator):
             # for engagement time
 
             table_ann_engagement_time = (
-                Engagement.query.with_entities(Engagement.content_id, func.count())
+                Engagement.query.with_entities(
+                    Engagement.content_id,
+                    func.sum(Engagement.engagement_value) / func.count(),
+                )
                 .filter_by(
                     user_id=user_id,
                     engagement_type=EngagementType.MillisecondsEngagedWith,
                 )
-                .order_by(Engagement.engagement_value.desc())
+                .group_by(Engagement.content_id)
+                .order_by((func.sum(Engagement.engagement_value) / func.count()).desc())
                 .limit(limit)
                 .offset(offset)
                 .all()
@@ -69,16 +81,16 @@ class FoxtrotGenerator(AbstractGenerator):
             )
 
             # get ANN for the items found
-            for liked_content_id in liked_by_user:
-                if liked_content_id is None:
-                    continue
+
+            for liked_content in liked_by_user:
                 content_ids, scores = ann_with_offset(
-                    liked_content_id,
+                    liked_content["content_id"],
                     0.9,
                     limit,
                     offset,
                     return_distances=True,
                 )
+            if liked_by_user:
                 results_ANN.append(content_ids)
 
             # Collaborative filtering: use users clusters to find similar users from user_id, then find most liked items
@@ -106,10 +118,7 @@ class FoxtrotGenerator(AbstractGenerator):
     # return list of all users in cluster from csv
     def retrieve_cluster(self, user):
         df = df_user_clusters
-        cluster_nbs = df.loc[df["user_id"] == user]["cluster_number"]
-        if len(cluster_nbs) == 0:
-            return []
-        cluster_nb = cluster_nbs.iloc[0]
+        cluster_nb = df.loc[df["user_id"] == user]["cluster_number"].iloc[0]
         users_in_cluster = df.loc[df["cluster_number"] == cluster_nb][
             "user_id"
         ].to_list()
@@ -118,6 +127,7 @@ class FoxtrotGenerator(AbstractGenerator):
     # auxilliary function: returns content liked by a user_id in the same cluster
     def get_content_ids_auxilliary(self, user_id, limit, offset, _seed, starting_point):
         if starting_point is None:
+
             # content found according to engagement metrics
             results_engagement = (
                 Engagement.query.with_entities(Engagement.content_id, func.count())
@@ -136,6 +146,7 @@ class FoxtrotGenerator(AbstractGenerator):
             results_ANN = []
 
             # for likes
+
             table_ann_likes = (
                 Engagement.query.with_entities(Engagement.content_id, func.count())
                 .filter_by(
@@ -143,6 +154,9 @@ class FoxtrotGenerator(AbstractGenerator):
                     engagement_type=EngagementType.Like,
                     engagement_value=1,
                 )
+                .group_by(Engagement.content_id)
+                # .where(Engagement.engagement_value==1)
+                # .order_by(Engagement.engagement_value.desc())
                 .limit(limit)
                 .offset(offset)
                 .all()
@@ -151,12 +165,16 @@ class FoxtrotGenerator(AbstractGenerator):
             # for engagement time
 
             table_ann_engagement_time = (
-                Engagement.query.with_entities(Engagement.content_id, func.count())
+                Engagement.query.with_entities(
+                    Engagement.content_id,
+                    func.sum(Engagement.engagement_value) / func.count(),
+                )
                 .filter_by(
                     user_id=user_id,
                     engagement_type=EngagementType.MillisecondsEngagedWith,
                 )
-                .order_by(Engagement.engagement_value.desc())
+                .group_by(Engagement.content_id)
+                .order_by((func.sum(Engagement.engagement_value) / func.count()).desc())
                 .limit(limit)
                 .offset(offset)
                 .all()
@@ -176,7 +194,9 @@ class FoxtrotGenerator(AbstractGenerator):
                     offset,
                     return_distances=True,
                 )
-            results_ANN.append(content_ids)
+            if liked_by_user:
+                results_ANN.append(content_ids)
+
             return list_engagement + results_ANN, None
         elif starting_point.get("content_id", False):
             content_ids, scores = ann_with_offset(
