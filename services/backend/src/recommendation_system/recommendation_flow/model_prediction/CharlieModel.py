@@ -7,7 +7,7 @@ import pandas as pd
 from .AbstractModel import AbstractModel
 
 
-class ExampleModel(AbstractModel):
+class CharlieModel(AbstractModel):
     def predict_probabilities(self, content_ids, user_id, seed=None, **kwargs):
         ## use the user_id to get all engagement of this
 
@@ -80,12 +80,12 @@ class ExampleModel(AbstractModel):
                 ## when doing the aggregation, check if user_id is the same as input, if yes, then keep the code
                 ## if not, += weight * 1
 
+                if style not in artist_style:
+                    artist_style[style] = { 'Like' : 0, 'Dislike' : 0, 'Neutral': 0, 'Agg': 0}
+                if source not in source_dict: 
+                    source_dict[source] = { 'Like' : 0, 'Dislike' : 0, 'Neutral': 0, 'Agg': 0} 
+
                 if user ==  user_id:
-                    
-                    if style not in artist_style:
-                        artist_style[style] = { 'Like' : 0, 'Dislike' : 0, 'Neutral': 0, 'Agg': 0}
-                    if source not in source_dict: 
-                        source_dict[source] = { 'Like' : 0, 'Dislike' : 0, 'Neutral': 0, 'Agg': 0} 
                     
                     if row['content_id'] in like_list:  
                         artist_style[style]['Like'] += 1
