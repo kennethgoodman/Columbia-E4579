@@ -28,7 +28,7 @@ class FoxtrotGenerator(AbstractGenerator):
                 .offset(offset)
                 .all()
             )
-            return list_engagement, None
+            return list(map(lambda x: x[0], results_engagement)), None
         elif starting_point.get("content_id", False):
             content_ids, scores = ann_with_offset(
                 starting_point["content_id"], 0.9, limit, offset, return_distances=True
