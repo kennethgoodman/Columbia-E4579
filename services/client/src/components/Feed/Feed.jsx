@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-handler-names */
 import React from "react";
-import { useState, useEffect, useRef, useCallback, Button } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import Post from "../Post/Post";
 import axios from "axios";
 import { getRefreshTokenIfExists } from "../../utils/tokenHandler";
