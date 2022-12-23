@@ -144,7 +144,7 @@ const Feed = (props) => {
       })
       .catch((error) => {
         console.log("error in getTimeEngaged");
-        alert(error);
+        setButtonText("please log in");
         setLoading(false);
       });
   };
