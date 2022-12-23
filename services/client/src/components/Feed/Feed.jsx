@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-handler-names */
 import React from "react";
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, Button } from "react";
 import Post from "../Post/Post";
 import axios from "axios";
 import { getRefreshTokenIfExists } from "../../utils/tokenHandler";
@@ -119,8 +119,54 @@ const Feed = (props) => {
     });
   };
 
+
+  const getTimeEngaged = async () => {
+    console.log("in getTimeEngaged");
+    const options = {
+      method: "get",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${getRefreshTokenIfExists()}`,
+      },
+    };
+    options[
+      "url"
+    ] = `${process.env.REACT_APP_API_SERVICE_URL}/engagement/time_engaged/${fetchParams["controller"]}`; //?&controller=${fetchParams["controller"]}`;
+    setLoading(true);
+    axios(options)
+      .then((response) => {
+        const results = response.data;
+        console.log('ms engaged: '+results);
+        var minutes = Math.floor(results/60000);
+        var seconds = Math.floor((results % 60000)/1000);
+        setButtonText(minutes+"m"+seconds+"s");
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.log("error in getTimeEngaged");
+        alert(error);
+        setLoading(false);
+      });
+  };
+
+
+  const [buttonText, setButtonText] = useState("time engaged")
+
   return (
     <div className="Feed">
+      <button
+        className="primary"
+        style={{width: "55px",height: "30px",
+          margin: 0,
+          top: 'auto',
+          right: 20,
+          bottom: 20,
+          left: 'auto', position: 'fixed', color:'#7e95be'}}
+        onMouseEnter={() => getTimeEngaged()}
+        onMouseLeave={() => setButtonText("time engaged")}
+      >
+          {buttonText}
+      </button>
       <label>
         Which Controller Do You Want To Use:
         <select value={fetchParams["controller"]} onChange={handleChange}>
@@ -167,3 +213,4 @@ const Feed = (props) => {
 };
 
 export default Feed;
+ 
