@@ -156,12 +156,8 @@ const Feed = (props) => {
     <div className="Feed">
       <button
         className="primary"
-        style={{width: "55px",height: "30px",
-          margin: 0,
-          top: 'auto',
-          right: 20,
-          bottom: 20,
-          left: 'auto', position: 'fixed', color:'#7e95be'}}
+        // ,width: "fit-content",
+        style={{width: "60px", height: "40px", margin: 0, top: 'auto', right: 20, bottom: 20, left: 'auto', position: 'fixed', color:'#7e95be'}}
         onMouseEnter={() => getTimeEngaged()}
         onMouseLeave={() => setButtonText("time engaged")}
       >
