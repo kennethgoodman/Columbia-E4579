@@ -66,7 +66,7 @@ def get_time_engaged_by_user_and_controller(user_id, controller):
         engagement_times_by_user = Engagement.query.filter_by(
             user_id=user_id, engagement_type="MillisecondsEngagedWith"
         ).all()
-        ms_engaged_by_user_with_controller = sum([i.engagement_value for i in engagement_times_by_user if i.engagement_metadata==controller])
+        ms_engaged_by_user_with_controller = sum([min(i.engagement_value,25000) for i in engagement_times_by_user if i.engagement_metadata==controller])
         print(ms_engaged_by_user_with_controller)
         return ms_engaged_by_user_with_controller
     except Exception as e:
