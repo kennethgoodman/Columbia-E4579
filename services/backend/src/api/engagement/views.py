@@ -204,7 +204,7 @@ class TimeEngaged(Resource):
             engagement_namespace.abort(status_code, exception_message)
             return status_code, exception_message
         return get_time_engaged_by_user_and_controller(
-            user_id,         
+            user_id,    
             {
                 "controller": controller
             }

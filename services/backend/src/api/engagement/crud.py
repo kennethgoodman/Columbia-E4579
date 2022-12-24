@@ -60,15 +60,16 @@ def get_engagement_by_content_and_user_and_type(user_id, content_id, engagement_
 
 
 def get_time_engaged_by_user_and_controller(user_id, controller):
-    try:
-        engagement_times_by_user = Engagement.query.filter_by(
-            user_id=user_id, engagement_type=EngagementType.MillisecondsEngagedWith
-        ).all()
-        ms_engaged_by_user_with_controller = sum([i.engagement_value for i in engagement_times_by_user if i.engagement_metadata==controller and i.engagement_value<=25000])
-        return ms_engaged_by_user_with_controller
-    except Exception as e:
-        print('get_time_engaged_by_user_and_controller hit an exception')
-        print(e)
+    # TODO: calculate sum using sql, add controller and engagement value filters in sql
+    engagement_times_by_user = Engagement.query.filter_by(
+        user_id=user_id, engagement_type=EngagementType.MillisecondsEngagedWith
+    ).all()
+    ms_engaged_by_user_with_controller = sum([
+        i.engagement_value 
+        for i in engagement_times_by_user 
+        if i.engagement_metadata == controller and i.engagement_value<=25000
+    ])
+    return ms_engaged_by_user_with_controller
 
 
 def add_engagement(user_id, content_id, engagement_type, engagement_value, metadata=None):
