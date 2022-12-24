@@ -7,6 +7,7 @@ from src.api.engagement.crud import (  # isort:skip
     get_all_engagements_by_content_id,
     get_engagement_by_content_and_user_and_type,
     get_engagement_count_by_content_id,
+    get_time_engaged_by_user_and_controller,
     add_engagement,
     update_engagement,
     delete_engagement,
@@ -191,9 +192,28 @@ class ElapsedTime(Resource):
         return {"message": "Success"}, 200
 
 
+class TimeEngaged(Resource):
+    @engagement_namespace.expect(parser)
+    @engagement_namespace.response(200, "Success")
+    @engagement_namespace.response(403, "Need To Login")
+    @engagement_namespace.response(401, "Bad Token, need to re-login")
+    @engagement_namespace.response(400, "Already exists")
+    def get(self, controller):
+        status_code, user_id, exception_message = get_user(request)
+        if exception_message:
+            engagement_namespace.abort(status_code, exception_message)
+            return status_code, exception_message
+        return get_time_engaged_by_user_and_controller(
+            user_id,         
+            {
+                "controller": controller
+            }
+        )
+
 engagement_namespace.add_resource(Like, "/like/<int:content_id>")
 engagement_namespace.add_resource(UnLike, "/unlike/<int:content_id>")
 engagement_namespace.add_resource(Dislike, "/dislike/<int:content_id>")
 engagement_namespace.add_resource(UnDislike, "/undislike/<int:content_id>")
 engagement_namespace.add_resource(LikeCount, "/likecount/<int:content_id>")
 engagement_namespace.add_resource(ElapsedTime, "/elapsed_time/<int:content_id>")
+engagement_namespace.add_resource(TimeEngaged, "/time_engaged/<controller>")
