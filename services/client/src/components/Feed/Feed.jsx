@@ -121,7 +121,6 @@ const Feed = (props) => {
 
 
   const getTimeEngaged = async () => {
-    console.log("in getTimeEngaged");
     const options = {
       method: "get",
       headers: {
@@ -131,19 +130,18 @@ const Feed = (props) => {
     };
     options[
       "url"
-    ] = `${process.env.REACT_APP_API_SERVICE_URL}/engagement/time_engaged/${fetchParams["controller"]}`; //?&controller=${fetchParams["controller"]}`;
+    ] = `${process.env.REACT_APP_API_SERVICE_URL}/engagement/time_engaged/${fetchParams["controller"]}`; 
     setLoading(true);
     axios(options)
       .then((response) => {
         const results = response.data;
-        console.log('ms engaged: '+results);
         var minutes = Math.floor(results/60000);
         var seconds = Math.floor((results % 60000)/1000);
         setButtonText(minutes+"m"+seconds+"s");
         setLoading(false);
       })
       .catch((error) => {
-        console.log("error in getTimeEngaged");
+        console.log("error in getTimeEngaged"+error);
         setButtonText("please log in");
         setLoading(false);
       });
