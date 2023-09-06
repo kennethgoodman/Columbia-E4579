@@ -33,9 +33,7 @@ class ExampleModel(AbstractModel):
                 lambda content_id: {
                     "content_id": content_id,
                     "p_engage": float(content_id_to_style_map[content_id] in styles_user_has_engaged_with),
-                    "score": kwargs.get("scores", {})
-                    .get(content_id, {})
-                    .get("score", None),
+                    "score": kwargs.get("scores", {}).get(content_id, {}).get("score", None),
                 },
                 content_ids,
             )

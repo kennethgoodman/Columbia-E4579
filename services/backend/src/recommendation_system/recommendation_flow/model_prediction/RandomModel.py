@@ -12,9 +12,7 @@ class RandomModel(AbstractModel):
                 lambda content_id: {
                     "content_id": content_id,
                     "p_engage": random.random(),
-                    "score": kwargs.get("scores", {})
-                    .get(content_id, {})
-                    .get("score", None),
+                    "score": kwargs.get("scores", {}).get(content_id, {}).get("score", None),
                 },
                 content_ids,
             )
