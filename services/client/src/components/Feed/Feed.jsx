@@ -17,12 +17,8 @@ function shuffleArray(array) {
 }
 
 let selection_values = [
-  {key:"Alpha", value:"ALPHA"},
-  {key:"Beta", value:"BETA"},
-  {key:"Charlie", value:"CHARLIE"},
-  {key:"Delta", value:"DELTA"},
-  {key:"Echo", value:"ECHO"},
-  {key:"Foxtrot", value:"FOXTROT"},
+  {key:"Random", value:"RANDOM"},
+  {key:"Example", value:"EXAMPLE"},
 ];
 
 shuffleArray(selection_values);

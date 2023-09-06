@@ -6,24 +6,12 @@ from src.api.users.models import User
 from src.recommendation_system.recommendation_flow.controllers import (
     RandomController,
     ExampleController,
-    AlphaController,
-    BetaController,
-    CharlieController,
-    DeltaController,
-    EchoController,
-    FoxtrotController
 )
 
 
 class ControllerEnum(Enum):
     RANDOM = RandomController
     EXAMPLE = ExampleController
-    ALPHA = AlphaController
-    BETA = BetaController
-    CHARLIE = CharlieController
-    DELTA = DeltaController
-    ECHO = EchoController
-    FOXTROT = FoxtrotController
 
     def human_string(self):
         return str(self).split(".")[1]
@@ -52,12 +40,6 @@ def get_content_data(controller, user_id, limit, offset, seed, starting_point=No
     if controller in [
         ControllerEnum.RANDOM,
         ControllerEnum.EXAMPLE,
-        ControllerEnum.ALPHA,
-        ControllerEnum.BETA,
-        ControllerEnum.CHARLIE,
-        ControllerEnum.DELTA,
-        ControllerEnum.ECHO,
-        ControllerEnum.FOXTROT
     ]:
         start = time.time()
         content_ids = controller.value().get_content_ids(
