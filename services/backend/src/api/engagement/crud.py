@@ -65,9 +65,9 @@ def get_time_engaged_by_user_and_controller(user_id, controller):
         user_id=user_id, engagement_type=EngagementType.MillisecondsEngagedWith
     ).all()
     ms_engaged_by_user_with_controller = sum([
-        i.engagement_value 
+        min(i.engagement_value, 5000) # dont count anything more than 5 seconds
         for i in engagement_times_by_user 
-        if i.engagement_metadata == controller and i.engagement_value<=25000
+        if i.engagement_metadata == controller and 200 <= i.engagement_value <= 5000
     ])
     return ms_engaged_by_user_with_controller
 
