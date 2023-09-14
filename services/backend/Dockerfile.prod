@@ -39,3 +39,4 @@ COPY ./entrypoint.production.sh .
 COPY ./id_to_embedding.pkl .
 COPY seed_data .
 RUN chmod +x /usr/src/app/entrypoint.production.sh
+CMD ["/usr/src/app/entrypoint.production.sh"]

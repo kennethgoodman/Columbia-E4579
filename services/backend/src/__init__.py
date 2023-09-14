@@ -50,7 +50,7 @@ def create_app(script_info=None):
         else:
             print("SCORE_TASK: score file not found. Skipping")
 
-    app.before_first_request(f)
+    # app.before_first_request(f)
     app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_port=1)
 
     # set config
