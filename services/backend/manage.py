@@ -33,9 +33,6 @@ def seed_db():
             user = User(**row)
             users.append(user)
             db.session.add(user)
-    print("reading embeddings")
-    with open("seed_data/data/prompt_to_embedding.64.100.1000.pkl", "rb") as f:
-        prompt_to_embedding = pickle.load(f)
     print("seeded content with metadata")
     with open("seed_data/data/content_with_metadata.csv") as csvfile:
         reader = csv.DictReader(csvfile, delimiter=chr(255))
@@ -60,8 +57,7 @@ def seed_db():
                 generated_type=row["generated_type"],
                 model=ModelType.StableDiffusion,  # TODO: read this, don't hardcode
                 model_version="1.4",  # TODO: read this, don't hardcode
-                prompt_embedding=list(prompt_to_embedding.get(row["prompt"], []))
-                or None,
+                prompt_embedding=None,
             )
             db.session.add(metadata)
     print("committing data")
