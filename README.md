@@ -84,7 +84,7 @@ docker-compose up
 If you want to access the database in a mysql CLI, you can run the following command while `docker-compose up` is running:
 
 ```bash
-docker exec -it $(docker ps | grep columbia-e4579_api-db | awk '{print $1}') mysql --password=mysql api_dev
+docker-compose exec api-db mysql --password=mysql api_dev
 ```
 
 ### Misc Commands
@@ -98,7 +98,7 @@ docker-compose exec api python manage.py shell
 #### Accessing terminal of api backend
 
 ```bash
-docker exec -it $(docker ps | grep "/usr/src/app/entryp…" | awk '{print $1}') /bin/bash
+docker-compose exec api /bin/bash
 ```
 
 #### Recreating DB
