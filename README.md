@@ -21,6 +21,8 @@ docker-compose -f docker-compose.full_db.yaml up --build --force-recreate --rene
 
 The website will be at http://127.0.0.1:3007/feed
 
+You must wait to see INSTANTIATED to finish to have the ANN index loaded locally, you can comment out before_first_request if you don't need it
+
 If you want to see the API docs, you can go to http://localhost:5004/doc
 
 You can use `control-c` to kill the local servers
