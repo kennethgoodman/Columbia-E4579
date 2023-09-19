@@ -4,23 +4,50 @@
   align-items: center;
   max-width: 600px;
   min-width: 300px;
-  border: 1px solid #dbdbdb;
-  border-radius: 5px;
-  margin: 1.5rem;
-  padding: 5px;
+  border: 2px solid #a1a1a1;
+  border-radius: 10px;
+  margin: 2rem;
+  padding: 10px;
   text-align: center;
-  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
-    rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+  box-shadow: rgba(60, 64, 67, 0.3) 0px 3px 5px 0px,
+    rgba(60, 64, 67, 0.15) 0px 3px 10px 2px;
+  transition: all 0.3s ease;
+  background-color: #ffffff;
+  color: #000;
+  font-family: 'Roboto', sans-serif;
+}
+
+.postContainer.dark {
+  background-color: #333;
+  color: #fff;
+  border-color: #fff;
+}
+
+.postContainer:hover {
+  transform: scale(1.005);
+  box-shadow: 0px 10px 20px rgba(0,0,0,0.19), 0px 6px 6px rgba(0,0,0,0.23);
 }
 
 .postAuthor {
-  background: #fafafa;
-  padding: 0.5rem;
+  background: #f2f2f2;
+  padding: 1rem;
   text-align: center;
+  font-weight: bold;
+}
+
+.postAuthor.dark {
+  background: #333;
+  color: #fff;
 }
 
 .postBody {
-  font-size: 12px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #000;
+}
+
+.postBody.dark {
+  color: #fff;
 }
 
 img {
@@ -29,12 +56,19 @@ img {
   -moz-user-select: none; /* mozilla browsers */
   -khtml-user-select: none; /* webkit (konqueror) browsers */
   -ms-user-select: none; /* IE10+ */
+  border-radius: 10px;
 }
 
 .likesContainer {
   display: flex;
-  width: 90px;
+  width: 100px;
   align-items: center;
   justify-content: space-between;
-  margin: 5px;
+  margin: 10px;
+  padding: 10px;
+  color: #333333;
+}
+
+.likesContainer.dark {
+  color: #fff;
 }

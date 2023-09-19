@@ -1,9 +1,10 @@
 /* eslint-disable react/jsx-handler-names */
 import React from "react";
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, useContext } from "react";
 import Post from "../Post/Post";
 import axios from "axios";
 import { getRefreshTokenIfExists } from "../../utils/tokenHandler";
+import { DarkModeContext } from '../../components/darkmode/DarkModeContext';
 
 import "./Feed.css";
 
@@ -24,6 +25,7 @@ let selection_values = [
 shuffleArray(selection_values);
 
 const Feed = (props) => {
+  const { darkMode, setDarkMode } = useContext(DarkModeContext);
   const [isLoading, setLoading] = useState(true);
   const [data, setData] = useState([]);
   const [fetchParams, setFetchParams] = useState({
@@ -147,7 +149,7 @@ const Feed = (props) => {
   const [buttonText, setButtonText] = useState("time engaged")
 
   return (
-    <div className="Feed">
+    <div className={darkMode ? 'Feed dark' : 'Feed'}>
       <button
         className="primary"
         style={{width: "60px", height: "40px", margin: 0, top: 'auto', right: 20, bottom: 20, left: 'auto', position: 'fixed', color:'#7e95be'}}
@@ -156,6 +158,10 @@ const Feed = (props) => {
       >
           {buttonText}
       </button>
+      <label className="switch">
+        <input type="checkbox" checked={darkMode} onChange={() => setDarkMode(!darkMode)} />
+        <span className="slider round" />
+      </label>
       <label>
         Which Controller Do You Want To Use:
         <select value={fetchParams["controller"]} onChange={handleChange}>
