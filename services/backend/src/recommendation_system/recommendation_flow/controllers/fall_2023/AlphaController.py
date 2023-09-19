@@ -20,11 +20,12 @@ class AlphaController(AbstractController):
     def get_content_ids(self, user_id, limit, offset, seed, starting_point):
         if seed <= 1:  # MySql seeds should be [0, # of rows] not [0, 1]
             seed *= 1000000
+        candidate_limit = 500
         candidates, scores = [], []
         for gen in [TwoTowerANNGenerator, CollaberativeFilteredSimilarUsersGenerator, YourChoiceGenerator]:
            cur_candidates, cur_scores = gen().get_content_ids(
                TeamName.Alpha,
-               user_id, candidates_limit, offset, seed, starting_point
+               user_id, candidate_limit, offset, seed, starting_point
            )
            candidates += cur_candidates
            scores += cur_scores
