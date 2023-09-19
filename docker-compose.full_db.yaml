@@ -2,7 +2,10 @@ version: "3.8"
 
 services:
   adminer:
-    image: adminer
+    image: adminer:latest
+    container_name: adminer
+    environment:
+      ADMINER_DEFAULT_SERVER: api-db
     restart: always
     ports:
       - 8080:8080

@@ -1,3 +1,30 @@
+import operator
+from sqlalchemy.sql.expression import func
+from src import db
+from src.api.metrics.models import Metric, MetricFunnelType, MetricType
+from src.api.metrics.crud import add_metric
+
+
 class AbstractGenerator:
-    def get_content_ids(self, user_id, limit, offset, seed, starting_point):
+    def get_content_ids(self, team_name, user_id, limit, offset, seed, starting_point):
+        response = self._get_content_ids(user_id, limit, offset, seed, starting_point)
+        add_metric(
+            team_name=team_name, 
+            funnel_name=self._get_name(), 
+            user_id=user_id if user_id else None, 
+            content_id=None, 
+            metric_funnel_type=MetricFunnelType.CandidateGeneration, 
+            metric_type=MetricType.CandidateGenerationNumCandidates, 
+            metric_value=len(response),
+            metric_metadata={
+                "limit": limit, "offset": offset, 
+                "seed": seed, "starting_point": starting_point
+                }
+        )
+        return response
+
+    def _get_content_ids(self, user_id, limit, offset, seed, starting_point):
+        pass
+
+    def _get_name(self):
         pass

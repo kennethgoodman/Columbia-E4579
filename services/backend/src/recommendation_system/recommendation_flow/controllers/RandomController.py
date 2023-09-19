@@ -13,7 +13,7 @@ from src.recommendation_system.recommendation_flow.model_prediction.RandomModel 
 from src.recommendation_system.recommendation_flow.ranking.RandomRanker import (
     RandomRanker,
 )
-
+from src.api.metrics.models import TeamName
 
 class RandomController(AbstractController):
     def get_content_ids(self, user_id, limit, offset, seed, starting_point):
@@ -23,6 +23,7 @@ class RandomController(AbstractController):
             limit * 10 * 10
         )  # 10% gets filtered out and take top 10% of rank
         candidates, scores = RandomGenerator().get_content_ids(
+            TeamName.Random,
             user_id, candidates_limit, offset, seed, starting_point
         )
         filtered_candidates = RandomFilter().filter_ids(

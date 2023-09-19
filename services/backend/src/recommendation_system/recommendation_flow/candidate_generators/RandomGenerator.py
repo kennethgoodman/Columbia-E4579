@@ -8,7 +8,7 @@ from .AbstractGenerator import AbstractGenerator
 
 
 class RandomGenerator(AbstractGenerator):
-    def get_content_ids(self, user_id, limit, offset, seed, starting_point):
+    def _get_content_ids(self, user_id, limit, offset, seed, starting_point):
         if starting_point is None:
             results = (
                 Content.query.with_entities(Content.id)
@@ -24,3 +24,6 @@ class RandomGenerator(AbstractGenerator):
             )
             return content_ids, scores
         raise NotImplementedError("Need to provide a key we know about")
+    
+    def _get_name(self):
+        return "Random"

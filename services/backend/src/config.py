@@ -8,6 +8,8 @@ class BaseConfig:
     BCRYPT_LOG_ROUNDS = 13
     ACCESS_TOKEN_EXPIRATION = 900  # 15 minutes
     REFRESH_TOKEN_EXPIRATION = 2592000  # 30 days
+    NUMBER_OF_CONTENT_IN_ANN = 5 # UPDATE THIS WHEN DEVELOPING ANN
+    INSTANTIATE_PROMPT_ANN = False
 
 
 class DevelopmentConfig(BaseConfig):
@@ -26,3 +28,5 @@ class TestingConfig(BaseConfig):
 class ProductionConfig(BaseConfig):
     SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL", "")
     SECRET_KEY = os.getenv("SECRET_KEY", "")
+    NUMBER_OF_CONTENT_IN_ANN = 50000
+    INSTANTIATE_PROMPT_ANN = True

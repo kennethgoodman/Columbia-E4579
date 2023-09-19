@@ -1,7 +1,8 @@
 import os
 import pickle
 from functools import lru_cache
-
+import random
+from flask import current_app
 import mrpt
 import numpy as np
 from src.api.content.models import Content, GeneratedContentMetadata
@@ -13,10 +14,13 @@ CONTENT_ID_TO_INDEX = {}
 
 @lru_cache(1)
 def read_data():
+    if not current_app.config.get("INSTANTIATE_PROMPT_ANN"):
+        return np.array([])
+
     global INDEX_TO_CONTENT_ID
-    if os.path.isfile("/usr/src/app/id_to_embedding.pkl"):
-        print("reading data from id_to_embedding.pkl")
-        with open("/usr/src/app/id_to_embedding.pkl", "rb") as f:
+    if os.path.isfile("/usr/src/app/id_to_pickle_dict.pkl"):
+        print("reading data from id_to_pickle_dict.pkl")
+        with open("/usr/src/app/id_to_pickle_dict.pkl", "rb") as f:
             data = pickle.load(f)
     else:
         data = GeneratedContentMetadata.query.with_entities(
@@ -28,14 +32,14 @@ def read_data():
     if len(data) == 0:
         raise ValueError(
             """
-            You probably don't have the prompt_to_embedding file:
-            https://github.com/kennethgoodman/Columbia-E4579/blob/main/services/backend/seed_data/data/prompt_to_embedding.64.100.1000.pkl
-            You have 2 options:
-            1) manually download the file from the link above and put it in /services/backend/seed_data/data/ folder
-            2) install git lfs and use that to pull the file, running "git lfs pull" (preferred but more effort)
+            You probably don't have the prompt_to_embedding file, ask for help
         """
         )
-    for (content_id, embedding) in data:
+    if isinstance(data, dict):
+        data_gen = data.items()
+    else:
+        data_gen = data
+    for (content_id, embedding) in data_gen:
         if embedding is None:
             continue
         INDEX_TO_CONTENT_ID[i] = content_id
@@ -46,6 +50,8 @@ def read_data():
 
 
 def instantiate(target_recall, k=25):  # instantiate k=25, but can ask for more later
+    if not current_app.config.get("INSTANTIATE_PROMPT_ANN"):
+        return
     global INDEXES
     data = read_data()
     index = mrpt.MRPTIndex(data)
@@ -66,6 +72,10 @@ def get_embedding(content_id):
 
 
 def ann(content_id, target_recall, k=25, return_distances=False):
+    if not current_app.config.get("INSTANTIATE_PROMPT_ANN"):
+        return db.session.query(
+            Content.id
+        ).order_by(func.random()).limit(k).all(), [random.rand() for _ in range(k)]
     global INDEXES, INDEX_TO_CONTENT_ID
     model = INDEXES[target_recall]
     idx = CONTENT_ID_TO_INDEX.get(content_id, None)

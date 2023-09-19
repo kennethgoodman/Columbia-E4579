@@ -11,7 +11,9 @@ from src.api.content.models import (
     MediaType,
     ModelType,
 )
+from src.api.metrics.models import Metric
 from src.api.users.models import User
+
 
 cli = FlaskGroup(create_app=create_app)
 

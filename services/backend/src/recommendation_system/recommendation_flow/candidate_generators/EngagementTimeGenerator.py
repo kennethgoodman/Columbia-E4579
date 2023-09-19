@@ -11,7 +11,7 @@ from .RandomGenerator import RandomGenerator
 
 
 class EngagementTimeGenerator(AbstractGenerator):
-    def get_content_ids(self, user_id, limit, offset, seed, starting_point):
+    def _get_content_ids(self, user_id, limit, offset, seed, starting_point):
         if starting_point is None:
             # TODO: should discount by creation_time so closer events have more weight
             results = (
@@ -60,3 +60,6 @@ class EngagementTimeGenerator(AbstractGenerator):
             )
             return content_ids, scores
         raise NotImplementedError("Need to provide a key we know about")
+
+    def _get_name(self):
+        return "EngagementTime"

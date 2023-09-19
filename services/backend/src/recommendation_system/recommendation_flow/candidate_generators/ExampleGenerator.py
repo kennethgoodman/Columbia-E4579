@@ -10,7 +10,7 @@ from .RandomGenerator import RandomGenerator
 
 
 class ExampleGenerator(AbstractGenerator):
-    def get_content_ids(self, _, limit, offset, _seed, starting_point):
+    def _get_content_ids(self, _, limit, offset, _seed, starting_point):
         if starting_point is None:
             # TODO: should discount by creation_time so closer events have more weight
             results = (
@@ -33,3 +33,6 @@ class ExampleGenerator(AbstractGenerator):
             )
             return content_ids, scores
         raise NotImplementedError("Need to provide a key we know about")
+    
+    def _get_name(self):
+        return "Example"

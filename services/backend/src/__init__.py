@@ -18,11 +18,18 @@ def create_app(script_info=None):
     # instantiate the app
     app = Flask(__name__)
 
-    def f():
+    def before_first_request():
         from src.data_structures.approximate_nearest_neighbor import (
             instantiate,
             read_data,
         )
+        from src.data_structures.approximate_nearest_neighbor.two_tower_ann import (
+            instantiate_indexes,
+        )
+
+        print("INSTANTIATING ALL TEAMS ANNs")
+        instantiate_indexes()
+        print("INSTANTIATED")
 
         print("READING DATA FOR ANN INDEX, will only run this once")
         read_data()
@@ -30,27 +37,6 @@ def create_app(script_info=None):
         instantiate(0.9)
         print("INSTANTIATED")
 
-        # code to generate collaborative filtering embeddings
-        from src.recommendation_system.recommendation_flow.utils.DeltaCfTask import (
-                generate_cf_embedding
-        )
-
-        print("generating cf embedding")
-        generate_cf_embedding()
-
-        from src.recommendation_system.recommendation_flow.utils.DeltaScoreTask import (
-            add_image_scores
-        )
-
-        # code to insert image quality
-        score_file = "/usr/src/app/src/delta/image_quality.csv"
-        if os.path.isfile(score_file):
-            print("SCORE TASK: adding image quality scores to the table")
-            add_image_scores(score_file)
-        else:
-            print("SCORE_TASK: score file not found. Skipping")
-
-    # app.before_first_request(f)
     app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_port=1)
 
     # set config
@@ -74,4 +60,7 @@ def create_app(script_info=None):
     def ctx():
         return {"app": app, "db": db}
 
+    with app.app_context():
+        db.create_all() # only create tables if they don't exist
+        before_first_request()
     return app
