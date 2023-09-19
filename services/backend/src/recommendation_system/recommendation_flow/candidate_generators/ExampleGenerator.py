@@ -6,7 +6,6 @@ from src.api.engagement.models import Engagement, EngagementType
 from src.data_structures.approximate_nearest_neighbor import ann_with_offset
 
 from .AbstractGenerator import AbstractGenerator
-from .RandomGenerator import RandomGenerator
 
 
 class ExampleGenerator(AbstractGenerator):

@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useState, useContext } from "react";
 import axios from "axios";
 import { Route, Routes } from "react-router-dom";
 import Feed from "./components/Feed";
@@ -12,83 +12,91 @@ import {
   setRefreshToken,
   removeRefreshToken,
 } from "./utils/tokenHandler";
+import { DarkModeContext } from './components/darkmode/DarkModeContext';
 
 import "./App.css";
 
-class App extends Component {
-  constructor() {
-    super();
+const App = () => {
+  const { darkMode } = useContext(DarkModeContext);
+  const [state, setState] = useState({
+    users: [],
+    title: "Columbia-E4579",
+    accessToken: null,
+    messageType: null,
+    messageText: null,
+    showModal: false,
+    seed: Math.random() * 1000000,
+  });
 
-    this.state = {
-      users: [],
-      title: "Columbia-E4579",
-      accessToken: null,
-      messageType: null,
-      messageText: null,
-      showModal: false,
-      seed: Math.random() * 1000000,
-    };
-  }
-
-  createMessage = (type, text) => {
-    this.setState({
+  const createMessage = (type, text) => {
+    setState(prevState => ({
+      ...prevState,
       messageType: type,
       messageText: text,
-    });
+    }));
     setTimeout(() => {
-      this.removeMessage();
+      removeMessage();
     }, 3000);
   };
 
-  handleLoginFormSubmit = (data) => {
+  const handleLoginFormSubmit = (data) => {
     const url = `${process.env.REACT_APP_API_SERVICE_URL}/auth/login`;
     axios
       .post(url, data)
       .then((res) => {
-        this.setState({ accessToken: res.data.access_token });
+        setState(prevState => ({
+          ...prevState,
+          accessToken: res.data.access_token
+        }));
         setRefreshToken(res.data.refresh_token);
-        this.createMessage("success", "You have logged in successfully.");
+        createMessage("success", "You have logged in successfully.");
       })
       .catch((err) => {
         console.log(err);
-        this.createMessage("danger", "Incorrect username and/or password.");
+        createMessage("danger", "Incorrect username and/or password.");
       });
   };
 
-  handleRegisterFormSubmit = (data) => {
+  const handleRegisterFormSubmit = (data) => {
     const url = `${process.env.REACT_APP_API_SERVICE_URL}/auth/register`;
     axios
       .post(url, data)
       .then((res) => {
-        this.setState({ accessToken: res.data.access_token });
+        setState(prevState => ({
+          ...prevState,
+          accessToken: res.data.access_token
+        }));
         setRefreshToken(res.data.refresh_token);
-        this.createMessage("success", "You have logged in successfully.");
-        this.createMessage("success", "You have registered successfully.");
+        createMessage("success", "You have registered successfully.");
       })
       .catch((err) => {
         console.log(err);
-        this.createMessage("danger", "That user already exists.");
+        createMessage("danger", "That user already exists.");
       });
   };
 
-  isAuthenticated = (callback) => {
-    return this.state.accessToken || this.validRefresh(callback);
+  const isAuthenticated = (callback) => {
+    return state.accessToken || validRefresh(callback);
   };
 
-  logoutUser = () => {
+  const logoutUser = () => {
     removeRefreshToken();
-    this.setState({ accessToken: null });
-    this.createMessage("success", "You have logged out.");
+    setState(prevState => ({
+      ...prevState,
+      accessToken: null
+    }));
+    createMessage("success", "You have logged out.");
   };
 
-  removeMessage = () => {
-    this.setState({
+  const removeMessage = () => {
+    setState(prevState => ({
+      ...prevState,
       messageType: null,
       messageText: null,
-    });
+    }));
   };
 
-  validRefresh = (callback) => {
+  const validRefresh = (callback) => {
     const token = getRefreshTokenIfExists();
     if (token) {
       axios
@@ -96,7 +104,10 @@ class App extends Component {
           refresh_token: token,
         })
         .then((res) => {
-          this.setState({ accessToken: res.data.access_token });
+          setState(prevState => ({
+            ...prevState,
+            accessToken: res.data.access_token
+          }));
           setRefreshToken(res.data.refresh_token);
           if (callback) callback();
         })
@@ -107,51 +118,49 @@ class App extends Component {
     return false;
   };
 
-  render() {
-    return (
-      <div className="App">
-        <NavBar
-          title={this.state.title}
-          logoutUser={this.logoutUser}
-          isAuthenticated={this.isAuthenticated}
+  return (
+    <div className={`App ${darkMode ? 'dark' : ''}`}>
+      <NavBar
+        title={state.title}
+        logoutUser={logoutUser}
+        isAuthenticated={isAuthenticated}
+      />
+      {state.messageType && state.messageText && (
+        <Message
+          messageType={state.messageType}
+          messageText={state.messageText}
+          removeMessage={removeMessage}
         />
-        {this.state.messageType && this.state.messageText && (
-          <Message
-            messageType={this.state.messageType}
-            messageText={this.state.messageText}
-            removeMessage={this.removeMessage}
-          />
-        )}
-        <Routes>
-          <Route exact path="/feed" element={<Feed seed={this.state.seed} />} />
-          <Route />
-          <Route exact path="/about" element={<About />} />
-          <Route
-            exact
-            path="/register"
-            element={
-              <RegisterForm
-                // eslint-disable-next-line react/jsx-handler-names
-                handleRegisterFormSubmit={this.handleRegisterFormSubmit}
-                isAuthenticated={this.isAuthenticated}
-              />
-            }
-          />
-          <Route
-            exact
-            path="/login"
-            element={
-              <LoginForm
-                // eslint-disable-next-line react/jsx-handler-names
-                handleLoginFormSubmit={this.handleLoginFormSubmit}
-                isAuthenticated={this.isAuthenticated}
-              />
-            }
-          />
-        </Routes>
-      </div>
-    );
-  }
+      )}
+      <Routes>
+        <Route exact path="/feed" element={<Feed seed={state.seed} />} />
+        <Route />
+        <Route exact path="/about" element={<About />} />
+        <Route
+          exact
+          path="/register"
+          element={
+            <RegisterForm
+              // eslint-disable-next-line react/jsx-handler-names
+              handleRegisterFormSubmit={handleRegisterFormSubmit}
+              isAuthenticated={isAuthenticated}
+            />
+          }
+        />
+        <Route
+          exact
+          path="/login"
+          element={
+            <LoginForm
+              // eslint-disable-next-line react/jsx-handler-names
+              handleLoginFormSubmit={handleLoginFormSubmit}
+              isAuthenticated={isAuthenticated}
+            />
+          }
+        />
+      </Routes>
+    </div>
+  );
 }
 
 export default App;

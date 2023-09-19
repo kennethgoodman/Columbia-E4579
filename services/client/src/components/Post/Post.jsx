@@ -1,8 +1,12 @@
-import React, { useEffect, useRef, useState, useMemo } from "react";
+import React, { useEffect, useRef, useState, useContext } from "react";
 import LikeButton from "../Likes/LikeButton";
 import DislikeButton from "../Likes/DislikeButton";
 import axios from "axios";
 import { getRefreshTokenIfExists } from "../../utils/tokenHandler";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { useSpring, animated } from 'react-spring';
+import { DarkModeContext } from '../../components/darkmode/DarkModeContext';
 
 import "./Post.css";
 
@@ -14,15 +18,14 @@ const get_options = (uri, content_id) => {
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${getRefreshTokenIfExists()}`,
-    },
+    }, 
   };
 };
 
 const Post = (props) => {
+  const { darkMode } = useContext(DarkModeContext);
   const [likeIsClicked, setLikeIsClicked] = useState(props.post.user_likes);
-  const [dislikeIsClicked, setDislikeIsClicked] = useState(
-    props.post.user_dislikes,
-  );
+  const [dislikeIsClicked, setDislikeIsClicked] = useState(props.post.user_dislikes);
   const [totalLikes, setTotalLikes] = useState(props.post.total_likes);
   const [totalDislikes, setTotalDislikes] = useState(props.post.total_dislikes);
   const [isAuthenticated, _] = useState(getRefreshTokenIfExists() !== null);
@@ -34,28 +37,28 @@ const Post = (props) => {
     axios(get_options("like", props.content_id))
       .then(callback)
       .catch(function (error) {
-        console.log(error);
+        toast.error('Something went wrong, please try again.');
       });
   };
   const unlike = (callback) => {
     axios(get_options("unlike", props.content_id))
       .then(callback)
       .catch(function (error) {
-        console.log(error);
+        toast.error('Something went wrong, please try again.');
       });
   };
   const dislike = (callback) => {
     axios(get_options("dislike", props.content_id))
       .then(callback)
       .catch(function (error) {
-        console.log(error);
+        toast.error('Something went wrong, please try again.');
       });
   };
   const undislike = (callback) => {
     axios(get_options("undislike", props.content_id))
       .then(callback)
       .catch(function (error) {
-        console.log(error);
+        toast.error('Something went wrong, please try again.');
       });
   };
 
@@ -98,9 +101,20 @@ const Post = (props) => {
     }
   };
 
+  const likeButtonSpring = useSpring({
+    opacity: 1,
+    from: { opacity: 0 },
+  });
+  
+  const dislikeButtonSpring = useSpring({
+    opacity: 1,
+    from: { opacity: 0 },
+  });
+
   return (
-    <div className="postContainer">
-      <h4 className="postAuthor">{props.post.author}</h4>
+    <div className={`postContainer ${darkMode ? 'dark' : ''}`}>
+      <ToastContainer />
+      <h4 className={`postAuthor ${darkMode ? 'dark' : ''}`}>{props.post.author}</h4>
       <button onClick={() => props.handleSeeMore(props.content_id)}>
         See More Like This
       </button>
@@ -110,22 +124,26 @@ const Post = (props) => {
         alt={props.post.text}
         onDoubleClick={handleLikes}
       />
-      <p className="postBody">{props.post.text}</p>
+      <p className={`postBody ${darkMode ? 'dark' : ''}`}>{props.post.text}</p>
       {isAuthenticated && (
-        <div className="likesContainer">
-          <LikeButton
-            content_id={props.content_id}
-            total_likes={totalLikes}
-            user_likes={likeIsClicked}
-            handleLikes={handleLikes}
-          />
+        <div className={`likesContainer ${darkMode ? 'dark' : ''}`}>
+          <animated.div style={likeButtonSpring}>
+            <LikeButton
+              content_id={props.content_id}
+              total_likes={totalLikes}
+              user_likes={likeIsClicked}
+              handleLikes={handleLikes}
+            />
+          </animated.div>
           {totalLikes - totalDislikes}
-          <DislikeButton
-            content_id={props.content_id}
-            total_dislikes={totalDislikes}
-            user_dislikes={dislikeIsClicked}
-            handleDislikes={handleDislikes}
-          />
+          <animated.div style={dislikeButtonSpring}>
+            <DislikeButton
+              content_id={props.content_id}
+              total_dislikes={totalDislikes}
+              user_dislikes={dislikeIsClicked}
+              handleDislikes={handleDislikes}
+            />
+          </animated.div>
         </div>
       )}
     </div>
@@ -149,7 +167,7 @@ function useIntersectionObserver(
   const frozen = entry?.isIntersecting && freezeOnceVisible;
 
   const handle_elapsed = (elapsed_time, content_id) => {
-    if (elapsed_time <= 500) {
+    if (elapsed_time <= 250) {
       return;
     }
     console.log("in handle elapsed", elapsed_time, content_id);

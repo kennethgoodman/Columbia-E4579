@@ -48,7 +48,7 @@ services:
       dockerfile: Dockerfile
     volumes:
       - "./services/client:/usr/src/app"
-      - "/usr/src/app/node_modules"
+      - "node_modules:/usr/src/app/node_modules"
     ports:
       - 3007:3000
     environment:
@@ -62,3 +62,6 @@ services:
     image: redis:latest
     ports:
       - "127.0.0.1:6379:6379"
+
+volumes:
+  node_modules:
