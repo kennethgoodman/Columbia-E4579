@@ -37,6 +37,14 @@ def create_app(script_info=None):
         instantiate(0.9)
         print("INSTANTIATED")
 
+        print("instantiating user based collabertive filter objects")
+        teams = ["alpha", "beta", "charlie", "delta", "echo", "foxtrot", "golf"]
+        for team in teams:
+            print(f"doing {team}")
+            module_path = f"src.data_structures.user_based_recommender.{team}.UserBasedRecommender"
+            __import__(module_path, fromlist=['recommender']).recommender # import to initialize the singleton
+            print(f"done {team}")
+
     app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_port=1)
 
     # set config

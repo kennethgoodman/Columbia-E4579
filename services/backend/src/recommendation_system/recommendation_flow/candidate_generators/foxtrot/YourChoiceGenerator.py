@@ -7,4 +7,4 @@ class YourChoiceGeneratorGenerator(AbstractGenerator):
         raise NotImplementedError("Need to implement this")
     
     def _get_name(self):
-        "YourChoiceGenerator"
+        return "YourChoiceGenerator"
