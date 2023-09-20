@@ -1,7 +1,4 @@
-import operator
-from sqlalchemy.sql.expression import func
-from src import db
-from src.api.metrics.models import Metric, MetricFunnelType, MetricType
+from src.api.metrics.models import MetricFunnelType, MetricType
 from src.api.metrics.crud import add_metric
 
 

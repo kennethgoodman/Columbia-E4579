@@ -23,6 +23,7 @@ class MetricFunnelType(Enum):
 @unique
 class MetricType(Enum):
     CandidateGenerationNumCandidates = 1
+    TimeTaken = 2
 
 @unique
 class TeamName(Enum):
