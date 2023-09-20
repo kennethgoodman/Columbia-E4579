@@ -47,7 +47,7 @@ def add_metric_time_took(team_name, user_id, val, limit, offset, seed, starting_
         user_id=user_id if user_id else None, 
         content_id=None, 
         metric_funnel_type=MetricFunnelType.Controller, 
-        metric_type=MetricType.TimeTaken, 
+        metric_type=MetricType.TimeTakenMS, 
         metric_value=val,
         metric_metadata={
             "limit": limit, "offset": offset, 
@@ -69,7 +69,7 @@ def get_content_data(controller, user_id, limit, offset, seed, starting_point=No
             add_metric_time_took({
                 ControllerEnum.RANDOM: TeamName.Random,
                 ControllerEnum.EXAMPLE: TeamName.Example
-            }[controller], user_id, int(time.time() - start), 
+            }[controller], user_id, int(1000 * (time.time() - start)), 
                                 limit, offset, seed, starting_point)
         except Exception as e:
             print(f"exception trying to add_metric_time_took {e}")
