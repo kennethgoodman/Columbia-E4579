@@ -1,4 +1,5 @@
 from flask import request
+import uuid
 from flask_restx import Namespace, Resource, fields
 from src.api.engagement.models import EngagementType, LikeDislike
 from src.api.utils.auth_utils import get_user
@@ -91,6 +92,7 @@ def _get_all_engagements_by_content_id(content_id, engagement_type):
 class LikeCount(Resource):
     @engagement_namespace.marshal_with(like_count)
     def get(self, content_id):
+        request.request_id = uuid.uuid4()
         return get_engagement_count_by_content_id(content_id, EngagementType.Like)
 
 
@@ -98,6 +100,7 @@ class Like(Resource):
     @engagement_namespace.marshal_with(engagement)
     def get(self, content_id):
         """Retrieve the like count for this content_id"""
+        request.request_id = uuid.uuid4()
         return _get_all_engagements_by_content_id(content_id, EngagementType.Like)
 
     @engagement_namespace.expect(parser)
@@ -108,6 +111,7 @@ class Like(Resource):
     @engagement_namespace.response(400, "Already exists")
     def post(self, content_id):
         """Like this content"""
+        request.request_id = uuid.uuid4()
         status_code, user_id, exception_message = get_user(request)
         if exception_message:
             engagement_namespace.abort(status_code, exception_message)
@@ -119,6 +123,7 @@ class Dislike(Resource):
     @engagement_namespace.marshal_with(engagement)
     def get(self, content_id):
         """Retrieve the dislike count for this content_id"""
+        request.request_id = uuid.uuid4()
         return _get_all_engagements_by_content_id(content_id, EngagementType.Like)
 
     @engagement_namespace.expect(parser)
@@ -129,6 +134,7 @@ class Dislike(Resource):
     @engagement_namespace.response(400, "Already exists")
     def post(self, content_id):
         """Dislike this content"""
+        request.request_id = uuid.uuid4()
         status_code, user_id, exception_message = get_user(request)
         if exception_message:
             engagement_namespace.abort(status_code, exception_message)
@@ -145,6 +151,7 @@ class UnLike(Resource):
     @engagement_namespace.response(400, "Already exists")
     def post(self, content_id):
         """Unlike this content"""
+        request.request_id = uuid.uuid4()
         status_code, user_id, exception_message = get_user(request)
         if exception_message:
             engagement_namespace.abort(status_code, exception_message)
@@ -161,6 +168,7 @@ class UnDislike(Resource):
     @engagement_namespace.response(400, "Already exists")
     def post(self, content_id):
         """UnDislike this content"""
+        request.request_id = uuid.uuid4()
         status_code, user_id, exception_message = get_user(request)
         if exception_message:
             engagement_namespace.abort(status_code, exception_message)
@@ -176,6 +184,7 @@ class ElapsedTime(Resource):
     @engagement_namespace.response(401, "Bad Token, need to re-login")
     @engagement_namespace.response(400, "Already exists")
     def post(self, content_id):
+        request.request_id = uuid.uuid4()
         status_code, user_id, exception_message = get_user(request)
         if exception_message:
             engagement_namespace.abort(status_code, exception_message)
@@ -199,6 +208,7 @@ class TimeEngaged(Resource):
     @engagement_namespace.response(401, "Bad Token, need to re-login")
     @engagement_namespace.response(400, "Already exists")
     def get(self, controller):
+        request.request_id = uuid.uuid4()
         status_code, user_id, exception_message = get_user(request)
         if exception_message:
             engagement_namespace.abort(status_code, exception_message)

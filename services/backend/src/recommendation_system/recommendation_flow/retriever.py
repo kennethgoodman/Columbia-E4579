@@ -1,5 +1,6 @@
 from enum import Enum
 import time
+from flask import request
 
 from src.api.content.models import Content, get_url
 from src.api.users.models import User
@@ -40,6 +41,7 @@ def content_to_response(content):
 
 def add_metric_time_took(team_name, user_id, val, limit, offset, seed, starting_point):
     add_metric(
+        request_id=request.request_id,
         team_name=team_name, 
         funnel_name='retriever', 
         user_id=user_id if user_id else None, 

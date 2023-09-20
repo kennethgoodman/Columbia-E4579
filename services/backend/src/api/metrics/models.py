@@ -23,7 +23,16 @@ class MetricFunnelType(Enum):
 @unique
 class MetricType(Enum):
     CandidateGenerationNumCandidates = 1
-    TimeTaken = 2
+    FilteringNumCandidates = 2
+    PredictionMeanPredicted = 3
+    RankingNumCandidates = 4
+    PredictionMeanBeingShown = 5
+    TimeTakenMS = 6
+    Reserved1 = 7
+    Reserved2 = 8
+    Reserved3 = 9
+    Reserved4 = 10
+
 
 @unique
 class TeamName(Enum):
@@ -44,6 +53,9 @@ class Metric(BaseModel):
     id = db.Column(
         db.Integer, primary_key=True
     )  # primary keys are required by SQLAlchemy
+    request_id = db.Column(
+        db.String(255), nullable=False
+    )
     team_name = db.Column(SqlEnum(TeamName), nullable=False)
     funnel_name = db.Column(db.String(255), nullable=False)
     user_id = db.Column(db.Integer, ForeignKey("user.id"), nullable=True)

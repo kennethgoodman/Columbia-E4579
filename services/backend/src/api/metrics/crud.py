@@ -8,9 +8,10 @@ def get_all_metrics():
 def get_engagement_by_id(metric_id):
     return Metric.query.filter_by(id=metric_id).all()
 
-def add_metric(team_name, funnel_name, user_id, content_id, 
+def add_metric(request_id, team_name, funnel_name, user_id, content_id, 
     metric_funnel_type, metric_type, metric_value, metric_metadata):
     metric = Metric(
+        request_id=request_id,
         team_name=team_name,
         funnel_name=funnel_name,
         user_id=user_id,

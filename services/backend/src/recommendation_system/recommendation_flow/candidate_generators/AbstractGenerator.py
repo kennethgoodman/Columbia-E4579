@@ -1,3 +1,5 @@
+from flask import request
+
 from src.api.metrics.models import MetricFunnelType, MetricType
 from src.api.metrics.crud import add_metric
 
@@ -6,6 +8,7 @@ class AbstractGenerator:
     def get_content_ids(self, team_name, user_id, limit, offset, seed, starting_point):
         response = self._get_content_ids(user_id, limit, offset, seed, starting_point)
         add_metric(
+            request_id=request.request_id,
             team_name=team_name, 
             funnel_name=self._get_name(), 
             user_id=user_id if user_id else None, 

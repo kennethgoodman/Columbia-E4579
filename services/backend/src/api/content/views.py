@@ -1,10 +1,8 @@
-import os
 import random
-import pprint
 import traceback
+import uuid
 
-import jwt
-from flask import jsonify, request
+from flask import request
 from flask_restx import Namespace, Resource, fields
 from src.api.content.models import MediaType
 from src.api.engagement.crud import (
@@ -14,9 +12,6 @@ from src.api.engagement.crud import (
 )
 from src.api.engagement.models import EngagementType, LikeDislike
 from src.api.utils.auth_utils import get_user
-from src.recommendation_system.recommendation_flow.controllers.RandomController import (
-    RandomController,
-)
 from src.recommendation_system.recommendation_flow.retriever import (
     ControllerEnum,
     get_content_data,
@@ -89,6 +84,7 @@ class ListControllers(Resource):
     @content_namespace.response(200, "Success")
     def get(self):
         """Return a list of all possible controllers in their human-readable string format"""
+        request.request_id = uuid.uuid4()
         return [
             {"controller": controller.human_string()}
             for controller in list(ControllerEnum)
@@ -103,6 +99,7 @@ class ContentPagination(Resource):
         """
         This API should be used for content pagination. Do not NEED to be signed in, but better experience if signed in
         """
+        request.request_id = uuid.uuid4()
         status_code, user_id, exception_message = get_user(request)
         if exception_message:
             print(exception_message)
