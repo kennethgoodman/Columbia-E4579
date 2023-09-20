@@ -15,7 +15,7 @@ class AbstractGenerator:
             content_id=None, 
             metric_funnel_type=MetricFunnelType.CandidateGeneration, 
             metric_type=MetricType.CandidateGenerationNumCandidates, 
-            metric_value=len(response),
+            metric_value=len(response[0]) if response is not None else -1,
             metric_metadata={
                 "limit": limit, "offset": offset, 
                 "seed": seed, "starting_point": starting_point
