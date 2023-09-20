@@ -10,6 +10,7 @@ import pandas as pd
 INDEXES = {}
 index_to_content_id = {}
 content_id_to_index = {}
+team_wrappers = {}
 
 def fetch_data_stub():
     try:
@@ -34,6 +35,8 @@ def fetch_data_stub():
 
 def instantiate_indexes():
     try:
+        if current_app.config.get("NUMBER_OF_CONTENT_IN_ANN") == 0:
+            return
         distinct_content_ids_subquery = db.session.query(
             Content.id
         ).order_by(func.random()).limit(current_app.config.get("NUMBER_OF_CONTENT_IN_ANN")).subquery()
@@ -43,7 +46,7 @@ def instantiate_indexes():
         df = pd.DataFrame(contents)
 
         teams = ["alpha", "beta", "charlie", "delta", "echo", "foxtrot", "golf"]
-        team_wrappers = {}
+        global team_wrappers
 
         for team in teams:
             module_path = f"src.recommendation_system.ml_models.{team}.two_tower"
@@ -74,7 +77,7 @@ def instantiate_indexes():
 def get_ANN_recommednations(embedding, team, K):
     try:
         global index_to_content_id, INDEXES
-        similar_indices, scores = INDEXES[team].query(user_embedding, k=K, return_distances=True)
+        similar_indices, scores = INDEXES[team].query(embedding, k=K, return_distances=True)
         similar_content_ids = [index_to_content_id[idx] for idx in similar_indices]
         return similar_content_ids, scores
     except Exception as e:
