@@ -1,3 +1,4 @@
+from src import db
 from flask import request
 
 from src.api.metrics.models import MetricFunnelType, MetricType
@@ -23,6 +24,7 @@ class AbstractGenerator:
                     }
             )
         except Exception as e:
+            db.session.rollback()
             print(f"exception trying to add_metric {team_name}, {self._get_name()}, {e}")
         return response
 

@@ -1,5 +1,6 @@
 from enum import Enum
 import time
+from src import db
 from flask import request
 
 from src.api.content.models import Content, get_url
@@ -72,6 +73,7 @@ def get_content_data(controller, user_id, limit, offset, seed, starting_point=No
             }[controller], user_id, int(1000 * (time.time() - start)), 
                                 limit, offset, seed, starting_point)
         except Exception as e:
+            db.session.rollback()
             print(f"exception trying to add_metric_time_took {e}")
     else:
         raise ValueError(f"don't support that controller: {controller}")
