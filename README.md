@@ -49,6 +49,8 @@ Then cd into the directory and run git lfs
 git lfs install && git lfs pull
 ```
 
+If you don't want to download git lfs, you can download directly [from github](https://github.com/kennethgoodman/Columbia-E4579/blob/main/services/db/02_rest.sql) or [drive](https://drive.google.com/file/d/1fG-dI0Y792R73MaMtaBwH0ZWPL8aUZEB/view?usp=drive_link) and place it in the right spot (services/db/02_rest.sql)
+
 #### Bring Down Containers
 
 ```bash
