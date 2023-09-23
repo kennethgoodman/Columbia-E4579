@@ -16,12 +16,12 @@ Running the docker app will add `docker` and `docker-compose` to your PATH so yo
 To do everything at once, open up a terminal and run the following command:
 
 ```bash
-docker-compose -f docker-compose.full_db.yaml up --build --force-recreate --renew-anon-volumes
+./docker_compose_run_setup_db.sh
 ```
 
 The website will be at http://127.0.0.1:3007/feed
 
-You must wait to see INSTANTIATED to finish to have the ANN index loaded locally, you can comment out before_first_request if you don't need it
+You must wait to see "FULLY DONE INSTANTIATION USE THE APP" to finish, you can comment out before_first_request if you don't need it
 
 If you want to see the API docs, you can go to http://localhost:5004/doc
 
@@ -29,9 +29,9 @@ You can use `control-c` to kill the local servers
 
 If you don't want to re-seed the DB, you can:
 
-If you want to do things separately there are 3 commands:
+docker-compose -f docker-compose.full_db.yaml up --build
 
-#### Running With Engagement Dump (Takes Longer)
+If you get errors, you may need to install git lfs:
 
 If you're running mac and have HomeBrew installed, then you can run brew install git-lfs
 
@@ -47,18 +47,6 @@ git clone https://github.com/kennethgoodman/Columbia-E4579.git
 Then cd into the directory and run git lfs
 ```bash
 git lfs install && git lfs pull
-```
-
-The first time to build the database
-
-```bash
-docker-compose -f docker-compose.full_db.yaml up --build --force-recreate --renew-anon-volumes
-```
-
-Afterwards you can run
-
-```bash
-docker-compose -f docker-compose.full_db.yaml up
 ```
 
 #### Bring Down Containers

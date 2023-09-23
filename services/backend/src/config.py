@@ -28,5 +28,5 @@ class TestingConfig(BaseConfig):
 class ProductionConfig(BaseConfig):
     SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL", "")
     SECRET_KEY = os.getenv("SECRET_KEY", "")
-    NUMBER_OF_CONTENT_IN_ANN = 50000
+    NUMBER_OF_CONTENT_IN_ANN = 1000
     INSTANTIATE_PROMPT_ANN = True
