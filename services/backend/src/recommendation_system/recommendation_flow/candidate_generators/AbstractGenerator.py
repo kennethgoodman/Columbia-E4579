@@ -25,7 +25,7 @@ class AbstractGenerator:
             )
         except Exception as e:
             db.session.rollback()
-            print(f"exception trying to add_metric {team_name}, {self._get_name()}, {e}")
+            print(f"exception trying to add_metric {team_name}, {user_id}, {self._get_name()}, {e}")
         return response
 
     def _get_content_ids(self, user_id, limit, offset, seed, starting_point):
