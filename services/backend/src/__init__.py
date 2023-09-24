@@ -19,20 +19,19 @@ def create_app(script_info=None):
     app = Flask(__name__)
 
     def before_first_request_checks():
-        from sqlalchemy import func
+        from sqlalchemy import func, exc
         from src.api.engagement.models import Engagement
         from src.api.content.models import Content, GeneratedContentMetadata
         from src.api.users.models import User
         for table in [Engagement, Content, GeneratedContentMetadata, User]:
-            if db.engine.dialect.has_table(db.engine, table.__tablename__):
-                print(f"Table '{table.__tablename__}' exists.")
-            else:
-                raise ValueError(f"table {table} does not exist")
-            row_count = db.session.query(func.count(table.id)).scalar()
-            if row_count > 0:
-                print(f"Table {table.__tablename__} has {row_count} rows")
-            else:
-                raise ValueError(f"no rows for {table.__tablename__}")
+            try:
+                row_count = db.session.query(func.count(table.id)).scalar()
+                print(f"Table '{table.__tablename__}' exists with {row_count} rows.")
+            except exc.OperationalError as e:
+                print(f"Table '{table.__tablename__}' does not exist. Error: {e}")
+            except exc.ProgrammingError as e:
+                db.session.rollback()  # Rollback the session to a clean state
+                print(f"Table '{table.__tablename__}' does not exist. Error: {e}")
 
     def before_first_request_instantiate():
         from src.data_structures.approximate_nearest_neighbor import (
