@@ -26,6 +26,8 @@ def create_app(script_info=None):
         for table in [Engagement, Content, GeneratedContentMetadata, User]:
             try:
                 row_count = db.session.query(func.count(table.id)).scalar()
+                if row_count == 0:
+                    raise ValueError(f"should be more than 0 rows for '{table.__tablename__}'")
                 print(f"Table '{table.__tablename__}' exists with {row_count} rows.")
             except exc.OperationalError as e:
                 print(f"Table '{table.__tablename__}' does not exist. Error: {e}")
