@@ -14,6 +14,10 @@ from src.recommendation_system.recommendation_flow.model_prediction.RandomModel 
 from src.recommendation_system.recommendation_flow.ranking.RandomRanker import (
     RandomRanker,
 )
+from src.recommendation_system.recommendation_flow.candidate_generators.beta.TwoTowerANNGenerator import TwoTowerANNGenerator
+from src.recommendation_system.recommendation_flow.candidate_generators.beta.CollaberativeFilteredSimilarUsersGenerator import CollaberativeFilteredSimilarUsersGenerator
+from src.recommendation_system.recommendation_flow.candidate_generators.beta.YourChoiceGenerator import YourChoiceGenerator
+
 from src.api.metrics.models import TeamName
 
 class BetaController(AbstractController):
@@ -24,8 +28,8 @@ class BetaController(AbstractController):
         candidates, scores = [], []
         for gen in [TwoTowerANNGenerator, CollaberativeFilteredSimilarUsersGenerator, YourChoiceGenerator]:
            cur_candidates, cur_scores = gen().get_content_ids(
-               TeamName.Beta,
-               user_id, candidates_limit, offset, seed, starting_point
+               TeamName.Beta_F2023,
+               user_id, candidate_limit, offset, seed, starting_point
            )
            candidates += cur_candidates
            scores += cur_scores

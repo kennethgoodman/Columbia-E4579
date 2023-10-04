@@ -50,6 +50,7 @@ content = content_namespace.model(
         "download_url": fields.String(required=False),
         "errors": fields.String(required=False),
         "traceback": fields.String(required=False),
+        "controller": fields.String(required=False),
     },
 )
 

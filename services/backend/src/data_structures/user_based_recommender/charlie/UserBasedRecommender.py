@@ -40,5 +40,3 @@ class UserBasedRecommender:
         # Recommend items engaged by those users, which the given user hasn't seen.
         pass
 
-# This will ensure that there's only one instance of UserBasedRecommender throughout the application.
-recommender = UserBasedRecommender()

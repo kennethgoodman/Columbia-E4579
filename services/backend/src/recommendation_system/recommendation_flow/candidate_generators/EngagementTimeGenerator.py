@@ -30,7 +30,7 @@ class EngagementTimeGenerator(AbstractGenerator):
             )
             num_results = len(results)
             if num_results == 0:
-                return RandomGenerator().get_content_ids(
+                return RandomGenerator()._get_content_ids(
                     user_id, limit, offset, seed, starting_point
                 )
             new_limit = 2 * (limit // num_results + 1)  # get 2x so we can take the best

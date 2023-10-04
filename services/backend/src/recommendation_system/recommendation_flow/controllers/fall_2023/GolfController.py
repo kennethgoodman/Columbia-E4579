@@ -14,6 +14,10 @@ from src.recommendation_system.recommendation_flow.model_prediction.RandomModel 
 from src.recommendation_system.recommendation_flow.ranking.RandomRanker import (
     RandomRanker,
 )
+from src.recommendation_system.recommendation_flow.candidate_generators.golf.TwoTowerANNGenerator import TwoTowerANNGenerator
+from src.recommendation_system.recommendation_flow.candidate_generators.golf.CollaberativeFilteredSimilarUsersGenerator import CollaberativeFilteredSimilarUsersGenerator
+from src.recommendation_system.recommendation_flow.candidate_generators.golf.YourChoiceGenerator import YourChoiceGenerator
+
 from src.api.metrics.models import TeamName
 
 class GolfController(AbstractController):
@@ -24,8 +28,8 @@ class GolfController(AbstractController):
         candidates, scores = [], []
         for gen in [TwoTowerANNGenerator, CollaberativeFilteredSimilarUsersGenerator, YourChoiceGenerator]:
            cur_candidates, cur_scores = gen().get_content_ids(
-               TeamName.Golf,
-               user_id, candidates_limit, offset, seed, starting_point
+               TeamName.Golf_F2023,
+               user_id, candidate_limit, offset, seed, starting_point
            )
            candidates += cur_candidates
            scores += cur_scores

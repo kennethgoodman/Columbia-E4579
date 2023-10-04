@@ -1,10 +1,9 @@
 
-from .AbstractGenerator import AbstractGenerator
-from .RandomGenerator import RandomGenerator
+from src.recommendation_system.recommendation_flow.candidate_generators.AbstractGenerator import AbstractGenerator
 
-class YourChoiceGeneratorGenerator(AbstractGenerator):
+class YourChoiceGenerator(AbstractGenerator):
     def _get_content_ids(self, _, limit, offset, _seed, starting_point):
-        raise NotImplementedError("Need to implement this")
+        return [], []
     
     def _get_name(self):
         return "YourChoiceGenerator"

@@ -36,6 +36,7 @@ class MetricType(Enum):
 
 @unique
 class TeamName(Enum):
+    Static = 0
     Example = 1
     Random = 2
     EngagementTime = 3

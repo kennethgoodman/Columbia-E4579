@@ -11,15 +11,15 @@ class AbstractGenerator:
         try:
             add_metric(
                 request_id=request.request_id,
-                team_name=team_name, 
-                funnel_name=self._get_name(), 
-                user_id=user_id if user_id else None, 
-                content_id=None, 
-                metric_funnel_type=MetricFunnelType.CandidateGeneration, 
-                metric_type=MetricType.CandidateGenerationNumCandidates, 
+                team_name=team_name,
+                funnel_name=self._get_name(),
+                user_id=user_id if user_id not in [None, 0] else None, 
+                content_id=None,
+                metric_funnel_type=MetricFunnelType.CandidateGeneration,
+                metric_type=MetricType.CandidateGenerationNumCandidates,
                 metric_value=len(response[0]) if response is not None and len(response) == 2 else -1,
                 metric_metadata={
-                    "limit": limit, "offset": offset, 
+                    "limit": limit, "offset": offset,
                     "seed": seed, "starting_point": starting_point
                     }
             )
@@ -29,7 +29,7 @@ class AbstractGenerator:
         return response
 
     def _get_content_ids(self, user_id, limit, offset, seed, starting_point):
-        pass
+        raise NotImplementedError("you need to implement")
 
     def _get_name(self):
-        pass
+        raise NotImplementedError("you need to implement")

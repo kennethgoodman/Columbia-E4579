@@ -69,6 +69,13 @@ docker-compose build --no-cache
 docker-compose up
 ```
 
+#### Only build one service
+
+For instance, the api backend
+```bash
+docker-compose -f docker-compose.full_db.yaml up --build api
+```
+
 ### Access the dev database
 
 If you want to access the database in a mysql CLI, you can run the following command while `docker-compose up` is running:

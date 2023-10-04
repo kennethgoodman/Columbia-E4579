@@ -82,7 +82,7 @@ def get_ANN_recommednations(embedding, team, K):
         return similar_content_ids, scores
     except Exception as e:
         print(f"Error during ANN recommendations: {e}")
-        return []
+        return [], []
 
 def get_ANN_recommendations_from_user(user_id, team, K):
     try:
@@ -96,12 +96,12 @@ def get_ANN_recommendations_from_user(user_id, team, K):
         user_embedding = team_wrappers[team].generate_user_embeddings(user_df)
 
         if len(user_embedding) == 0:
-            return []
+            return [], []
 
         return get_ANN_recommednations(user_embedding, team, K)
     except Exception as e:
         print(f"Error during ANN recommendations: {e}")
-        return []
+        return [], []
 
 def get_ANN_recommendations_from_content(content_id, team, K):
     try:
@@ -115,9 +115,9 @@ def get_ANN_recommendations_from_content(content_id, team, K):
         content_embedding = team_wrappers[team].generate_content_embeddings(content_df)
 
         if len(content_embedding) == 0:
-            return []
+            return [], []
 
         return get_ANN_recommednations(content_embedding, team, K)
     except Exception as e:
         print(f"Error during ANN recommendations: {e}")
-        return []
+        return [], []

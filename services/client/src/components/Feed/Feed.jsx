@@ -17,22 +17,46 @@ function shuffleArray(array) {
     }
 }
 
-let selection_values = [
-  {key:"Random", value:"RANDOM"},
-  {key:"Example", value:"EXAMPLE"},
-];
-
-shuffleArray(selection_values);
-
 const Feed = (props) => {
   const { darkMode, setDarkMode } = useContext(DarkModeContext);
   const [isLoading, setLoading] = useState(true);
   const [data, setData] = useState([]);
+  const [selectionValues, setSelectionValues] = useState([]);
   const [fetchParams, setFetchParams] = useState({
     page: 0,
-    controller: selection_values[0]['value'],
+    controller: undefined,
     starting_content_id: undefined,
   });
+
+  useEffect(() => {
+    const options = {
+      method: "get",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${getRefreshTokenIfExists()}`,
+      },
+      url: `${process.env.REACT_APP_API_SERVICE_URL}/content/listcontrollers`
+    };
+    
+    axios(options)
+      .then((response) => {
+        const results = response.data;
+        let selection_values = [];
+        results.map((item) => {
+          selection_values.push(
+            {'key': item["controller"].toUpperCase(), 'value': item["controller"]}
+          )
+        });
+        setSelectionValues(selection_values);
+        setFetchParams(prevState => ({
+          ...prevState,
+          controller: selection_values[0]['value'],
+        }));
+      })
+      .catch((error) => {
+        alert(`error with listcontrollers ${error}`);
+      });
+  }, []); // The empty dependency array ensures this runs only once when the component mounts
 
   const handleSeeMore = (content_id) => {
     if (content_id === fetchParams["starting_content_id"]) {
@@ -79,6 +103,9 @@ const Feed = (props) => {
   // every time the pageNum changes
   // we request a new set of images
   useEffect(() => {
+    if(fetchParams["controller"] === undefined) {
+      return
+    }
     const fetchPosts = async () => {
       const options = {
         method: "get",
@@ -166,7 +193,7 @@ const Feed = (props) => {
         Which Controller Do You Want To Use:
         <select value={fetchParams["controller"]} onChange={handleChange}>
           {
-            selection_values.map(el => {
+            selectionValues.map(el => {
               return <option value={el['value']} key={el['key']}>{el['key']}</option>
             })
           }
@@ -187,7 +214,7 @@ const Feed = (props) => {
                 content_id={post.id}
                 post={post}
                 handleSeeMore={handleSeeMore}
-                controller={fetchParams["controller"]}
+                controller={post['controller'] ? post['controller'] : fetchParams["controller"]}
               />
             </div>
           );

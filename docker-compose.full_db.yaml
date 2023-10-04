@@ -15,7 +15,9 @@ services:
       dockerfile: Dockerfile
     entrypoint: ["/usr/src/app/entrypoint.full_db.sh"]
     volumes:
-      - "./services/backend:/usr/src/app"
+      - type: bind
+        source: "./services/backend/"
+        target: "/usr/src/app"
     ports:
       - 5004:5000
     environment:

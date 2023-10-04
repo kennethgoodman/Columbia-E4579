@@ -35,4 +35,6 @@ echo "deleting image"
 docker rmi -f $(docker images | grep api-db | awk '{ print $3 }')
 echo "image deleted, building with docker-compose" 
 
-docker-compose -f docker-compose.full_db.yaml up --build --force-recreate 
+docker-compose down
+
+docker-compose -f docker-compose.full_db.yaml up --build --force-recreate --no-cache

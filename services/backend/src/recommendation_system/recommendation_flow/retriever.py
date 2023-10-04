@@ -1,5 +1,6 @@
 from enum import Enum
 import time
+import random
 from src import db
 from flask import request
 
@@ -8,6 +9,15 @@ from src.api.users.models import User
 from src.recommendation_system.recommendation_flow.controllers import (
     RandomController,
     ExampleController,
+    EngagementTimeController,
+    StaticController,
+    AlphaController,
+    BetaController,
+    CharlieController,
+    DeltaController,
+    EchoController,
+    FoxtrotController,
+    GolfController
 )
 
 from src.api.metrics.models import MetricFunnelType, MetricType, TeamName
@@ -17,6 +27,15 @@ from src.api.metrics.crud import add_metric
 class ControllerEnum(Enum):
     RANDOM = RandomController
     EXAMPLE = ExampleController
+    ENGAGEMENT_TIME = EngagementTimeController
+    STATIC = StaticController
+    ALPHA = AlphaController
+    BETA = BetaController
+    CHARLIE = CharlieController
+    DELTA = DeltaController
+    ECHO = EchoController
+    FOXTROT = FoxtrotController
+    GOLF = GolfController
 
     def human_string(self):
         return str(self).split(".")[1]
@@ -58,25 +77,24 @@ def add_metric_time_took(team_name, user_id, val, limit, offset, seed, starting_
 
 
 def get_content_data(controller, user_id, limit, offset, seed, starting_point=None):
-    if controller in [
-        ControllerEnum.RANDOM,
-        ControllerEnum.EXAMPLE,
-    ]:
-        start = time.time()
-        content_ids = controller.value().get_content_ids(
-            user_id, limit, offset, seed, starting_point
-        )
-        try:
-            add_metric_time_took({
-                ControllerEnum.RANDOM: TeamName.Random,
-                ControllerEnum.EXAMPLE: TeamName.Example
-            }[controller], user_id, int(1000 * (time.time() - start)), 
-                                limit, offset, seed, starting_point)
-        except Exception as e:
-            db.session.rollback()
-            print(f"exception trying to add_metric_time_took {e}")
-    else:
-        raise ValueError(f"don't support that controller: {controller}")
+    start = time.time()
+    content_ids = controller.value().get_content_ids(
+        user_id, limit, offset, seed, starting_point
+    )
+    try:
+        add_metric_time_took({
+            ControllerEnum.RANDOM: TeamName.Random,
+            ControllerEnum.EXAMPLE: TeamName.Example
+        }[controller], user_id, int(1000 * (time.time() - start)), 
+                            limit, offset, seed, starting_point)
+    except Exception as e:
+        db.session.rollback()
+        print(f"exception trying to add_metric_time_took {e}")
     all_content = Content.query.filter(Content.id.in_(content_ids)).all()
     responses = map(content_to_response, all_content)
-    return list(responses)
+    return list(map(lambda x: {**x, "controller": controller.human_string()}, responses))
+
+
+def get_content_data_random_controller(user_id, limit, offset, seed, starting_point=None):
+    controller = random.choice([ControllerEnum.EXAMPLE, ControllerEnum.RANDOM])
+    return get_content_data(controller, user_id, limit, offset, seed, starting_point)

@@ -1,12 +1,11 @@
 
-from .AbstractGenerator import AbstractGenerator
-from .RandomGenerator import RandomGenerator
-from src.data_structures.user_based_recommender.golf.UserBasedRecommender import recommender
+from src.recommendation_system.recommendation_flow.candidate_generators.AbstractGenerator import AbstractGenerator
+from src.data_structures.user_based_recommender.golf.UserBasedRecommender import UserBasedRecommender
 
 
-class CollaberativeFilteredSimilarUsersGeneratorGenerator(AbstractGenerator):
+class CollaberativeFilteredSimilarUsersGenerator(AbstractGenerator):
     def _get_content_ids(self, _, limit, offset, _seed, starting_point):
-        raise NotImplementedError("Need to implement this")
+        return [], []
     
     def _get_name(self):
         return "CollaberativeFilteredSimilarUsersGenerator"
