@@ -19,3 +19,6 @@ from src.recommendation_system.recommendation_flow.controllers.fall_2023 import 
     FoxtrotController,
     GolfController
 )
+from src.recommendation_system.recommendation_flow.controllers.EngagementAssignmentController import (
+    EngagementAssignmentController
+)

@@ -66,3 +66,32 @@ input:checked + .slider:before {
 .slider.round:before {
   border-radius: 50%;
 }
+
+
+.empty-state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;  /* Adjust as needed */
+  border: 1px dashed #ccc;
+  border-radius: 5px;
+  padding: 20px;
+  margin-top: 20px; 
+  background-color: #f7f7f7;  /* Light grey background */
+}
+
+.empty-state p {
+  font-size: 16px;
+  color: #666;
+  text-align: center;
+}
+
+/* Dark mode adjustments for the empty state */
+.Feed.dark .empty-state {
+  background-color: #444;  /* Darker grey for the dark mode */
+  border-color: #555;
+}
+
+.Feed.dark .empty-state p {
+  color: #ccc;  /* Lighter grey text for the dark mode */
+}

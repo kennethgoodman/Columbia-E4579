@@ -205,8 +205,14 @@ const Feed = (props) => {
           Back
         </button>
       )}
+      {data?.length === 0 && (
+        <div className={`empty-state ${darkMode ? 'dark' : ''}`}>
+          <p>No items found. Needs To Be Implemented By The Team.</p>
+        </div>
+      )}
       {data?.map((post, index) => {
         // we request a new set of images when the second to last image is on the screen
+        // TODO, maybe switch to 80%
         if (data.length === index + 2) {
           return (
             <div key={post.id} ref={lastElementRef}>

@@ -11,6 +11,7 @@ from src.recommendation_system.recommendation_flow.controllers import (
     ExampleController,
     EngagementTimeController,
     StaticController,
+    EngagementAssignmentController,
     AlphaController,
     BetaController,
     CharlieController,
@@ -29,6 +30,7 @@ class ControllerEnum(Enum):
     EXAMPLE = ExampleController
     ENGAGEMENT_TIME = EngagementTimeController
     STATIC = StaticController
+    ENGAGEMENT_ASSIGNMENT = EngagementAssignmentController
     ALPHA = AlphaController
     BETA = BetaController
     CHARLIE = CharlieController
@@ -45,6 +47,29 @@ class ControllerEnum(Enum):
         return {
             controller.human_string(): controller for controller in list(ControllerEnum)
         }[controller_string]
+    
+    @staticmethod
+    def controller_to_string(controller):
+        for controller_enum in list(ControllerEnum):
+            if controller_enum.value() == controller:
+                return controller_enum
+        raise ValueError(f"{str(controller)} doesn't exist")
+    
+    @staticmethod
+    def controller_to_team_name(controller):
+        return {
+            ControllerEnum.RANDOM: TeamName.Random,
+            ControllerEnum.EXAMPLE: TeamName.Example,
+            ControllerEnum.ALPHA: TeamName.Alpha_F2023,
+            ControllerEnum.BETA: TeamName.Beta_F2023,
+            ControllerEnum.CHARLIE: TeamName.Charlie_F2023,
+            ControllerEnum.DELTA: TeamName.Delta_F2023,
+            ControllerEnum.ECHO: TeamName.Echo_F2023,
+            ControllerEnum.FOXTROT: TeamName.Foxtrot_F2023,
+            ControllerEnum.GOLF: TeamName.Golf_F2023,
+            ControllerEnum.ENGAGEMENT_TIME: TeamName.EngagementTime,
+            ControllerEnum.STATIC: TeamName.Static
+        }[controller]
 
 
 def content_to_response(content):
@@ -78,23 +103,22 @@ def add_metric_time_took(team_name, user_id, val, limit, offset, seed, starting_
 
 def get_content_data(controller, user_id, limit, offset, seed, starting_point=None):
     start = time.time()
-    content_ids = controller.value().get_content_ids(
-        user_id, limit, offset, seed, starting_point
-    )
+    if controller == ControllerEnum.ENGAGEMENT_ASSIGNMENT:
+        content_ids, new_controller = controller.value().get_content_ids(
+            user_id, limit, offset, seed, starting_point
+        )
+        controller = ControllerEnum.controller_to_string(new_controller)
+    else:
+        content_ids = controller.value().get_content_ids(
+            user_id, limit, offset, seed, starting_point
+        )
     try:
-        add_metric_time_took({
-            ControllerEnum.RANDOM: TeamName.Random,
-            ControllerEnum.EXAMPLE: TeamName.Example
-        }[controller], user_id, int(1000 * (time.time() - start)), 
-                            limit, offset, seed, starting_point)
+        add_metric_time_took(ControllerEnum.controller_to_team_name(controller), 
+                             user_id, int(1000 * (time.time() - start)), 
+                             limit, offset, seed, starting_point)
     except Exception as e:
         db.session.rollback()
         print(f"exception trying to add_metric_time_took {e}")
     all_content = Content.query.filter(Content.id.in_(content_ids)).all()
     responses = map(content_to_response, all_content)
     return list(map(lambda x: {**x, "controller": controller.human_string()}, responses))
-
-
-def get_content_data_random_controller(user_id, limit, offset, seed, starting_point=None):
-    controller = random.choice([ControllerEnum.EXAMPLE, ControllerEnum.RANDOM])
-    return get_content_data(controller, user_id, limit, offset, seed, starting_point)
