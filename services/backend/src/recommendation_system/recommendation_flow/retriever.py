@@ -101,7 +101,7 @@ def add_metric_time_took(team_name, user_id, val, limit, offset, seed, starting_
 
 def get_content_data(controller, user_id, limit, offset, seed, starting_point=None):
     start = time.time()
-    if controller == ControllerEnum.ENGAGEMENT_ASSIGNMENT:
+    if False: # controller == ControllerEnum.ENGAGEMENT_ASSIGNMENT:
         content_ids, new_controller = controller.value().get_content_ids(
             user_id, limit, offset, seed, starting_point
         )
