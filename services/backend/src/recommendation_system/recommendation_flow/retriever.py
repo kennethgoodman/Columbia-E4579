@@ -11,7 +11,6 @@ from src.recommendation_system.recommendation_flow.controllers import (
     ExampleController,
     EngagementTimeController,
     StaticController,
-    EngagementAssignmentController,
     AlphaController,
     BetaController,
     CharlieController,
@@ -30,7 +29,6 @@ class ControllerEnum(Enum):
     EXAMPLE = ExampleController
     ENGAGEMENT_TIME = EngagementTimeController
     STATIC = StaticController
-    ENGAGEMENT_ASSIGNMENT = EngagementAssignmentController
     ALPHA = AlphaController
     BETA = BetaController
     CHARLIE = CharlieController
