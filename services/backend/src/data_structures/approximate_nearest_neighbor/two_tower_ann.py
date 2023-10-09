@@ -76,10 +76,11 @@ def instantiate_indexes():
 
 def get_ANN_recommednations(embedding, team, K):
     try:
+        K = min(current_app.config.get("NUMBER_OF_CONTENT_IN_ANN") - 1, K)
         global index_to_content_id, INDEXES
-        similar_indices, scores = INDEXES[team].query(embedding, k=K, return_distances=True)
-        similar_content_ids = [index_to_content_id[idx] for idx in similar_indices]
-        return similar_content_ids, scores
+        similar_indices, scores = INDEXES[team].ann(embedding, k=K, return_distances=True)
+        similar_content_ids = [index_to_content_id[idx] for idx in similar_indices[0]]
+        return similar_content_ids, scores[0]
     except Exception as e:
         print(f"Error during ANN recommendations: {e}")
         return [], []
