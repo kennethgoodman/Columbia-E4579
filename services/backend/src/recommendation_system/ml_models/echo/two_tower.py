@@ -10,12 +10,12 @@ import warnings
 warnings.filterwarnings("ignore")
 import pickle
 import joblib
-
-top_artist_styles = joblib.load('top_artist_styles.pkl')
-top_sources = joblib.load('top_sources.pkl')
-top_seeds = joblib.load('top_seeds.pkl')
-encoder = joblib.load('encoder.pkl')
-scaler = joblib.load('scaler.pkl')
+file_path = '/usr/src/app/src/recommendation_system/ml_models/echo/'
+top_artist_styles = joblib.load(file_path+'top_artist_styles.pkl')
+top_sources = joblib.load(file_path+'top_sources.pkl')
+top_seeds = joblib.load(file_path+'top_seeds.pkl')
+encoder = joblib.load(file_path+'encoder.pkl')
+scaler = joblib.load(file_path+'scaler.pkl')
 
 # Set up basic logging configuration
 logging.basicConfig(level=logging.ERROR)
@@ -25,7 +25,7 @@ TOP_SOURCES = 30
 TOP_SEEDS = 14
 TOP_CONTENT = 251
 PROMPT_EMBEDDING_LENGTH = 512
-with open('/usr/src/app/src/recommendation_system/ml_models/echo/top_n_content.pkl','rb') as file:
+with open(file_path + 'top_n_content.pkl','rb') as file:
   top_n_content = pickle.load(file)
 
 
