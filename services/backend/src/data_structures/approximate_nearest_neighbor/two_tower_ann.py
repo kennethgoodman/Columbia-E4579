@@ -97,6 +97,8 @@ def get_ANN_recommendations_from_user(user_id, team, K):
         ).all()
 
         user_df = pd.DataFrame(user_engagements)
+        if len(user_df) == 0:
+            return [], []
 
         user_embedding = team_wrappers[team].generate_user_embeddings(user_df)
 
