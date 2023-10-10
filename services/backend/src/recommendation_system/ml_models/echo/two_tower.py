@@ -124,11 +124,18 @@ def user_preprocessing(df):
 def content_preprocessing(df):
 
     # Get the top artist styles, sources, and seeds
+    df['model_version'] = df['model_version'].apply(lambda x:eval(x))
     df['artist_style'] = df['artist_style'].apply(lambda x: x if x in top_artist_styles else 'other')
     df['source'] = df['source'].apply(lambda x: x if x in top_sources else 'other')
     df['seed'] = df['seed'].apply(lambda x: str(x) if x in top_seeds else 'other')
+    feature_names_columns = []
     content_onehot = encoder.transform(df[['artist_style', 'model_version', 'seed', 'source']])
-    content_onehot_df = pd.DataFrame(content_onehot.toarray(), columns=encoder.get_feature_names_out(['artist_style', 'model_version', 'seed', 'source']))
+    for i,name in enumerate(['artist_style', 'model_version', 'seed', 'source']):
+        for col in encoder.categories_[i]:
+            if not isinstance(col,str):
+                col = str(col)
+            feature_names_columns.append(name+'_'+col)
+    content_onehot_df = pd.DataFrame(content_onehot.toarray(), columns=feature_names_columns) # encoder.get_feature_names_out(['artist_style', 'model_version', 'seed', 'source'])
     df = pd.concat([df, content_onehot_df], axis=1)
 
     # Normalizing linear features
