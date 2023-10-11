@@ -147,7 +147,6 @@ def content_preprocessing(df):
     df = df.drop('prompt_embedding', axis=1)
 
     content_columns = (
-        ['content_id'] +
     list(filter(lambda x: 'artist_style_' in x, df.columns)) +
     list(filter(lambda x: 'model_version_' in x, df.columns)) +
     list(filter(lambda x: 'source_' in x, df.columns)) +
@@ -163,7 +162,7 @@ def content_preprocessing(df):
 def df_to_content_tensor(df):
     # Group by content_id and sum
 
-    aggregated = df.groupby('content_id').sum()
+    aggregated = df.groupby('content_id').sum().reset_index()
     content_tensor = torch.tensor(aggregated.values, dtype=torch.float32)
     return content_tensor
 
