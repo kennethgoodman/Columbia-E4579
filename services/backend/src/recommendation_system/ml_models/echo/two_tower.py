@@ -146,7 +146,6 @@ def content_preprocessing(df):
     df[prompt_columns] = pd.DataFrame(df['prompt_embedding'].tolist(), index=df.index)
     df = df.drop('prompt_embedding', axis=1)
 
-
     content_columns = (
         ['content_id'] +
     list(filter(lambda x: 'artist_style_' in x, df.columns)) +
@@ -186,10 +185,8 @@ class ModelWrapper:
         self.model.eval()
 
     def generate_content_embeddings(self, df):
-        # content_features = content_preprocessing(df)
-        content_features, _ = content_preprocessing(df)
+        content_features= content_preprocessing(df)
         content_tensor = df_to_content_tensor(content_features)
-        # content_tensor = df_to_content_tensor(df)
 
         if len(df["content_id"].unique()) != len(content_tensor):
             logging.error("Mismatch in content tensor length")
@@ -203,10 +200,8 @@ class ModelWrapper:
         return embeddings
 
     def generate_user_embeddings(self, df):
-        # user_features = user_preprocessing(df)
-        _, user_features = user_preprocessing(df)
+        user_features = user_preprocessing(df)
         user_tensor = df_to_user_tensor(user_features)
-        # user_tensor = df_to_user_tensor(df)
         if len(df["user_id"].unique()) != len(user_tensor):
             logging.error("Mismatch in user tensor length")
             return np.array([])
