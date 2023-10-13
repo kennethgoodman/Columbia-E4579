@@ -8,13 +8,14 @@ from sqlalchemy.sql.expression import func
 class CollaberativeFilteredSimilarUsersGenerator(AbstractGenerator):
 
     def _get_content_ids(self, _, limit, offset, _seed, starting_point):
-        if starting_point is None:
-            rec = UserBasedRecommender()
-            rec.compute_similarity()
-            lst  = rec.recommend_items(_, limit)
-            lst2 = [0] * limit
-            
-            return lst, lst2
+        # if starting_point is None:
+        recommendation_length = 200
+        rec = UserBasedRecommender()
+        rec.compute_similarity()
+        lst  = rec.recommend_items(_, recommendation_length)
+        lst2 = [0] * limit
+        
+        return lst, lst2
     
     def _get_name(self):
         return "CollaberativeFilteredSimilarUsersGenerator"

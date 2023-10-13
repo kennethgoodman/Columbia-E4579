@@ -25,7 +25,7 @@ class UserBasedRecommender:
             Engagement.user_id,
             Engagement.engagement_type,
             Engagement.engagement_value
-        ).limit(50000).all()
+        ).all()
 
     def compute_similarity(self):
         # Compute the similarity between users.
@@ -58,6 +58,7 @@ class UserBasedRecommender:
             for jdx, other_user in enumerate(users):
                 if user != other_user:  # Avoid comparing the user to themselves
                     self.user_similarity_map[user][other_user] = similarity_matrix[idx][jdx]
+        # print(self.user_similarity_map)
 
     def get_similar_users(self, user_id):
         # Fetch the list of similar users for a given user_id from the map.
@@ -67,8 +68,11 @@ class UserBasedRecommender:
         # For a given user, fetch the list of similar users.
         # Recommend items engaged by those users, which the given user hasn't seen.
         # Fetch the list of similar users for the given user_id.
+        self.compute_similarity()
         similar_users = sorted(self.user_similarity_map.get(user_id, {}).items(), key=lambda x: x[1], reverse=True)
+        # print(self.user_similarity_map)
         # print(similar_users)
+        # print(user_id)
         # Track recommended items.
         recommended_content_ids = set()
 
