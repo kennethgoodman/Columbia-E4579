@@ -24,9 +24,9 @@ class EchoController(AbstractController):
     def get_content_ids(self, user_id, limit, offset, seed, starting_point):
         if seed <= 1:  # MySql seeds should be [0, # of rows] not [0, 1]
             seed *= 1000000
-        candidate_limit = 500
+        candidate_limit = set
         candidates, scores = [], []
-        for gen in [TwoTowerANNGenerator]: # , CollaberativeFilteredSimilarUsersGenerator, YourChoiceGenerator
+        for gen in [CollaberativeFilteredSimilarUsersGenerator]: # , CollaberativeFilteredSimilarUsersGenerator, YourChoiceGenerator, TwoTowerANNGenerator
            cur_candidates, cur_scores = gen().get_content_ids(
                TeamName.Echo_F2023,
                user_id, candidate_limit, offset, seed, starting_point
