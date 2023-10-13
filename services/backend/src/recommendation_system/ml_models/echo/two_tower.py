@@ -17,6 +17,7 @@ top_seeds = joblib.load(file_path+'top_seeds.pkl')
 encoder = joblib.load(file_path+'encoder.pkl')
 scaler = joblib.load(file_path+'scaler.pkl')
 
+
 # Set up basic logging configuration
 logging.basicConfig(level=logging.ERROR)
 
