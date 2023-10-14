@@ -99,7 +99,6 @@ def get_ANN_recommendations_from_user(user_id, team, K):
         user_df = pd.DataFrame(user_engagements)
 
         user_embedding = team_wrappers[team].generate_user_embeddings(user_df)
-        print(user_embedding)
         if len(user_embedding) == 0:
             return [], []
 
@@ -118,7 +117,6 @@ def get_ANN_recommendations_from_content(content_id, team, K):
         content_df = pd.DataFrame(user_engagements_for_content)
 
         content_embedding = team_wrappers[team].generate_content_embeddings(content_df)
-        print(content_embedding)
         if len(content_embedding) == 0:
             return [], []
 
