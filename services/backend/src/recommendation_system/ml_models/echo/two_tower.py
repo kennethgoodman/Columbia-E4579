@@ -195,7 +195,7 @@ class ModelWrapper:
         if len(embeddings) != len(content_tensor) or embeddings.shape[1] > 64:
             logging.error("Mismatch in embeddings and tensor length or embedding size exceeds 64")
             return np.array([])
-        
+
         return embeddings
 
     def generate_user_embeddings(self, df):
