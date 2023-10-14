@@ -175,12 +175,11 @@ def df_to_user_tensor(df):
 
 # Model Wrapper
 class ModelWrapper:
-    def __init__(self, model_path=''):#'/usr/src/app/src/recommendation_system/ml_models/echo/model_1.pt'):
+    def __init__(self, model_path='/usr/src/app/src/recommendation_system/ml_models/echo/model_1.pt'):
         if not model_path:
             self.model = DummyTwoTowerModel()
         else:
             self.model = TwoTowerModel(753,593,64)
-            # self.model = torch.load(model_path, map_location=torch.device('cpu'))
             self.model.load_state_dict(torch.load(model_path, map_location=torch.device('cpu')))
         self.model.eval()
 
@@ -196,7 +195,7 @@ class ModelWrapper:
         if len(embeddings) != len(content_tensor) or embeddings.shape[1] > 64:
             logging.error("Mismatch in embeddings and tensor length or embedding size exceeds 64")
             return np.array([])
-
+        
         return embeddings
 
     def generate_user_embeddings(self, df):

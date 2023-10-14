@@ -7,6 +7,7 @@ from src.data_structures.approximate_nearest_neighbor.two_tower_ann import (
 
 class TwoTowerANNGenerator(AbstractGenerator):
     def _get_content_ids(self, user_id, limit, offset, _, starting_point):
+        print(user_id,limit,offset,starting_point)
         if starting_point is not None and starting_point.get("content_id", False):
             content_ids, scores = get_ANN_recommendations_from_content(starting_point["content_id"], "echo", limit + offset)
         else:
