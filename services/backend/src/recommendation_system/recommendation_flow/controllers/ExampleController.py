@@ -39,4 +39,5 @@ class ExampleController(AbstractController):
             else {},
         )
         rank = RandomRanker().rank_ids(limit, predictions, seed, starting_point)
+        print(rank)
         return rank
