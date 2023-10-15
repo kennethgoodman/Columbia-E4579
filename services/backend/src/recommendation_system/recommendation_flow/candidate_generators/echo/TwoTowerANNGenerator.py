@@ -12,7 +12,7 @@ class TwoTowerANNGenerator(AbstractGenerator):
         else:
             content_ids, scores = get_ANN_recommendations_from_user(user_id, "echo", limit + offset)
         print(len(content_ids))
-        # print(content_ids[offset:])
+        print(content_ids[offset:])
         return content_ids[offset:], scores[offset:]
 
     def _get_name(self):
