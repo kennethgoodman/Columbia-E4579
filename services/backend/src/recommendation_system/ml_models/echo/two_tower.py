@@ -163,14 +163,12 @@ def content_preprocessing(df):
 def df_to_content_tensor(df):
     # Group by content_id and sum
 
-    # aggregated = df.groupby('content_id').sum().reset_index()
     aggregated = df.drop_duplicates()
     content_tensor = torch.tensor(aggregated.values, dtype=torch.float32)
     return content_tensor
 
 def df_to_user_tensor(df):
     # Group by user_id and sum
-    # df.drop_duplicates(inplace = True)
     aggregated = df.groupby('user_id').mean()
     user_tensor = torch.tensor(aggregated.values, dtype=torch.float32)
     return user_tensor
