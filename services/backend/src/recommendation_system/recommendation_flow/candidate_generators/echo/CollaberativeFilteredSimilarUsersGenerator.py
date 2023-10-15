@@ -9,13 +9,11 @@ class CollaberativeFilteredSimilarUsersGenerator(AbstractGenerator):
 
     def _get_content_ids(self, _, limit, offset, _seed, starting_point):
         # if starting_point is None:
-        recommendation_length = 200
+        recommendation_length = 1000
         rec = UserBasedRecommender()
-        rec.compute_similarity()
         lst  = rec.recommend_items(_, recommendation_length)
-        lst2 = [0] * limit
-        
-        return lst, lst2
+        lst2 = [0] * recommendation_length
+        return lst[:725], lst2[:725]
     
     def _get_name(self):
         return "CollaberativeFilteredSimilarUsersGenerator"
