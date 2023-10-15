@@ -20,7 +20,7 @@ class YourChoiceGenerator(AbstractGenerator):
                 .filter(Engagement.engagement_type == EngagementType.Like)
                 .group_by(Engagement.content_id)
                 .order_by(func.count().desc())
-                .limit(int(limit * 5))
+                .limit(int(limit * 7))
                 .offset(offset)
                 .all()
             )
@@ -34,8 +34,8 @@ class YourChoiceGenerator(AbstractGenerator):
                 .filter(Engagement.engagement_value >= 1000)
                 .order_by(Engagement.engagement_value.desc())
                 .limit(
-                    int(limit * 5)
-                )  # * 5  to take into account filtering on both list will eventually decrease the nb of candidates by quite a lot
+                    int(limit * 7)
+                )  # * 7  to take into account filtering on both list will eventually decrease the nb of candidates by quite a lot
                 .offset(offset)
                 .all()
             )
@@ -68,12 +68,20 @@ class YourChoiceGenerator(AbstractGenerator):
             ]
 
             results = list(set(results_engagement_score))
-            print("Num of Candidates:", len(results))
 
-            return list(map(lambda x: x[0], results)), list(
-                map(lambda x: x[1], results)  # engagement_score
-            )
-
+            if len(results) < limit:
+                print("Number of candidates for YourChoiceGenerator: ", len(results))
+                return list(map(lambda x: x[0], results)), list(
+                    map(lambda x: x[1], results)  # engagement_score
+                )
+            else:
+                print(
+                    "Number of candidates for YourChoiceGenerator: ",
+                    len(results[:limit]),
+                )
+                return list(map(lambda x: x[0], results[:limit])), list(
+                    map(lambda x: x[1], results[:limit])  # engagement_score
+                )
         elif starting_point.get("content_id", False):
             content_ids, scores = ann_with_offset(
                 starting_point["content_id"], 0.9, limit, offset, return_distances=True

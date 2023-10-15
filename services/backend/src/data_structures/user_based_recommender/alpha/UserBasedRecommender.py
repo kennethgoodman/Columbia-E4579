@@ -5,8 +5,8 @@ from src import db
 import pandas as pd
 from sklearn.metrics.pairwise import cosine_similarity
 
-class UserBasedRecommender:
 
+class UserBasedRecommender:
     _instance = None  # Singleton instance reference
 
     def __new__(cls):
@@ -19,11 +19,11 @@ class UserBasedRecommender:
         return cls._instance
 
     # Create a mapping function
-    def map_engagement_value(self, row, min, max):
-        if str(row['engagement_type']) == 'EngagementType.Like':
-            return row['engagement_value'] 
-        elif str(row['engagement_type']) == 'EngagementType.MillisecondsEngagedWith':
-            return (row['engagement_value'] - min) / (max-min)
+    def map_engagement_value(self, row, factor):
+        if str(row["engagement_type"]) == "EngagementType.Like":
+            return row["engagement_value"] * 1000
+        elif str(row["engagement_type"]) == "EngagementType.MillisecondsEngagedWith":
+            return row["engagement_value"] / factor
         else:
             return None  # Handle other cases if needed
 
@@ -33,19 +33,25 @@ class UserBasedRecommender:
             Engagement.user_id,
             Engagement.content_id,
             Engagement.engagement_type,
-            Engagement.engagement_value
+            Engagement.engagement_value,
         ).all()
 
-        df = pd.DataFrame(self.interactions, columns=['user_id', 'content_id', 'engagement_type', 'engagement_value'])
-        engagement_time = df.loc[df['engagement_type'] == 'MillisecondsEngagedWith',['engagement_value']]
-        max = engagement_time.max()
-        min = engagement_time.min() 
+        df = pd.DataFrame(
+            self.interactions,
+            columns=["user_id", "content_id", "engagement_type", "engagement_value"],
+        )
+        engagement_time = df.loc[df["engagement_value"] >= 500, ["engagement_value"]]
+        q99 = float(engagement_time.quantile(0.99))
 
         # Preprocessing
         # Dont forget to transform db.session to dataframe
-        df["engagement_value"] = df.apply(self.map_engagement_value, args=(min,max), axis=1)
+        df["engagement_value"] = df.apply(self.map_engagement_value, factor=q99, axis=1)
         impression = df[["user_id", "content_id", "engagement_value"]]
-        agg_impression = impression.groupby(['user_id', 'content_id']).agg({'engagement_value': 'sum'}).reset_index()
+        agg_impression = (
+            impression.groupby(["user_id", "content_id"])
+            .agg({"engagement_value": "sum"})
+            .reset_index()
+        )
 
         for user_id, content_id, value in agg_impression.values:
             if user_id not in self.user_content_matrix:
@@ -58,11 +64,16 @@ class UserBasedRecommender:
 
         # Convert our dict to a matrix for computation
         users = list(self.user_content_matrix.keys())
-        content_items = set(item for sublist in self.user_content_matrix.values() for item in sublist)
+        content_items = set(
+            item for sublist in self.user_content_matrix.values() for item in sublist
+        )
         matrix = []
 
         for user in users:
-            row = [self.user_content_matrix[user].get(content, 0) for content in content_items]
+            row = [
+                self.user_content_matrix[user].get(content, 0)
+                for content in content_items
+            ]
             matrix.append(row)
 
         # compute pairwise similarity
@@ -72,14 +83,18 @@ class UserBasedRecommender:
 
         # Update self.user_similarity_map with the similarities.
         for idx, user in enumerate(users):
-            self.user_similarity_map[user] = [(users[i], sim) for i, sim in enumerate(similarities[idx]) if i != idx]
+            self.user_similarity_map[user] = [
+                (users[i], sim) for i, sim in enumerate(similarities[idx]) if i != idx
+            ]
 
     def get_similar_users(self, user_id):
         # Fetch the list of similar users for a given user_id from the map.
-        return sorted(self.user_similarity_map.get(user_id, []), key=lambda x: x[1], reverse=True)
+        return sorted(
+            self.user_similarity_map.get(user_id, []), key=lambda x: x[1], reverse=True
+        )
 
     def recommend_items(self, user_id, num_recommendations=10):
-         # For a given user, fetch the list of similar users.
+        # For a given user, fetch the list of similar users.
         # Experimenting: Just pick top 5 similar users
         similar_users = self.get_similar_users(user_id)[:3]
         recommended = set()
@@ -94,6 +109,14 @@ class UserBasedRecommender:
         recommended_tuple = sorted(recommended, key=lambda x: x[1], reverse=True)
         recommended_content_ids = [int(item[0]) for item in recommended_tuple]
         content_ids_value = [int(item[1]) for item in recommended_tuple]
-        
+
         # Return only the top num_recommendations
-        return recommended_content_ids[:num_recommendations], content_ids_value[:num_recommendations]
+        # changing for 900 for now to compensate 2tower model
+        print(
+            "Number of candidates for Collaborative Filtering: ",
+            len(recommended_content_ids[:900]),
+        )
+        return (
+            recommended_content_ids[:900],
+            content_ids_value[:900],
+        )
