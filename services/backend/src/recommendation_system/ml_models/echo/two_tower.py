@@ -163,7 +163,8 @@ def content_preprocessing(df):
 def df_to_content_tensor(df):
     # Group by content_id and sum
 
-    aggregated = df.groupby('content_id').sum().reset_index()
+    # aggregated = df.groupby('content_id').sum().reset_index()
+    aggregated = df.drop_duplicates()
     content_tensor = torch.tensor(aggregated.values, dtype=torch.float32)
     return content_tensor
 
