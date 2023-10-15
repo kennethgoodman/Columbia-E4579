@@ -77,11 +77,12 @@ import torch.nn.functional as F
 import torch.distributions as D
 
 class ContrastiveLoss(nn.Module):
-    def __init__(self, margin=1.0, lambda_reg=0.01, lambda_orthog=0.01):
+    def __init__(self, margin=1.0, lambda_reg=0.01, lambda_orthog=0.01, num_neg_samples=5):
         super(ContrastiveLoss, self).__init__()
         self.margin = margin
         self.lambda_reg = lambda_reg
         self.lambda_orthog = lambda_orthog
+        self.num_neg_samples = num_neg_samples
 
     def calculate_targets(self, engagement_type_vector, engagement_value_vector):
         # Conditions for 0=dislike, 1=like, and 2=milliseconds engaged
@@ -106,7 +107,7 @@ class ContrastiveLoss(nn.Module):
               )
         )
 
-    def forward(self, user_embedding, content_embedding, targets, with_debug=False):
+    def forward(self, user_embedding, content_embedding, targets, pos_weight=None, neg_weight=None, with_debug=False):
         noise_factor = 0.0005
         user_embedding += noise_factor * torch.randn(*user_embedding.shape)
         content_embedding += noise_factor * torch.randn(*content_embedding.shape)
@@ -114,13 +115,23 @@ class ContrastiveLoss(nn.Module):
         cosine_sim = F.cosine_similarity(user_embedding, content_embedding, dim=1)
 
         # Contrastive loss
-        loss_contrastive = torch.mean(
-            (1 - targets) * torch.pow(cosine_sim, 2) +
-            (targets)     * torch.pow(
-                torch.clamp(self.margin - cosine_sim, min=0.0),
-                2
-            )
-        )
+        pos_loss = targets * torch.pow(torch.clamp(self.margin - cosine_sim, min=0.0), 2)
+        neg_loss = (1 - targets) * torch.pow(cosine_sim, 2)
+
+        # If weights are provided, apply them to the positive and negative losses
+        if pos_weight is not None:
+            pos_loss *= pos_weight
+        if neg_weight is not None:
+            neg_loss *= neg_weight
+
+        ## Negative sampling
+        neg_samples_indices = torch.randint(0, len(content_embedding), (user_embedding.size(0), self.num_neg_samples))
+        neg_samples = content_embedding[neg_samples_indices, :]
+        neg_cosine_sim = F.cosine_similarity(user_embedding.unsqueeze(1), neg_samples, dim=2)
+        neg_loss += torch.pow(neg_cosine_sim, 2).sum(dim=1)
+        
+
+        loss_contrastive = torch.mean(pos_loss + neg_loss)
 
         # Regularization terms
         reg_user = torch.norm(user_embedding, p=2)
@@ -132,6 +143,7 @@ class ContrastiveLoss(nn.Module):
             torch.mm(content_embedding, content_embedding.t()) -
             torch.eye(content_embedding.size(0))
         )
+
 
         total_loss = (
             loss_contrastive +
@@ -299,6 +311,10 @@ class ModelWrapper:
             logging.error("Mismatch in embeddings and tensor length or embedding size exceeds 64")
             return np.array([])
 
+        
+        #print('Content Embeddings:')
+        #print(embeddings)
+
         return embeddings
 
     def generate_user_embeddings(self, df):
@@ -382,8 +398,8 @@ class ModelWrapper:
         #print("df in user, ", df.columns)
 
         TOP_CONTENT = len(user_vector_df['millisecond_engaged_vector'].tolist()[0])
-        print("Length of User vector: ", user_vector_df['millisecond_engaged_vector'].shape)
-        print(len(user_vector_df['millisecond_engaged_vector'].tolist()[0]))
+        #print("Length of User vector: ", user_vector_df['millisecond_engaged_vector'].shape)
+        #print(len(user_vector_df['millisecond_engaged_vector'].tolist()[0]))
 
         # Unpack vector columns into individual columns
         millisecond_columns = [f"ms_engaged_{i}" for i in range(TOP_CONTENT)]
@@ -477,6 +493,8 @@ class ModelWrapper:
             return np.array([])
 
         #print('embeddings ,',embeddings.columns)
+        #print('User Embeddings:')
+        #print(embeddings)
 
         return embeddings
 
