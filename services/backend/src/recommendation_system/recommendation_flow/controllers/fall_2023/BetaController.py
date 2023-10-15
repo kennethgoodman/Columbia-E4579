@@ -26,9 +26,7 @@ class BetaController(AbstractController):
             seed *= 1000000
         candidate_limit = 500
         candidates, scores = [], []
-        for gen in [CollaberativeFilteredSimilarUsersGenerator, YourChoiceGenerator]:
-        #: 
-        #[TwoTowerANNGenerator, CollaberativeFilteredSimilarUsersGenerator, YourChoiceGenerator]:
+        for gen in [TwoTowerANNGenerator, CollaberativeFilteredSimilarUsersGenerator, YourChoiceGenerator]:
            cur_candidates, cur_scores = gen().get_content_ids(
                TeamName.Beta_F2023,
                user_id, candidate_limit, offset, seed, starting_point
