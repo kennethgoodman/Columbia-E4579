@@ -50,8 +50,12 @@ def instantiate_indexes():
 
         for team in teams:
             module_path = f"src.recommendation_system.ml_models.{team}.two_tower"
-            TwoTower = __import__(module_path, fromlist=['ModelWrapper']).ModelWrapper
-            team_wrappers[team] = TwoTower()
+            ModelWrapper = __import__(module_path, fromlist=['ModelWrapper']).ModelWrapper
+            try:
+                team_wrappers[team] = ModelWrapper()
+            except Exception as e:
+                print(f"Error during ModelWrapper instantiation for {team}, {e}")
+                team_wrappers[team] = None
 
         global index_to_content_id, content_id_to_index, INDEXES
         index_to_content_id = df['content_id'].to_dict()
