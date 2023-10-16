@@ -11,7 +11,9 @@ class TwoTowerANNGenerator(AbstractGenerator):
             content_ids, scores = get_ANN_recommendations_from_content(starting_point["content_id"], "golf", limit + offset)
         else:
             content_ids, scores = get_ANN_recommendations_from_user(user_id, "golf", limit + offset)
+        
         return content_ids[offset:], scores[offset:]
+        
 
     def _get_name(self):
         return "TwoTowerANNGenerator"
