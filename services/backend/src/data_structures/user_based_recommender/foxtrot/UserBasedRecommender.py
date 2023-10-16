@@ -23,17 +23,12 @@ class UserBasedRecommender:
     def gather_data(self):
         # Connect to the database and fetch user-content engagement.
         self.interactions = []
-        if os.path.isfile("/usr/src/app/src/recommendation_system/ml_models/foxtrot/assets/colab.pkl"):
-            with open("/usr/src/app/src/recommendation_system/ml_models/foxtrot/assets/colab.pkl", "rb") as f:
-                self.interactions = pickle.load(f)
         self.interactions = db.session.query(
             Engagement.content_id,
             Engagement.user_id,
             Engagement.engagement_type,
             Engagement.engagement_value
-        ).all()
-        with open("/usr/src/app/src/recommendation_system/ml_models/foxtrot/assets/colab.pkl", "wb") as file:
-            pickle.dump(self.interactions, file)
+        ).limit(50000).all()
         self.min_val = db.session.query(
             func.min(Engagement.engagement_value)
             ).where(Engagement.engagement_type == "MillisecondsEngagedWith").one()[0]
