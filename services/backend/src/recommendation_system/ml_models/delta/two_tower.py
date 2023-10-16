@@ -1,4 +1,3 @@
-two_tower.py
 import torch
 import torch.nn as nn
 import pandas as pd
@@ -123,3 +122,6 @@ class ModelWrapper:
 
 # Initialize ModelWrapper with an empty path to return a dummy model for testing
 model_wrapper = ModelWrapper()
+
+
+
