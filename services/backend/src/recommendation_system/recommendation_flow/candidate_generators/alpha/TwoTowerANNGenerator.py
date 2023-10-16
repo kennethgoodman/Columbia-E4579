@@ -17,7 +17,6 @@ class TwoTowerANNGenerator(AbstractGenerator):
             content_ids, scores = get_ANN_recommendations_from_user(
                 user_id, "alpha", limit + offset
             )
-        print("Number of candidates for TwoTowerANNGenerator: ", len(content_ids))
         return content_ids[offset:], scores[offset:]
 
     def _get_name(self):

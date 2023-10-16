@@ -594,7 +594,3 @@ class ModelWrapper:
             return np.array([])
 
         return embeddings
-
-
-# Initialize ModelWrapper with an empty path to return a dummy model for testing
-model_wrapper = ModelWrapper()

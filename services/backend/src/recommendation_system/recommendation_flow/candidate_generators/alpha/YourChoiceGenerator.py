@@ -41,8 +41,7 @@ class YourChoiceGenerator(AbstractGenerator):
             )
 
             # Get content_ids from results_engage_time
-            print("results like", len(results_like))
-            print("results engage", len(results_engage_time))
+
             engage_time_content_ids = [result[0] for result in results_engage_time]
 
             # Filter results_like based on these content_ids
@@ -51,7 +50,6 @@ class YourChoiceGenerator(AbstractGenerator):
                 for result in results_like
                 if result[0] in engage_time_content_ids
             ]
-            print("Num of candidates", len(results_like_new))
             # Create a dictionary where the keys are the content_ids and the values are tuples of (number_of_likes, engagement_time)
             engagement_data = {result[0]: (result[1], 0) for result in results_like_new}
             for result in results_engage_time:
@@ -70,15 +68,10 @@ class YourChoiceGenerator(AbstractGenerator):
             results = list(set(results_engagement_score))
 
             if len(results) < limit:
-                print("Number of candidates for YourChoiceGenerator: ", len(results))
                 return list(map(lambda x: x[0], results)), list(
                     map(lambda x: x[1], results)  # engagement_score
                 )
             else:
-                print(
-                    "Number of candidates for YourChoiceGenerator: ",
-                    len(results[:limit]),
-                )
                 return list(map(lambda x: x[0], results[:limit])), list(
                     map(lambda x: x[1], results[:limit])  # engagement_score
                 )

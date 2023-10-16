@@ -1,4 +1,3 @@
-
 from src.recommendation_system.recommendation_flow.candidate_generators.RandomGenerator import (
     RandomGenerator,
 )
@@ -14,11 +13,18 @@ from src.recommendation_system.recommendation_flow.model_prediction.RandomModel 
 from src.recommendation_system.recommendation_flow.ranking.RandomRanker import (
     RandomRanker,
 )
-from src.recommendation_system.recommendation_flow.candidate_generators.alpha.TwoTowerANNGenerator import TwoTowerANNGenerator
-from src.recommendation_system.recommendation_flow.candidate_generators.alpha.CollaberativeFilteredSimilarUsersGenerator import CollaberativeFilteredSimilarUsersGenerator
-from src.recommendation_system.recommendation_flow.candidate_generators.alpha.YourChoiceGenerator import YourChoiceGenerator
+from src.recommendation_system.recommendation_flow.candidate_generators.alpha.TwoTowerANNGenerator import (
+    TwoTowerANNGenerator,
+)
+from src.recommendation_system.recommendation_flow.candidate_generators.alpha.CollaberativeFilteredSimilarUsersGenerator import (
+    CollaberativeFilteredSimilarUsersGenerator,
+)
+from src.recommendation_system.recommendation_flow.candidate_generators.alpha.YourChoiceGenerator import (
+    YourChoiceGenerator,
+)
 
 from src.api.metrics.models import TeamName
+
 
 class AlphaController(AbstractController):
     def get_content_ids(self, user_id, limit, offset, seed, starting_point):
@@ -26,13 +32,22 @@ class AlphaController(AbstractController):
             seed *= 1000000
         candidate_limit = 500
         candidates, scores = [], []
-        for gen in [TwoTowerANNGenerator, CollaberativeFilteredSimilarUsersGenerator, YourChoiceGenerator]:
-           cur_candidates, cur_scores = gen().get_content_ids(
-               TeamName.Alpha_F2023,
-               user_id, candidate_limit, offset, seed, starting_point
-           )
-           candidates += cur_candidates
-           scores += cur_scores
+        print("trying TwoTowerANNGenerator for team alpha")
+        for gen in [
+            TwoTowerANNGenerator,
+            CollaberativeFilteredSimilarUsersGenerator,
+            YourChoiceGenerator,
+        ]:
+            cur_candidates, cur_scores = gen().get_content_ids(
+                TeamName.Alpha_F2023,
+                user_id,
+                candidate_limit,
+                offset,
+                seed,
+                None,
+            )
+            candidates += cur_candidates
+            scores += cur_scores
         filtered_candidates = RandomFilter().filter_ids(
             candidates, seed, starting_point
         )
