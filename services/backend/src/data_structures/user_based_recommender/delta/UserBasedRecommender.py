@@ -1,4 +1,3 @@
-UserBasedRecommender.py
 from sqlalchemy.sql.expression import func
 from src.api.content.models import Content, GeneratedContentMetadata
 from src.api.engagement.models import Engagement
