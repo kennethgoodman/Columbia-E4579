@@ -1,4 +1,3 @@
-CollaberativeFilteredSimilarUsersGenerator.py
 from src.recommendation_system.recommendation_flow.candidate_generators.AbstractGenerator import AbstractGenerator
 from src.data_structures.user_based_recommender.delta.UserBasedRecommender import UserBasedRecommender
 
