@@ -251,7 +251,7 @@ def df_to_user_tensor(df):
 
 # Model Wrapper
 class ModelWrapper:
-    def __init__(self, model_path="src.recommendation_system.ml_models.charlie.two_tower_trained_saved.pth"):
+    def __init__(self, model_path="/usr/src/app/src/recommendation_system/ml_models/charlie/two_tower_trained_saved.pth"):
         if not model_path:
             self.model = DummyTwoTowerModel()
         else:

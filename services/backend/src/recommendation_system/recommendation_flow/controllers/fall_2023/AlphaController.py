@@ -32,7 +32,6 @@ class AlphaController(AbstractController):
             seed *= 1000000
         candidate_limit = 500
         candidates, scores = [], []
-        print("trying TwoTowerANNGenerator for team alpha")
         for gen in [
             TwoTowerANNGenerator,
             CollaberativeFilteredSimilarUsersGenerator,

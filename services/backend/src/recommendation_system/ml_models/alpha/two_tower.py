@@ -182,7 +182,7 @@ class ContrastiveLoss(nn.Module):
 
 # Model Wrapper
 class ModelWrapper:
-    def __init__(self, model_path=""):
+    def __init__(self, model_path="/usr/src/app/src/recommendation_system/ml_models/alpha/two_tower_trained_saved.pth"):
         if not model_path:
             self.model = DummyTwoTowerModel()
         else:

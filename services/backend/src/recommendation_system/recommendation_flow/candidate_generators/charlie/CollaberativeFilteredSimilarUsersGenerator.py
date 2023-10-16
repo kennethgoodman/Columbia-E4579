@@ -7,7 +7,6 @@ class CollaberativeFilteredSimilarUsersGenerator(AbstractGenerator):
     def _get_content_ids(self, user_id, limit, offset, _seed, starting_point):
         # Get recommendations based on user-based collaborative filtering
         ubr = UserBasedRecommender()
-        ubr.compute_similarity()
         recommended_content = ubr.recommend_items(user_id, 2 * limit)
         content_ids = []
         scores = []
