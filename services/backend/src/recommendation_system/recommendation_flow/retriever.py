@@ -101,19 +101,16 @@ def add_metric_time_took(team_name, user_id, val, limit, offset, seed, starting_
 
 def get_content_data(controller, user_id, limit, offset, seed, starting_point=None):
     start = time.time()
-    try:
-        if False: # controller == ControllerEnum.ENGAGEMENT_ASSIGNMENT:
-            content_ids, new_controller = controller.value().get_content_ids(
-                user_id, limit, offset, seed, starting_point
-            )
-            controller = ControllerEnum.controller_to_string(new_controller)
-        else:
-            content_ids = controller.value().get_content_ids(
-                user_id, limit, offset, seed, starting_point
-            )
-    except Exception as e:
-        print(f"exception trying to get content for {controller}, {e}")
-        content_ids = []
+
+    if False: # controller == ControllerEnum.ENGAGEMENT_ASSIGNMENT:
+        content_ids, new_controller = controller.value().get_content_ids(
+            user_id, limit, offset, seed, starting_point
+        )
+        controller = ControllerEnum.controller_to_string(new_controller)
+    else:
+        content_ids = controller.value().get_content_ids(
+            user_id, limit, offset, seed, starting_point
+        )
     try:
         add_metric_time_took(ControllerEnum.controller_to_team_name(controller), 
                              user_id, int(1000 * (time.time() - start)), 
