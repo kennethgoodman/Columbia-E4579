@@ -50,8 +50,8 @@ def instantiate_indexes():
 
         for team in teams:
             module_path = f"src.recommendation_system.ml_models.{team}.two_tower"
-            ModelWrapper = __import__(module_path, fromlist=['ModelWrapper']).ModelWrapper
             try:
+                ModelWrapper = __import__(module_path, fromlist=['ModelWrapper']).ModelWrapper
                 team_wrappers[team] = ModelWrapper()
             except Exception as e:
                 print(f"Error during ModelWrapper instantiation for {team}, {e}")
