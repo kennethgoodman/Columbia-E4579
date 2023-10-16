@@ -113,6 +113,7 @@ def get_content_data(controller, user_id, limit, offset, seed, starting_point=No
             )
     except Exception as e:
         print(f"exception trying to get content for {controller}, {e}")
+        content_ids = []
     try:
         add_metric_time_took(ControllerEnum.controller_to_team_name(controller), 
                              user_id, int(1000 * (time.time() - start)), 

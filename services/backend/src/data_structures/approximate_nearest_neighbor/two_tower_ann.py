@@ -90,7 +90,7 @@ def get_ANN_recommednations(embedding, team, K):
                 new_scores.append(score) 
         return new_similar_content, new_scores
     except Exception as e:
-        print(f"Error during ANN recommendations: {e}")
+        print(f"Error during get_ANN_recommednations recommendations for {team}: {e}")
         return [], []
 
 def get_ANN_recommendations_from_user(user_id, team, K):
@@ -109,7 +109,7 @@ def get_ANN_recommendations_from_user(user_id, team, K):
 
         return get_ANN_recommednations(user_embedding, team, K)
     except Exception as e:
-        print(f"Error during ANN recommendations: {e}")
+        print(f"Error during get_ANN_recommendations_from_user recommendations for {team}: {e}")
         return [], []
 
 def get_ANN_recommendations_from_content(content_id, team, K):
@@ -128,5 +128,5 @@ def get_ANN_recommendations_from_content(content_id, team, K):
 
         return get_ANN_recommednations(content_embedding, team, K)
     except Exception as e:
-        print(f"Error during ANN recommendations: {e}")
+        print(f"Error during get_ANN_recommendations_from_content recommendations for {team}: {e}")
         return [], []
