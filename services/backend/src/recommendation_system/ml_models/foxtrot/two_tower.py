@@ -1,27 +1,63 @@
-
+import os
 import torch
 import torch.nn as nn
 import pandas as pd
 import numpy as np
 import logging
+from src.recommendation_system.ml_models.foxtrot.utils import (
+    get_tops,
+    preprocess_for_tensor,
+    create_user_tensor,
+    create_content_tensor,
+)
 
 # Set up basic logging configuration
 logging.basicConfig(level=logging.ERROR)
 
 # Two Tower PyTorch Model
 class TwoTowerModel(nn.Module):
-    def __init__(self):
+    def __init__(self, user_dim=1500, content_dim=593, hidden_dim=512, output_dim=64):
         super(TwoTowerModel, self).__init__()
-        # Define the layers for content and user towers here if needed
-        # For the sake of simplicity, I'm leaving it empty now
+
+        self.dropout = nn.Dropout(0.5)
+        # User tower
+        self.user_linear1 = nn.Linear(user_dim, hidden_dim)
+        self.user_relu = nn.LeakyReLU()
+        self.user_batchnorm1 = nn.BatchNorm1d(hidden_dim)
+        self.user_batchnorm2 = nn.BatchNorm1d(hidden_dim)
+        self.user_linear2 = nn.Linear(hidden_dim, output_dim)
+
+        # Content tower
+        self.content_linear1 = nn.Linear(content_dim, hidden_dim)
+        self.content_relu = nn.LeakyReLU()
+        self.content_batchnorm1 = nn.BatchNorm1d(hidden_dim)
+        self.content_batchnorm2 = nn.BatchNorm1d(hidden_dim)
+        self.content_linear2 = nn.Linear(hidden_dim, output_dim)
+
+        # initialization
+        nn.init.kaiming_normal_(self.user_linear1.weight, mode='fan_in', nonlinearity='relu')
+        nn.init.kaiming_normal_(self.content_linear1.weight, mode='fan_in', nonlinearity='relu')
 
     def forward_content(self, content_tensor):
-        # Forward pass for content
-        raise NotImplementedError("forward_content needs to be implemented")
+        # Content tower
+        content_embedding = self.content_linear1(content_tensor)
+        content_embedding = self.content_relu(content_embedding)
+        content_embedding = self.content_batchnorm1(content_embedding)
+        content_embedding = self.dropout(content_embedding)
+        content_embedding = self.content_linear2(content_embedding)
+
+        return content_embedding
 
     def forward_user(self, user_tensor):
-        # Forward pass for user
-        raise NotImplementedError("forward_user needs to be implemented")
+        # User tower
+        user_embedding = self.user_linear1(user_tensor)
+        user_embedding = self.user_relu(user_embedding)
+        user_embedding = self.user_batchnorm1(user_embedding)
+        user_embedding = self.dropout(user_embedding)
+        user_embedding = self.user_linear2(user_embedding)
+
+        return user_embedding
+
 
 # Dummy Two Tower PyTorch Model for testing
 class DummyTwoTowerModel(nn.Module):
@@ -36,22 +72,23 @@ class DummyTwoTowerModel(nn.Module):
         # Return dummy embeddings of shape (user_tensor length, 64)
         return torch.randn((len(user_tensor), 64))
 
+
 # Functions to convert DataFrame to Tensors
 def df_to_content_tensor(df):
-    # Group by content_id and sum
-    aggregated = df.groupby('content_id').sum()
-    content_tensor = torch.tensor(aggregated.values, dtype=torch.float32)
+    top_artist_styles, top_sources, top_seeds, top_n_content = get_tops()
+    df = preprocess_for_tensor(df, top_artist_styles, top_sources, top_seeds, top_n_content)
+    content_tensor, _ = create_content_tensor(df, True)
     return content_tensor
 
 def df_to_user_tensor(df):
-    # Group by user_id and sum
-    aggregated = df.groupby('user_id').sum()
-    user_tensor = torch.tensor(aggregated.values, dtype=torch.float32)
+    top_artist_styles, top_sources, top_seeds, top_n_content = get_tops()
+    df = preprocess_for_tensor(df, top_artist_styles, top_sources, top_seeds, top_n_content)
+    user_tensor, _ = create_user_tensor(df, True)
     return user_tensor
 
 # Model Wrapper
 class ModelWrapper:
-    def __init__(self, model_path=""):
+    def __init__(self, model_path="/usr/src/app/src/recommendation_system/ml_models/foxtrot/model.pth"):
         if not model_path:
             self.model = DummyTwoTowerModel()
         else:
