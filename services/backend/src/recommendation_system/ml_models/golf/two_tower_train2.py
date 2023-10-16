@@ -34,6 +34,18 @@ top_artist_styles = df['artist_style'].value_counts().nlargest(TOP_ARTIST_STYLES
 top_sources = df['source'].value_counts().nlargest(TOP_SOURCES).index.tolist()
 top_seeds = df['seed'].value_counts().nlargest(TOP_SEEDS).index.tolist()
 
+
+# In[9]:
+
+
+# import pickle
+# with open('top_n_content.pkl', 'wb') as f:
+#     pickle.dump(top_n_content, f)
+
+
+# In[10]:
+
+
 # Replace less frequent artist styles, sources, and seeds with 'other'
 df['artist_style'] = df['artist_style'].apply(lambda x: x if x in top_artist_styles else 'other')
 df['source'] = df['source'].apply(lambda x: x if x in top_sources else 'other')
@@ -150,48 +162,20 @@ engagement_type_value['engagement_type'] = engagement_type_value.apply(
 )
 engagement_type_tensor = torch.FloatTensor(engagement_type_value[['engagement_type']].values)
 engagement_value_tensor = torch.FloatTensor(engagement_type_value[['engagement_value']].values)
-
-engagement_aggregate2 = engagement_aggregate.drop('user_id', axis=1)
-engagement_aggregate2 = engagement_aggregate2.groupby('content_id',as_index=False).sum()
-likes_count = engagement_aggregate2[['content_id','likes_count']]
-median = likes_count['likes_count'].median()
-
-def is_popular(x):
-    if x>median:
-        return 1
-    else:
-        return 0
-
-likes_count['likes_count'] = likes_count['likes_count'].apply(is_popular)
-df = df.merge(
-    likes_count,
-    how = 'left',
-    on='content_id'
-)
-
-#del engagement_type_value
-#del df
+del engagement_type_value
+del df
 
 
-# In[10]:
+# In[8]:
 
 
-import numpy
-import random
-def random_fill(x):
-    if(np.isnan(x)):
-        return random.random()
-    return x
-df['likes_count'] = df['likes_count'].apply(random_fill)
+# import pickle
+# encoder_file_path = "encoder.pkl"
+# with open(encoder_file_path, 'wb') as file:
+#     pickle.dump(encoder, file)
 
 
 # In[11]:
-
-
-popular_tensor = torch.FloatTensor(df[['likes_count']].values)
-
-
-# In[12]:
 
 
 import torch
@@ -230,7 +214,7 @@ class ContrastiveLoss(nn.Module):
         self.lambda_reg = lambda_reg
         self.lambda_orthog = lambda_orthog
 
-    def calculate_targets(self, engagement_type_vector, engagement_value_vector,popular_tensor):
+    def calculate_targets(self, engagement_type_vector, engagement_value_vector):
         # Conditions for 0=dislike, 1=like, and 2=milliseconds engaged
         return torch.where(
               engagement_type_vector == DISLIKE_ENGAGEMENT_TYPE_VALUE,
@@ -239,10 +223,10 @@ class ContrastiveLoss(nn.Module):
                   engagement_type_vector == LIKE_ENGAGEMENT_TYPE_VALUE,
                   torch.ones_like(engagement_type_vector), # like
                   torch.where(
-                      popular_tensor > 0.5, #popular
-                      torch.zeros_like(engagement_type_vector), # bad engagement
+                      engagement_value_vector % 2 ==0,        #random negative sampling
+                      torch.zeros_like(engagement_type_vector), 
                       torch.ones_like(engagement_type_vector)
-                    
+                      
                   ) # millisecond engaged with
               )
         )
@@ -344,7 +328,7 @@ from sklearn.model_selection import train_test_split
 import torch.optim as optim
 from torch.optim.lr_scheduler import CyclicLR
 
-targets = loss_function.calculate_targets(engagement_type_tensor, engagement_value_tensor,popular_tensor)
+targets = loss_function.calculate_targets(engagement_type_tensor, engagement_value_tensor)
 engagement_data = EngagementDataset(user_features_tensor, content_features_tensor, targets)
 
 train_data, test_data = train_test_split(engagement_data, test_size=0.2, random_state=28)
@@ -376,7 +360,7 @@ scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer,
                                                final_div_factor=10000.0)  # max_lr divided by this factor gives the ending LR
 
 
-# In[13]:
+# In[12]:
 
 
 # Training loop
@@ -417,20 +401,8 @@ for epoch in range(20):
     print(f'Epoch {epoch+1}, Avg Cosine-Sims: {random_cosine_similarity(content_embedding, n=10)}')
 
 
-# In[14]:
+# In[13]:
 
 
-torch.save(model.state_dict(),'Popularity_biased_Negative_Sampling.pt')
-
-
-# In[81]:
-
-
-plot_bins(content_embedding)
-
-
-# In[83]:
-
-
-plot_bins(user_embedding)
+torch.save(model.state_dict(),'random_negative_sampling.pt')
 
