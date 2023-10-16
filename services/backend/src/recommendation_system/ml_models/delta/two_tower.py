@@ -4,10 +4,8 @@ import pandas as pd
 import numpy as np
 import logging
 
-# Set up basic logging configuration
 logging.basicConfig(level=logging.ERROR)
 
-# Two Tower PyTorch Model
 class TwoTowerModel(nn.Module):
     def __init__(self, user_dim, content_dim, output_dim):
         super(TwoTowerModel, self).__init__()
@@ -22,7 +20,6 @@ class TwoTowerModel(nn.Module):
         return self.forward_user(user_tensor), self.forward_content(content_tensor)
 
     def forward_content(self, content_tensor):
-        # Forward pass for content
         content_tensor = F.relu(self.fc0_1(content_tensor))
         content_tensor = F.relu(self.fc1(content_tensor))
         content_tensor = F.relu(self.fc2(content_tensor))
@@ -32,7 +29,6 @@ class TwoTowerModel(nn.Module):
 
 
     def forward_user(self, user_tensor):
-        # Forward pass for user
         user_tensor = F.relu(self.fc0(user_tensor))
         user_tensor = F.relu(self.fc1(user_tensor))
         user_tensor = F.relu(self.fc2(user_tensor))
@@ -41,8 +37,6 @@ class TwoTowerModel(nn.Module):
         return user_tensor
 
 
-
-# Dummy Two Tower PyTorch Model for testing
 class DummyTwoTowerModel(nn.Module):
     def __init__(self):
         super(DummyTwoTowerModel, self).__init__()
@@ -55,21 +49,16 @@ class DummyTwoTowerModel(nn.Module):
         # Return dummy embeddings of shape (user_tensor length, 64)
         return torch.randn((len(user_tensor), 64))
 
-# Functions to convert DataFrame to Tensors
 def df_to_content_tensor(df):
-    # Group by content_id and sum
     aggregated = df.groupby('content_id').sum()
     content_ids = aggregated.index
     content_values = aggregated.values
 
-    # Calculate the number of times to repeat the aggregated data
     num_repeats = max(1, 50000 // len(content_ids))
 
-    # Repeat content_ids and content_values to reach 50,000 embeddings
     repeated_content_ids = content_ids.repeat(num_repeats)
     repeated_content_values = content_values.repeat(num_repeats, axis=0)
 
-    # Trim the data to exactly 50,000 embeddings
     repeated_content_ids = repeated_content_ids[:50000]
     repeated_content_values = repeated_content_values[:50000]
 
@@ -78,16 +67,13 @@ def df_to_content_tensor(df):
     return content_tensor
 
 def df_to_user_tensor(df):
-    # Group by user_id and sum
     aggregated = df.groupby('user_id').sum()
     user_tensor = torch.tensor(aggregated.values, dtype=torch.float32)
     return user_tensor
 
-# Model Wrapper
 
 class ModelWrapper:
     def __init__(self, model_path="/usr/src/app/src/recommendation_system/ml_models/delta/twotower_model.dict"):
-        #model_path="/usr/src/app/src/recommendation_system/ml_models/delta/saved_two_tower.pt"
         if not model_path:
             self.model = DummyTwoTowerModel()
         else:
@@ -120,8 +106,4 @@ class ModelWrapper:
 
         return embeddings
 
-# Initialize ModelWrapper with an empty path to return a dummy model for testing
 model_wrapper = ModelWrapper()
-
-
-
