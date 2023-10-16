@@ -36,10 +36,6 @@ def create_app(script_info=None):
                 print(f"Table '{table.__tablename__}' does not exist. Error: {e}")
 
     def before_first_request_instantiate():
-        from src.data_structures.approximate_nearest_neighbor import (
-            instantiate,
-            read_data,
-        )
         from src.data_structures.approximate_nearest_neighbor.two_tower_ann import (
             instantiate_indexes,
         )
@@ -47,12 +43,6 @@ def create_app(script_info=None):
         print("INSTANTIATING ALL TEAMS ANNs")
         instantiate_indexes()
         print("INSTANTIATED INDEXES FOR TEAMS")
-
-        print("READING DATA FOR ANN INDEX, will only run this once")
-        read_data()
-        print("INSTANTIATING ANN INDEX")
-        instantiate(0.9)
-        print("INSTANTIATED ANN INDEX")
 
         print("instantiating user based collabertive filter objects")
         teams = ["alpha", "beta", "charlie", "delta", "echo", "foxtrot", "golf"]
