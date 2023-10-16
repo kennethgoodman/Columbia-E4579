@@ -9,7 +9,6 @@ class CollaberativeFilteredSimilarUsersGenerator(AbstractGenerator):
         ubr = UserBasedRecommender()
         ubr.compute_similarity()
         recommended_content = ubr.recommend_items(user_id, 2 * limit)
-        # return [tup[0] for tup in recommended_content], [0] * 2 * limit
         content_ids = []
         scores = []
         index = 0
