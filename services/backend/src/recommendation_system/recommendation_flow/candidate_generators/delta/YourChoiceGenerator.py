@@ -1,4 +1,3 @@
-YourChoiceGenerator.py
 import operator
 from sqlalchemy.sql.expression import func
 from src import db
