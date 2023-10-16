@@ -62,7 +62,6 @@ class UserBasedRecommender:
 
     def recommend_items(self, user_id, num_recommendations=10):
 
-        self.compute_similarity()
         similar_users = sorted(self.user_similarity_map.get(user_id, {}).items(), key=lambda x: x[1], reverse=True)
 
         recommended_content_ids = set()
