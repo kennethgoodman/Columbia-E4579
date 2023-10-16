@@ -29,7 +29,6 @@ class YourChoiceGenerator(AbstractGenerator):
                 starting_point["content_id"], 0.9, limit, offset, return_distances=True
             )
             return content_ids, scores
-        raise NotImplementedError("Need to provide a key we know about")
     
     def _get_name(self):
         return "YourChoiceGenerator"
