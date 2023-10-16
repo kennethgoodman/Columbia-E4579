@@ -168,6 +168,74 @@ def df_to_user_tensor(df):
 
     # Group by user_id and content_id, then apply the function
     try:
+        df.created_date = pd.to_datetime(df.created_date)
+        df['contentCmltLike'] = ((df.engagement_type == 'Like') & (df.engagement_value == 1)).groupby(df.content_id).cumsum()
+        df['contentCmltDislike'] = ((df.engagement_type == 'Like') & (df.engagement_value == -1)).groupby(df.content_id).cumsum()
+        df['contentCmltEngagement'] = ((df.engagement_type == 'MillisecondsEngagedWith')).groupby(df.content_id).cumsum()
+        df['userCmltLike'] = ((df.engagement_type == 'Like') & (df.engagement_value == 1)).groupby(df.user_id).cumsum()
+        df['userCmltLike'] = ((df.engagement_type == 'Like') & (df.engagement_value == 1)).groupby(df.user_id).cumsum()
+        df['userCmltDislike'] = ((df.engagement_type == 'Like') & (df.engagement_value == -1)).groupby(df.user_id).cumsum()
+        df['userCmltEngagement'] = ((df.engagement_type == 'MillisecondsEngagedWith')).groupby(df.user_id).cumsum()
+        df['userStartUsing'] = df.groupby('user_id')['created_date'].transform('min')
+        df['timeSinceStart'] = (df.created_date - df.userStartUsing).dt.total_seconds()
+
+        merger = lambda df:pd.merge(
+            df[df.engagement_type=='MillisecondsEngagedWith'][['user_id','content_id','engagement_value',
+                                                        'contentCmltLike','contentCmltDislike','contentCmltEngagement',
+                                                        'userCmltLike','userCmltDislike','userCmltEngagement',
+                                                        'timeSinceStart']],
+            df[df.engagement_type=='Like'][['content_id','engagement_value']],
+            on='content_id',
+            how='left').fillna(0)
+
+        All_Liked_content = df[(df.engagement_type=='Like')&(df.engagement_value==1)].groupby('content_id', as_index=False).agg({"engagement_value":"sum"})
+        # Liked_content.plot()
+        # popular content threshole is 10
+        Popular_content = All_Liked_content[All_Liked_content.engagement_value > 10]
+        Popular_content
+
+        All_Disliked_content = df[(df.engagement_type=='Like')&(df.engagement_value==-1)].groupby('content_id', as_index=False).agg({"engagement_value":"sum"})
+            # Disliked_content.plot()
+        # unfavorable content threshold is -6
+        Unfavorable_content = All_Disliked_content[All_Disliked_content.engagement_value < -6]
+        Unfavorable_content
+
+        df['popular_content'] = np.where(df['content_id'].isin(Popular_content['content_id']),1,0)
+        df['unfavorable_content'] = np.where(df['content_id'].isin(Unfavorable_content['content_id']),1,0)
+
+        unfavorable_saw = df[(df.unfavorable_content==1)].groupby('user_id', as_index=False).agg({"engagement_value":"count"})
+        unfavorable_saw
+
+        popular_saw = df[(df.popular_content==1)].groupby('user_id', as_index=False).agg({"engagement_value":"count"})
+        popular_saw
+
+        #define indie scores for users
+        indie = df[(df.engagement_type=='Like')&(df.engagement_value==1)&(df.unfavorable_content==1)].groupby('user_id', as_index=False).agg({"engagement_value":"sum"})
+        #indie['user_id'].isin(unfavorable_saw['user_id'])
+        indie = pd.merge(indie,unfavorable_saw,on='user_id',how='left')
+        indie['score'] = indie['engagement_value_x']/indie['engagement_value_y']
+        #indie
+
+        #define vigilante scores for users
+        vigilante = df[(df.engagement_type=='Like')&(df.engagement_value==-1)&(df.popular_content==1)].groupby('user_id', as_index=False).agg({"engagement_value":"sum"})
+        #vigilante['user_id'].isin(popular_saw['user_id'])
+        vigilante = pd.merge(vigilante,popular_saw,on='user_id',how='left')
+        vigilante['score'] = -vigilante['engagement_value_x']/vigilante['engagement_value_y']
+        #vigilante
+
+        #define basic scores for users
+        basic_like = df[(df.engagement_type=='Like')&(df.engagement_value==1)&(df.popular_content==1)].groupby('user_id', as_index=False).agg({"engagement_value":"sum"})
+        #basic_like['user_id'].isin(popular_saw['user_id'])
+        basic_like = pd.merge(basic_like,popular_saw,on='user_id',how='left')
+        basic_like['score'] = basic_like['engagement_value_x']/basic_like['engagement_value_y']
+        #basic_like
+
+        basic_dislike = df[(df.engagement_type=='Like')&(df.engagement_value==-1)&(df.unfavorable_content==1)].groupby('user_id', as_index=False).agg({"engagement_value":"sum"})
+        #basic_dislike['user_id'].isin(unfavorable_saw['user_id'])
+        basic_dislike = pd.merge(basic_dislike,unfavorable_saw,on='user_id',how='left')
+        basic_dislike['score'] = -basic_dislike['engagement_value_x']/basic_dislike['engagement_value_y']
+        #basic_dislike
+
         engagement_aggregate = df[df['content_id'].isin(top_n_content)].groupby(['user_id', 'content_id'],group_keys=False).apply(aggregate_engagement).reset_index()
 
         #print(f'Successfully aggregated, {engagement_aggregate.shape}')
@@ -186,9 +254,19 @@ def df_to_user_tensor(df):
             user_vector_dict[user_id]['like_vector'][idx] = row['likes_count']
             user_vector_dict[user_id]['dislike_vector'][idx] = row['dislikes_count']
 
+        
+
         # Convert to DataFrame
         user_vector_df = pd.DataFrame.from_dict(user_vector_dict, orient='index')
         del user_vector_dict
+
+        user_vector_df_new = user_vector_df
+        user_vector_df_new = user_vector_df_new.merge(basic_like[['user_id','score']], right_on='user_id',left_index=True, how = "left").drop(columns=['user_id'])
+        user_vector_df_new = user_vector_df_new.merge(basic_dislike[['user_id','score']], right_on='user_id',left_index=True, how = "left", suffixes=('_1', '_2')).drop(columns=['user_id'])
+        user_vector_df_new = user_vector_df_new.merge(vigilante[['user_id','score']], right_on='user_id',left_index=True, how = "left").drop(columns=['user_id'])
+        user_vector_df_new = user_vector_df_new.merge(indie[['user_id','score']], right_on='user_id',left_index=True, how = "left").drop(columns=['user_id'])
+        user_vector_df_new.fillna(0, inplace=True)
+
         
         user_vector_mil = np.vstack(user_vector_df['millisecond_engaged_vector']).astype(np.float32)
         user_vector_like = np.vstack(user_vector_df['like_vector']).astype(np.float32)
