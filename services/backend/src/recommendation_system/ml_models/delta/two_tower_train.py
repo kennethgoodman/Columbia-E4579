@@ -1,4 +1,3 @@
-two_tower_train.py
 import numpy as np
 import pandas as pd
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
