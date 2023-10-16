@@ -112,10 +112,6 @@ class UserBasedRecommender:
 
         # Return only the top num_recommendations
         # changing for 900 for now to compensate 2tower model
-        print(
-            "Number of candidates for Collaborative Filtering: ",
-            len(recommended_content_ids[:900]),
-        )
         return (
             recommended_content_ids[:900],
             content_ids_value[:900],
