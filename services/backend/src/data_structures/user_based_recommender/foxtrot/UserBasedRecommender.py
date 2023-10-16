@@ -59,7 +59,10 @@ class UserBasedRecommender:
             for j, content in enumerate(contents):
                 matrix[i][j] = user_content_matrix[user][content]
 
-        similarities = cosine_similarity(matrix)
+        try:
+            similarities = cosine_similarity(matrix)
+        except:
+            similarities = []
 
         for i, user in enumerate(users):
             self.user_similarity_map[user] = [(users[j], sim) for j, sim in enumerate(similarities[i]) if j != i and sim > 0]
