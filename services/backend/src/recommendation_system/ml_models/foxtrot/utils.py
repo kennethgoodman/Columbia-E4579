@@ -97,36 +97,6 @@ def fetch_data_by_user_id(user_id):
 
 
 
-# this the function to fetch the training data from the database
-def fetch_database_train_data():
-    try:
-        if os.path.isfile("/usr/src/app/src/recommendation_system/ml_models/foxtrot/assets/train_total.pkl"):
-            with open("/usr/src/app/src/recommendation_system/ml_models/foxtrot/assets/train_total.pkl", "rb") as f:
-                return pickle.load(f)
-        res = db.session.query(
-            Engagement.user_id,
-            Engagement.content_id,
-            Engagement.engagement_type,
-            Engagement.engagement_value,
-            #Engagement.created_date,
-            GeneratedContentMetadata.seed,
-            GeneratedContentMetadata.guidance_scale,
-            GeneratedContentMetadata.num_inference_steps,
-            GeneratedContentMetadata.artist_style,
-            GeneratedContentMetadata.source,
-            GeneratedContentMetadata.model_version,
-            GeneratedContentMetadata.prompt,
-            GeneratedContentMetadata.prompt_embedding
-        ).join(
-            GeneratedContentMetadata, Engagement.content_id == GeneratedContentMetadata.content_id
-        ).all()
-        with open("/usr/src/app/src/recommendation_system/ml_models/foxtrot/assets/train_total.pkl", "wb") as file:
-            pickle.dump(res, file)
-        return res
-    except Exception as e:
-        print(f"Error fetching data: {e}")
-        return None
-
 def generate_negative_samples(df, n_negatives_per_positive=1):
     """
     Generate negative samples for the dataset using an optimized approach.
@@ -253,13 +223,11 @@ def aggregate_engagement(group):
         'dislikes_count': dislikes_count
     })
 
-def get_tops(top_content=500):
+def get_tops(df, top_content=500):
     if os.path.isfile("/usr/src/app/src/recommendation_system/ml_models/foxtrot/assets/tops.pkl"):
         with open("/usr/src/app/src/recommendation_system/ml_models/foxtrot/assets/tops.pkl", "rb") as f:
             top_artist_styles, top_sources, top_seeds, top_n_content = pickle.load(f)
             return top_artist_styles, top_sources, top_seeds, top_n_content
-    raw_data = fetch_database_train_data()
-    df = raw_database_data_to_df(raw_data)
     # Configuration options
     TOP_ARTIST_STYLES = 30
     TOP_SOURCES = 30
