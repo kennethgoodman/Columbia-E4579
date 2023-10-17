@@ -53,6 +53,7 @@ def instantiate_indexes():
             try:
                 ModelWrapper = __import__(module_path, fromlist=['ModelWrapper']).ModelWrapper
                 team_wrappers[team] = ModelWrapper()
+                print(f"Done ModelWrapper instantiation for {team} successfully")
             except Exception as e:
                 print(f"Error during ModelWrapper instantiation for {team}, {e}")
                 print(traceback.format_exc())
@@ -70,6 +71,7 @@ def instantiate_indexes():
                 else:
                     index = mrpt.MRPTIndex(data)
                     index.build_autotune_sample(0.9, 10)
+                print(f"Done index instantiation for {team} successfully")
             except Exception as e:
                 print(f"Error during index instantiation for {team}, {e}")
                 print(traceback.format_exc())
