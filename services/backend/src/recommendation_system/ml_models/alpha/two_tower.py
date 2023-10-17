@@ -186,7 +186,7 @@ class ModelWrapper:
         if not model_path:
             self.model = DummyTwoTowerModel()
         else:
-            self.model = TwoTowerModel()
+            self.model = TwoTowerModel(753, 593, 64)
             self.model.load_state_dict(
                 torch.load(model_path, map_location=torch.device("cpu"))
             )
