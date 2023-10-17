@@ -23,6 +23,12 @@ class UserBasedRecommender:
     def gather_data(self):
         # Connect to the database and fetch user-content engagement.
         self.interactions = []
+        self.interactions = db.session.query(
+            Engagement.content_id,
+            Engagement.user_id,
+            Engagement.engagement_type,
+            Engagement.engagement_value
+        ).limit(50000).all()
         self.min_val = db.session.query(
             func.min(Engagement.engagement_value)
             ).where(Engagement.engagement_type == "MillisecondsEngagedWith").one()[0]
