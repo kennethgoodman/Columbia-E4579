@@ -6,6 +6,7 @@ from src import db
 import numpy as np
 import pandas as pd
 from sklearn.metrics.pairwise import cosine_similarity
+from scipy.sparse import csr_matrix
 import pdb
 from src.api.engagement.models import EngagementType, LikeDislike
 from src.data_structures.user_based_recommender.data_collector import DataCollector
