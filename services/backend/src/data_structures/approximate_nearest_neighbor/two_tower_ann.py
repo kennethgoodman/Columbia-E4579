@@ -5,6 +5,7 @@ from src.api.engagement.models import Engagement
 from flask import current_app
 import mrpt
 import pandas as pd
+import traceback
 
 # Global Variables
 INDEXES = {}
@@ -54,6 +55,7 @@ def instantiate_indexes():
                 team_wrappers[team] = ModelWrapper()
             except Exception as e:
                 print(f"Error during ModelWrapper instantiation for {team}, {e}")
+                print(traceback.format_exc())
                 team_wrappers[team] = None
 
         global index_to_content_id, content_id_to_index, INDEXES
@@ -70,10 +72,9 @@ def instantiate_indexes():
                     index.build_autotune_sample(0.9, 10)
             except Exception as e:
                 print(f"Error during index instantiation for {team}, {e}")
+                print(traceback.format_exc())
                 index = None
             INDEXES[team] = index
-            del data
-
     except Exception as e:
         print(f"Error during index instantiation: {e}")
 
