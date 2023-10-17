@@ -8,7 +8,7 @@ class DataCollector:
     _instance = None  # Singleton instance reference
     def __new__(cls):
         if cls._instance is None:
-            cls._instance = super(DataGather, cls).__new__(cls)
+            cls._instance = super(DataCollector, cls).__new__(cls)
             cls._instance.gather_data()
         return cls._instance
 
