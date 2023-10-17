@@ -5,6 +5,7 @@ from src.api.engagement.models import Engagement
 from flask import current_app
 import mrpt
 import pandas as pd
+import traceback
 
 # Global Variables
 INDEXES = {}
@@ -45,13 +46,18 @@ def instantiate_indexes():
         ).order_by(Engagement.content_id).all()
         df = pd.DataFrame(contents)
 
-        teams = ["alpha", "beta", "charlie", "delta", "echo", "foxtrot", "golf"]
         global team_wrappers
-
+        teams = current_app.config.get("TEAMS_TO_RUN_FOR")
         for team in teams:
             module_path = f"src.recommendation_system.ml_models.{team}.two_tower"
-            TwoTower = __import__(module_path, fromlist=['ModelWrapper']).ModelWrapper
-            team_wrappers[team] = TwoTower()
+            try:
+                ModelWrapper = __import__(module_path, fromlist=['ModelWrapper']).ModelWrapper
+                team_wrappers[team] = ModelWrapper()
+                print(f"Done ModelWrapper instantiation for {team} successfully")
+            except Exception as e:
+                print(f"Error during ModelWrapper instantiation for {team}, {e}")
+                print(traceback.format_exc())
+                team_wrappers[team] = None
 
         global index_to_content_id, content_id_to_index, INDEXES
         index_to_content_id = df['content_id'].to_dict()
@@ -65,12 +71,12 @@ def instantiate_indexes():
                 else:
                     index = mrpt.MRPTIndex(data)
                     index.build_autotune_sample(0.9, 10)
+                print(f"Done index instantiation for {team} successfully")
             except Exception as e:
                 print(f"Error during index instantiation for {team}, {e}")
+                print(traceback.format_exc())
                 index = None
             INDEXES[team] = index
-            del data
-
     except Exception as e:
         print(f"Error during index instantiation: {e}")
 
@@ -86,7 +92,7 @@ def get_ANN_recommednations(embedding, team, K):
                 new_scores.append(score) 
         return new_similar_content, new_scores
     except Exception as e:
-        print(f"Error during ANN recommendations: {e}")
+        print(f"Error during get_ANN_recommednations recommendations for {team}: {e}")
         return [], []
 
 def get_ANN_recommendations_from_user(user_id, team, K):
@@ -105,7 +111,7 @@ def get_ANN_recommendations_from_user(user_id, team, K):
 
         return get_ANN_recommednations(user_embedding, team, K)
     except Exception as e:
-        print(f"Error during ANN recommendations: {e}")
+        print(f"Error during get_ANN_recommendations_from_user recommendations for {team}: {e}")
         return [], []
 
 def get_ANN_recommendations_from_content(content_id, team, K):
@@ -124,5 +130,5 @@ def get_ANN_recommendations_from_content(content_id, team, K):
 
         return get_ANN_recommednations(content_embedding, team, K)
     except Exception as e:
-        print(f"Error during ANN recommendations: {e}")
+        print(f"Error during get_ANN_recommendations_from_content recommendations for {team}: {e}")
         return [], []

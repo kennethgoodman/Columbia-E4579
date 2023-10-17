@@ -4,6 +4,7 @@ from src.api.engagement.models import Engagement
 from src import db
 import pandas as pd
 from sklearn.metrics.pairwise import cosine_similarity
+from src.data_structures.user_based_recommender.data_collector import DataCollector
 
 
 class UserBasedRecommender:
@@ -29,17 +30,8 @@ class UserBasedRecommender:
 
     def gather_data(self):
         # Connect to the database and fetch user-content engagement.
-        self.interactions = db.session.query(
-            Engagement.user_id,
-            Engagement.content_id,
-            Engagement.engagement_type,
-            Engagement.engagement_value,
-        ).all()
+        df = DataCollector().get_data_df()
 
-        df = pd.DataFrame(
-            self.interactions,
-            columns=["user_id", "content_id", "engagement_type", "engagement_value"],
-        )
         engagement_time = df.loc[df["engagement_value"] >= 500, ["engagement_value"]]
         q99 = float(engagement_time.quantile(0.99))
 
