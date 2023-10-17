@@ -22,30 +22,30 @@ class UserBasedRecommender:
         return cls._instance
 
     def gather_data(self):
-        self.interactions = db.session.query(
+        result = db.session.query(
             Engagement.content_id,
             Engagement.user_id,
             Engagement.engagement_type,
             Engagement.engagement_value
         ).all()
-
+        self.engagement_data = pd.DataFrame(result, columns=[
+            'content_id', 'user_id', 'engagement_type', 'engagement_value'
+        ])
 
     def compute_similarity(self, threshhold_percentile=70):
-        user_ids = list(set(interaction.user_id for interaction in self.interactions))
-        item_ids = list(set(interaction.content_id for interaction in self.interactions))
-
-        n_users = len(user_ids)
-        n_items = len(item_ids)
-        
-        user_item_matrix = pd.DataFrame(np.zeros((n_users, n_items)),columns=item_ids,index=user_ids)
-        for interaction in self.interactions:
-            if interaction.engagement_type == EngagementType.Like:
-                user_item_matrix.loc[interaction.user_id,interaction.content_id] += interaction.engagement_value
-        
-        r = cosine_similarity(np.array(user_item_matrix))
-        for i, sim in enumerate(r):
-            threshhold = np.percentile(sim,threshhold_percentile)
-            self.user_similarity_map[user_ids[i]] = np.array(user_ids)[sim>=threshhold].tolist()
+        like_data = self.engagement_data[self.engagement_data['engagement_type'] == EngagementType.Like]
+        user_item_matrix = like_data.pivot_table(
+            index='user_id',
+            columns='content_id',
+            values='engagement_value',
+            fill_value=0,
+            aggfunc='sum'
+        )
+        user_ids = user_item_matrix.index.tolist()
+        for i, sim in enumerate(cosine_similarity(csr_matrix(user_item_matrix))):
+            threshold = np.percentile(sim, threshhold_percentile)
+            above_threshold = sim >= threshold
+            self.user_similarity_map[user_ids[i]] = list(np.array(user_ids)[above_threshold])
             self.user_similarity_map[user_ids[i]].remove(user_ids[i])
 
     def get_similar_users(self, user_id):
