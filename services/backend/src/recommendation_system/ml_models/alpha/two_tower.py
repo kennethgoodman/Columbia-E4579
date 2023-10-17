@@ -298,7 +298,6 @@ class ModelWrapper:
         del user_vector_dict
 
         TOP_CONTENT = len(user_vector_df["millisecond_engaged_vector"].tolist()[0])
-        print(TOP_CONTENT)
 
         # Unpack vector columns into individual columns
         millisecond_columns = [f"ms_engaged_{i}" for i in range(TOP_CONTENT)]

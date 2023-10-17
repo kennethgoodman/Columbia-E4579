@@ -67,7 +67,6 @@ def df_to_content_tensor(df):
     top_data['top_sources'].append('other')
     top_data['top_seeds'].append('other')
 
-    #print('sucess loading content data')
 
     df = df.groupby('content_id').agg({'artist_style':lambda x: x.iloc[0],
                                       'source':lambda x: x.iloc[0],
@@ -86,7 +85,6 @@ def df_to_content_tensor(df):
             
     clip_e = np.array(clip_e)
 
-    #print('Success constructed clip_e')
     
     NUM = {
         'artist_style':30,
