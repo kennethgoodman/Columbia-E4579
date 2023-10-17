@@ -17,7 +17,7 @@ class DataCollector:
 
     def gather_data(self):
         self.result = (
-            session.query(
+            db.session.query(
                 Engagement.content_id,
                 Engagement.user_id,
                 Engagement.engagement_type,
