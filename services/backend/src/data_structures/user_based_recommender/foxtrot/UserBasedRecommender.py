@@ -4,6 +4,7 @@ import numpy as np
 from sqlalchemy.sql.expression import func
 from src.api.content.models import Content, GeneratedContentMetadata
 from src.api.engagement.models import Engagement
+from src.data_structures.user_based_recommender.data_collector import DataCollector
 from src import db
 import pickle
 import os
@@ -22,13 +23,7 @@ class UserBasedRecommender:
 
     def gather_data(self):
         # Connect to the database and fetch user-content engagement.
-        self.interactions = []
-        self.interactions = db.session.query(
-            Engagement.content_id,
-            Engagement.user_id,
-            Engagement.engagement_type,
-            Engagement.engagement_value
-        ).limit(50000).all()
+        self.interactions = DataCollector().get_data()
         self.min_val = db.session.query(
             func.min(Engagement.engagement_value)
             ).where(Engagement.engagement_type == "MillisecondsEngagedWith").one()[0]

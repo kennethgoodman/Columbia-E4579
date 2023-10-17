@@ -5,6 +5,7 @@ from src.api.content.models import Content, GeneratedContentMetadata
 from src.api.engagement.models import Engagement, EngagementType
 from src import db
 from sklearn.metrics.pairwise import cosine_similarity
+from src.data_structures.user_based_recommender.data_collector import DataCollector
 
 class UserBasedRecommender:
 
@@ -19,13 +20,7 @@ class UserBasedRecommender:
         return cls._instance
 
     def gather_data(self):
-
-        self.interactions = db.session.query(
-            Engagement.content_id,
-            Engagement.user_id,
-            Engagement.engagement_type,
-            Engagement.engagement_value
-        ).all()
+        self.interactions = DataCollector().get_data()
 
     def compute_similarity(self):
 

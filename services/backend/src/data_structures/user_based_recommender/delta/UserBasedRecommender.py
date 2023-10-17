@@ -7,6 +7,7 @@ import numpy as np
 from collections import defaultdict
 from sklearn.metrics.pairwise import cosine_similarity 
 import heapq
+from src.data_structures.user_based_recommender.data_collector import DataCollector
 
 class UserBasedRecommender:
 
@@ -22,12 +23,7 @@ class UserBasedRecommender:
 
     def gather_data(self):
         # Connect to the database and fetch user-content engagement.
-        self.interactions = db.session.query(
-            Engagement.content_id,
-            Engagement.user_id,
-            Engagement.engagement_type,
-            Engagement.engagement_value
-        ).limit(100000).all()
+        self.interactions_df = DataCollector().get_data_df()
         #we only get 100000 data but can get more/all
 
     def aggregate_engagement(self, group):
@@ -50,7 +46,7 @@ class UserBasedRecommender:
         # Update self.user_similarity_map with the similarities.
         
         TOP_CONTENT = 251
-        interactions_df = pd.DataFrame(self.interactions)
+        interactions_df = self.interactions_df
         # Compute top N content pieces based on engagement count
         top_n_content = interactions_df.groupby('content_id')['engagement_value'].count().nlargest(TOP_CONTENT).index.tolist()
         #initiliaze  user_vector_dict
@@ -113,7 +109,7 @@ class UserBasedRecommender:
         # Recommend items engaged by those users, which the given user hasn't seen.
         
         #can store this df in compute similarity as a class field
-        interactions_df = pd.DataFrame(self.interactions)
+        interactions_df = self.interactions_df
         similar_users = self.get_similar_users(user_id)
         content_dict = {}
         seen_content_ids = interactions_df[interactions_df["user_id"] == user_id]["content_id"].unique()
