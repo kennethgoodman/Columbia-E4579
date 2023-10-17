@@ -28,7 +28,7 @@ class UserBasedRecommender:
 
     def compute_similarity(self, threshhold_percentile=70):
         interactions_df = DataCollector().get_data_df()
-        like_data = self.interactions_df[self.interactions_df['engagement_type'] == EngagementType.Like]
+        like_data = interactions_df[interactions_df['engagement_type'] == EngagementType.Like]
         user_item_matrix = like_data.pivot_table(
             index='user_id',
             columns='content_id',
