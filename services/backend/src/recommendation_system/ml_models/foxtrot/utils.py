@@ -239,8 +239,6 @@ def get_tops(df, top_content=500):
     top_sources = df['source'].value_counts().nlargest(TOP_SOURCES).index.tolist()
     top_seeds = df['seed'].value_counts().nlargest(TOP_SEEDS).index.tolist()
     top_n_content = df.groupby('content_id')['engagement_value'].count().nlargest(TOP_CONTENT).index.tolist()
-    with open("/usr/src/app/src/recommendation_system/ml_models/foxtrot/assets/tops.pkl", "wb") as file:
-        pickle.dump((top_artist_styles, top_sources, top_seeds, top_n_content), file)
     return top_artist_styles, top_sources, top_seeds, top_n_content
 
 def preprocess_for_tensor(df, top_artist_styles, top_sources, top_seeds, top_n_content, top_content=500):
