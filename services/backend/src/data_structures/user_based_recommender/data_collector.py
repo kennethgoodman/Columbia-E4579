@@ -1,6 +1,6 @@
 
 from src import db
-from pandas import pd
+import pandas as pd
 from src.api.engagement.models import Engagement
 import copy
 
