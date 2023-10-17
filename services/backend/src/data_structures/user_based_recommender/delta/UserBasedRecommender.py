@@ -3,6 +3,8 @@ from src.api.content.models import Content, GeneratedContentMetadata
 from src.api.engagement.models import Engagement
 from src import db
 import pandas as pd
+import heapq
+from scipy.sparse import csr_matrix
 import numpy as np
 from collections import defaultdict
 from sklearn.metrics.pairwise import cosine_similarity 
@@ -47,58 +49,41 @@ class UserBasedRecommender:
         
         TOP_CONTENT = 251
         interactions_df = self.interactions_df
-        # Compute top N content pieces based on engagement count
-        top_n_content = interactions_df.groupby('content_id')['engagement_value'].count().nlargest(TOP_CONTENT).index.tolist()
-        #initiliaze  user_vector_dict
-        user_vector_dict = defaultdict(lambda: {
-            'millisecond_engaged_vector': np.zeros(len(top_n_content))
-            #'like_vector': np.zeros(len(top_n_content)),
-            #'dislike_vector': np.zeros(len(top_n_content))
-        })        
-        engagement_aggregate = interactions_df[interactions_df['content_id'].isin(top_n_content)].groupby(['user_id', 'content_id']).apply(self.aggregate_engagement).reset_index()
-        # Now, populate your user_vector_dict, mapping user_id to list of engagement_sums for top contents
-        #user_vector_dict={user_id: [engagement_sum for content i, i=[0, 250]]}
-        for _, row in engagement_aggregate.iterrows():
-            user_id = row['user_id']
-            content_id = row['content_id']
-            idx = top_n_content.index(content_id)
-            
-            user_vector_dict[user_id]['millisecond_engaged_vector'][idx] = row['millisecond_engagement_sum']
-            #user_vector_dict[user_id]['like_vector'][idx] = row['likes_count']
-            #user_vector_dict[user_id]['dislike_vector'][idx] = row['dislikes_count']
-        
-        user_vector_df = pd.DataFrame.from_dict(user_vector_dict, orient='index')
-        del user_vector_dict
-        millisecond_columns = [f"ms_engaged_{i}" for i in range(TOP_CONTENT)]
-        #like_columns = [f"like_vector_{i}" for i in range(TOP_CONTENT)]
-        #dislike_columns = [f"dislike_vector_{i}" for i in range(TOP_CONTENT)]
-        user_vector_df[millisecond_columns] = pd.DataFrame(user_vector_df['millisecond_engaged_vector'].tolist(), index=user_vector_df.index)
-        #user_vector_df[like_columns] = pd.DataFrame(user_vector_df['like_vector'].tolist(), index=user_vector_df.index)
-        #user_vector_df[dislike_columns] = pd.DataFrame(user_vector_df['dislike_vector'].tolist(), index=user_vector_df.index)
 
-        # Drop the original vector columns
-        user_vector_df.drop(['millisecond_engaged_vector'], axis=1, inplace=True)
-        user_vector_df = user_vector_df.reset_index().rename(columns={'index': 'user_id'})
-        # Create overall features
-        user_columns = (
-            [f'ms_engaged_{i}' for i in range(TOP_CONTENT)] 
-            #+ [f'like_vector_{i}' for i in range(TOP_CONTENT)]
-            #+ [f'dislike_vector_{i}' for i in range(TOP_CONTENT)]
-        )
-        user_features = user_vector_df[user_columns]
-        # mapping user_id to its index in user features
-        user_idx_dict = {idx: row['user_id'] for idx, row in user_vector_df.iterrows()}
+        # Get the top N content based on engagement count
+        top_n_content = (interactions_df.groupby('content_id')['engagement_value']
+                         .count().nlargest(TOP_CONTENT).index)
 
-        #user_features_tensor = torch.FloatTensor(user_features.values)
+        # Filter interactions_df for top content and user_id between 77 and 150
+        filtered_df = interactions_df[interactions_df['content_id'].isin(top_n_content) &
+                                       interactions_df['user_id'].between(77, 150)]
 
-        user_similarity = cosine_similarity(user_features)
+        # Aggregate engagement
+        engagement_aggregate = (filtered_df.groupby(['user_id', 'content_id'])
+                                .agg(millisecond_engagement_sum=pd.NamedAgg(
+                                    column='engagement_value', aggfunc='sum'))
+                                .reset_index())
+
+        # Create a pivot table to get engagement sum for each user and content
+        user_content_pivot = (engagement_aggregate.pivot(index='user_id', columns='content_id',
+                                                         values='millisecond_engagement_sum')
+                              .fillna(0))
+
+        # Convert the pivot table to a sparse matrix
+        user_content_sparse = csr_matrix(user_content_pivot)
+
+        # Cosine similarity computation
+        user_similarity = cosine_similarity(user_content_sparse)
         SIMILAR_USERS = 20
+
+        # Get user_id to index mapping for easy lookup
+        user_idx_dict = {idx: user_id for idx, user_id in enumerate(user_content_pivot.index)}
+
+        # Finding top similar users
         for user_idx, similarities in enumerate(user_similarity):
             user_id = user_idx_dict[user_idx]
             top_similar = heapq.nlargest(SIMILAR_USERS + 1, enumerate(similarities), key=lambda x: x[1])
             self.user_similarity_map[user_id] = [user_idx_dict[idx] for idx, _ in top_similar if idx != user_idx]
-
-
 
     def get_similar_users(self, user_id):
         # Fetch the list of similar users for a given user_id from the map.
