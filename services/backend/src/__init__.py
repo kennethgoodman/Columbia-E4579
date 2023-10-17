@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask
+from flask import Flask, current_app
 from flask_admin import Admin
 from flask_bcrypt import Bcrypt
 from flask_cors import CORS
@@ -45,7 +45,7 @@ def create_app(script_info=None):
         print("INSTANTIATED INDEXES FOR TEAMS")
 
         print("instantiating user based collabertive filter objects")
-        teams = ["alpha", "beta", "charlie", "delta", "echo", "foxtrot", "golf"]
+        teams = current_app.config.get("TEAMS_TO_RUN_FOR")
         for team in teams:
             print(f"doing {team}")
             module_path = f"src.data_structures.user_based_recommender.{team}.UserBasedRecommender"

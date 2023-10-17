@@ -45,9 +45,8 @@ def instantiate_indexes():
         ).order_by(Engagement.content_id).all()
         df = pd.DataFrame(contents)
 
-        teams = ["alpha", "beta", "charlie", "delta", "echo", "foxtrot", "golf"]
         global team_wrappers
-
+        teams = current_app.config.get("TEAMS_TO_RUN_FOR")
         for team in teams:
             module_path = f"src.recommendation_system.ml_models.{team}.two_tower"
             try:
