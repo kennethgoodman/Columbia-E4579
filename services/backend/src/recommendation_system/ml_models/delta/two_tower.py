@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 import pandas as pd
 import numpy as np
+import torch.nn.functional as F
 import logging
 
 logging.basicConfig(level=logging.ERROR)
