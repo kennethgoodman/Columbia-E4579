@@ -135,8 +135,12 @@ def preprocessing_user(df):
     return user_features
 
 def preprocessing_content(df):
-
-    df['model_version'] = df['model_version'].apply(lambda x: eval(x) if x else 1.4)
+    def try_eval(x):
+        try:
+            return eval(x)
+        except:
+            return 1.4
+    df['model_version'] = df['model_version'].apply(lambda x: try_eval(x))
     df['artist_style'] = df['artist_style'].apply(lambda x: x if x in top_artist_styles else 'other')
     df['source'] = df['source'].apply(lambda x: x if x in top_sources else 'other')
     df['seed'] = df['seed'].apply(lambda x: str(x) if x in top_seeds else 'other')
