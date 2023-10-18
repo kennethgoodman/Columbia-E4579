@@ -223,9 +223,9 @@ def aggregate_engagement(group):
         'dislikes_count': dislikes_count
     })
 
-def get_tops(df, top_content=500):
-    if os.path.isfile("/usr/src/app/src/recommendation_system/ml_models/foxtrot/assets/tops.pkl"):
-        with open("/usr/src/app/src/recommendation_system/ml_models/foxtrot/assets/tops.pkl", "rb") as f:
+def get_tops(top_content=500):
+    if os.path.isfile("/usr/src/app/src/recommendation_system/ml_models/foxtrot/tops.pkl"):
+        with open("/usr/src/app/src/recommendation_system/ml_models/foxtrot/tops.pkl", "rb") as f:
             top_artist_styles, top_sources, top_seeds, top_n_content = pickle.load(f)
             return top_artist_styles, top_sources, top_seeds, top_n_content
     # Configuration options
