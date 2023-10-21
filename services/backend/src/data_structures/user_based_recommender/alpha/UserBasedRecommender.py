@@ -33,7 +33,9 @@ class UserBasedRecommender:
         df = DataCollector().get_data_df()
 
         engagement_time = df.loc[df["engagement_value"] >= 500, ["engagement_value"]]
-        q99 = float(engagement_time.quantile(0.99).iloc[0])
+        q99 = 500
+        if len(engagement_time) != 0:
+            q99 = float(engagement_time.quantile(0.99))
 
         # Preprocessing
         df["engagement_value"] = df.apply(self.map_engagement_value, factor=q99, axis=1)
