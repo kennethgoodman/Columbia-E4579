@@ -16,7 +16,9 @@ from src.recommendation_system.recommendation_flow.ranking.RandomRanker import (
 )
 from src.recommendation_system.recommendation_flow.candidate_generators.foxtrot.TwoTowerANNGenerator import TwoTowerANNGenerator
 from src.recommendation_system.recommendation_flow.candidate_generators.foxtrot.CollaberativeFilteredSimilarUsersGenerator import CollaberativeFilteredSimilarUsersGenerator
-from src.recommendation_system.recommendation_flow.candidate_generators.foxtrot.YourChoiceGenerator import YourChoiceGenerator
+from src.recommendation_system.recommendation_flow.candidate_generators.ExampleGenerator import (
+    ExampleGenerator,
+)
 
 from src.api.metrics.models import TeamName
 
@@ -26,7 +28,7 @@ class FoxtrotController(AbstractController):
             seed *= 1000000
         candidate_limit = 500
         candidates, scores = [], []
-        for gen in [TwoTowerANNGenerator, CollaberativeFilteredSimilarUsersGenerator, YourChoiceGenerator]:
+        for gen in [TwoTowerANNGenerator, CollaberativeFilteredSimilarUsersGenerator, ExampleGenerator]:
            cur_candidates, cur_scores = gen().get_content_ids(
                TeamName.Foxtrot_F2023,
                user_id, candidate_limit, offset, seed, starting_point
