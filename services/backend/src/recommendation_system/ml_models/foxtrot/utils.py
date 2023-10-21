@@ -279,7 +279,12 @@ def preprocess_for_tensor(df, top_artist_styles, top_sources, top_seeds, top_n_c
     })
 
     # Group by user_id and content_id, then apply the function
-    engagement_aggregate = df[df['content_id'].isin(top_n_content)].groupby(['user_id', 'content_id']).apply(aggregate_engagement).reset_index()
+    engagement_aggregate = (
+        df[df['content_id'].isin(top_n_content)]
+        .groupby(['user_id', 'content_id'])
+        .apply(aggregate_engagement)
+        .reset_index(level='content_id', drop=True)
+    )
 
     # Now, populate your user_vector_dict
     for _, row in engagement_aggregate.iterrows():
