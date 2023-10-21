@@ -214,7 +214,7 @@ def preprocessing(df):
 
     # truncate_and_convert_to_df is WRONG but doing it to get code to work
     def truncate_and_convert_to_df(series, column_names):
-        truncated_lists = [x[:len(column_names)] for x in series.tolist()]
+        truncated_lists = [x[:len(column_names)] for x in series[list(series.columns)[0]].tolist()]
         truncated_df = pd.DataFrame(truncated_lists, index=series.index, columns=len(column_names))
         return truncated_df
     user_vector_df[millisecond_columns] = truncate_and_convert_to_df(user_vector_df[['millisecond_engaged_vector']], millisecond_columns)

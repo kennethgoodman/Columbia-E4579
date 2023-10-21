@@ -25,7 +25,7 @@ class ExampleGenerator(AbstractGenerator):
                 .offset(offset)
                 .all()
             )
-            return list(map(lambda x: x[0], results)), None
+            return list(map(lambda x: x[0], results)), list(map(lambda x: x[1], results))
         content_ids, scores = ann_with_offset(
             starting_point["content_id"], 0.9, limit, offset, return_distances=True
         )

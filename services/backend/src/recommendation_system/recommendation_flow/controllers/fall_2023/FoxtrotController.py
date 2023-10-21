@@ -41,7 +41,7 @@ class FoxtrotController(AbstractController):
                user_id, candidate_limit, offset, seed, starting_point
            )
            candidates += cur_candidates
-           scores += cur_scores
+           scores += cur_scores if cur_scores else [0] * len(cur_candidates)
         filtered_candidates = RandomFilter().filter_ids(
             candidates, seed, starting_point
         )
