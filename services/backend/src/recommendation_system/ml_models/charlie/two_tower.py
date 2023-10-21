@@ -217,9 +217,9 @@ def preprocessing(df):
         truncated_lists = [x[:len(column_names)] for x in series.tolist()]
         truncated_df = pd.DataFrame(truncated_lists, index=series.index, columns=len(column_names))
         return truncated_df
-    user_vector_df[millisecond_columns] = truncate_and_convert_to_df(user_vector_df['millisecond_engaged_vector'], millisecond_columns)
-    user_vector_df[like_columns] = truncate_and_convert_to_df(user_vector_df['like_vector'], like_columns)
-    user_vector_df[dislike_columns] = truncate_and_convert_to_df(user_vector_df['dislike_vector'], dislike_columns)
+    user_vector_df[millisecond_columns] = truncate_and_convert_to_df(user_vector_df[['millisecond_engaged_vector']], millisecond_columns)
+    user_vector_df[like_columns] = truncate_and_convert_to_df(user_vector_df[['like_vector']], like_columns)
+    user_vector_df[dislike_columns] = truncate_and_convert_to_df(user_vector_df[['dislike_vector']], dislike_columns)
 
     # Drop the original vector columns
     user_vector_df.drop(['millisecond_engaged_vector', 'like_vector', 'dislike_vector'], axis=1, inplace=True)

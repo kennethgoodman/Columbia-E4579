@@ -110,16 +110,12 @@ def df_to_content_tensor(df):
            for column in ['artist_style','source','seed']]
     content_onehot = np.hstack(content_onehot)
 
-    print('sucess onehot for artist_style etc')
-
     # Normalizing linear features
     scaler = StandardScaler()
     df[['guidance_scale', 'num_inference_steps']] = scaler.fit_transform(df[['guidance_scale', 'num_inference_steps']])
 
     content_columns2 = ['content_id','guidance_scale', 'num_inference_steps']
     content_features2 = df[content_columns2]
-
-    print('success subsetting df')
     
     content_onehott = content_onehot.astype(np.float32)
     clip_e = clip_e.astype(np.float32)
@@ -130,7 +126,6 @@ def df_to_content_tensor(df):
     content_features_tensor = torch.FloatTensor(
         np.hstack([content_onehott, clip_e, content_f2])
     ) 
-    print(f'Sucess creating array {content_features_tensor.shape}')
     return content_features_tensor
 
 def df_to_user_tensor(df):

@@ -68,7 +68,7 @@ def instantiate_indexes():
             try:
                 data = team_wrappers[team].generate_content_embeddings(df)
                 if len(data) < 101:
-                    raise ValueError(f"len(data) == f{len(data)} < 101")
+                    raise ValueError(f"len(data) == {len(data)} < 101")
                     index = None
                 else:
                     index = mrpt.MRPTIndex(data)

@@ -8,7 +8,7 @@ class BaseConfig:
     BCRYPT_LOG_ROUNDS = 13
     ACCESS_TOKEN_EXPIRATION = 900  # 15 minutes
     REFRESH_TOKEN_EXPIRATION = 2592000  # 30 days
-    NUMBER_OF_CONTENT_IN_ANN = 100 # UPDATE THIS WHEN DEVELOPING ANN
+    NUMBER_OF_CONTENT_IN_ANN = 1000 # UPDATE THIS WHEN DEVELOPING ANN
     INSTANTIATE_PROMPT_ANN = False
     TEAMS_TO_RUN_FOR = ["alpha", "beta", "charlie", "delta", "echo", "foxtrot", "golf"]
 
