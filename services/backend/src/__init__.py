@@ -50,7 +50,10 @@ def create_app(script_info=None):
             print(f"doing {team}")
             module_path = f"src.data_structures.user_based_recommender.{team}.UserBasedRecommender"
             TeamSpecificUserBasedRecommender = __import__(module_path, fromlist=['UserBasedRecommender']).UserBasedRecommender 
-            TeamSpecificUserBasedRecommender() # initialize singleton 
+            try:
+                TeamSpecificUserBasedRecommender() # initialize singleton 
+            except Exception as e:
+                print(f"Failed to do user based recommender for {team}, {e}")
             print(f"done {team}")
         print("instantiated collabertive filter object for teams")
 
