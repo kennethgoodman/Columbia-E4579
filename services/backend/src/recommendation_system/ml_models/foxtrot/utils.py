@@ -12,6 +12,7 @@ from PIL import Image
 import requests
 from io import BytesIO
 import pickle
+import traceback
 
 # Get a list image sources based given list of content id
 def fetch_database_data_by_contentid(content_id_list):
@@ -25,6 +26,7 @@ def fetch_database_data_by_contentid(content_id_list):
         ).all()
     except Exception as e:
         print(f"Error fetching data: {e}")
+        print(traceback.format_exc())
         return None
 
 # Get a list image urls
@@ -93,6 +95,7 @@ def fetch_data_by_user_id(user_id):
         ).all()
     except Exception as e:
         print(f"Error fetching data: {e}")
+        print(traceback.format_exc())
         return None
 
 

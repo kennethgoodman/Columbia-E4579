@@ -1,5 +1,6 @@
 from src import db
 from flask import request
+import traceback
 
 from src.api.metrics.models import MetricFunnelType, MetricType
 from src.api.metrics.crud import add_metric
@@ -26,6 +27,7 @@ class AbstractGenerator:
         except Exception as e:
             db.session.rollback()
             print(f"exception trying to add_metric {team_name}, {user_id}, {self._get_name()}, {e}")
+            print(traceback.format_exc())
         return response
 
     def _get_content_ids(self, user_id, limit, offset, seed, starting_point):

@@ -39,6 +39,7 @@ def fetch_engagement_data(_filter, n_rows_per_content):
         )
     except Exception as e:
         print(f"Error fetching engagement data: {e}")
+        print(traceback.format_exc())
         return None
 
 def fetch_generated_content_metadata_data(content_ids):
@@ -63,6 +64,7 @@ def fetch_generated_content_metadata_data(content_ids):
         )
     except Exception as e:
         print(f"Error fetching generated content metadata data: {e}")
+        print(traceback.format_exc())
         return None
         
 

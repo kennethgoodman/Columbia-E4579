@@ -32,6 +32,7 @@ def fetch_data_stub():
         )
     except Exception as e:
         print(f"Error fetching data: {e}")
+        print(traceback.format_exc())
         return None
 
 def instantiate_indexes():
@@ -80,6 +81,7 @@ def instantiate_indexes():
             INDEXES[team] = index
     except Exception as e:
         print(f"Error during index instantiation: {e}")
+        print(traceback.format_exc())
 
 def get_ANN_recommednations(embedding, team, K):
     try:

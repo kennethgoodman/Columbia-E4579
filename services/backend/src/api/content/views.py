@@ -136,7 +136,8 @@ class ContentPagination(Resource):
                 starting_point=starting_point,
             )
         except Exception as e:
-            print(e)
+            print(f"failed to retrieve get_content_data {e} for {request.args.get('controller')}")
+            print(traceback.format_exc())
             return [{ "errors": str(e), "id": 0, "traceback": traceback.format_exc()}], 500 
         return add_content_data(responses, user_id), 200
 

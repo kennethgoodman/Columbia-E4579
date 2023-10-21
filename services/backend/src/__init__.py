@@ -1,4 +1,5 @@
 import os
+import traceback
 
 from flask import Flask
 from flask_admin import Admin
@@ -54,6 +55,7 @@ def create_app(script_info=None):
                 TeamSpecificUserBasedRecommender() # initialize singleton 
             except Exception as e:
                 print(f"Failed to do user based recommender for {team}, {e}")
+                print(traceback.format_exc())
             print(f"done {team}")
         print("instantiated collabertive filter object for teams")
 

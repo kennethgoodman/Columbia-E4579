@@ -3,6 +3,7 @@ import time
 import random
 from src import db
 from flask import request
+import traceback
 
 from src.api.content.models import Content, get_url
 from src.api.users.models import User
@@ -118,6 +119,7 @@ def get_content_data(controller, user_id, limit, offset, seed, starting_point):
     except Exception as e:
         db.session.rollback()
         print(f"exception trying to add_metric_time_took {e}")
+        print(traceback.format_exc())
     all_content = Content.query.filter(Content.id.in_(content_ids)).all()
     responses = map(content_to_response, all_content)
     return list(map(lambda x: {**x, "controller": controller.human_string()}, responses))
