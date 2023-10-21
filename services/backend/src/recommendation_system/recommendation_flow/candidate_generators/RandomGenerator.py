@@ -9,7 +9,7 @@ from .AbstractGenerator import AbstractGenerator
 
 class RandomGenerator(AbstractGenerator):
     def _get_content_ids(self, user_id, limit, offset, seed, starting_point):
-        if starting_point is None:
+        if starting_point.get("content_id", None) is None:
             results = (
                 Content.query.with_entities(Content.id)
                 .order_by(func.random(seed))
@@ -18,12 +18,10 @@ class RandomGenerator(AbstractGenerator):
                 .all()
             )
             return list(map(lambda x: x[0], results)), None
-        elif starting_point.get("content_id", False):
-            content_ids, scores = ann_with_offset(
-                starting_point["content_id"], 0.9, limit, offset, return_distances=True
-            )
-            return content_ids, scores
-        raise NotImplementedError("Need to provide a key we know about")
+        content_ids, scores = ann_with_offset(
+            starting_point["content_id"], 0.9, limit, offset, return_distances=True
+        )
+        return content_ids, scores
     
     def _get_name(self):
         return "Random"

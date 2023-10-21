@@ -13,7 +13,7 @@ import pandas as pd
 
 class YourChoiceGenerator(AbstractGenerator):
     def _get_content_ids(self, user_id, limit, offset, seed, starting_point):
-        if starting_point is None:
+        if starting_point.get("content_id", None) is None:
             # nb of likes subquery
             results_like = (
                 Engagement.query.with_entities(Engagement.content_id, func.count())
