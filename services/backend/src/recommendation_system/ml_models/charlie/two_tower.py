@@ -213,9 +213,9 @@ def preprocessing(df):
     dislike_columns = [f"dislike_vector_{i}" for i in range(TOP_CONTENT)]
 
     # [:TOP_CONTENT] is WRONG but doing it to get code to work
-    user_vector_df[millisecond_columns] = pd.DataFrame(user_vector_df['millisecond_engaged_vector'].tolist()[:TOP_CONTENT], index=user_vector_df.index)
-    user_vector_df[like_columns] = pd.DataFrame(user_vector_df['like_vector'].tolist()[:TOP_CONTENT], index=user_vector_df.index)
-    user_vector_df[dislike_columns] = pd.DataFrame(user_vector_df['dislike_vector'].tolist()[:TOP_CONTENT], index=user_vector_df.index)
+    user_vector_df[millisecond_columns] = pd.DataFrame(user_vector_df['millisecond_engaged_vector'].tolist().apply(lambda x: x[:TOP_CONTENT]), index=user_vector_df.index)
+    user_vector_df[like_columns] = pd.DataFrame(user_vector_df['like_vector'].tolist().apply(lambda x: x[:TOP_CONTENT]), index=user_vector_df.index)
+    user_vector_df[dislike_columns] = pd.DataFrame(user_vector_df['dislike_vector'].tolist().apply(lambda x: x[:TOP_CONTENT]), index=user_vector_df.index)
 
     # Drop the original vector columns
     user_vector_df.drop(['millisecond_engaged_vector', 'like_vector', 'dislike_vector'], axis=1, inplace=True)

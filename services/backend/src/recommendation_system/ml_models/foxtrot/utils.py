@@ -283,13 +283,11 @@ def preprocess_for_tensor(df, top_artist_styles, top_sources, top_seeds, top_n_c
         df[df['content_id'].isin(top_n_content)]
         .groupby(['user_id', 'content_id'])
         .apply(aggregate_engagement)
-        .reset_index(level='content_id', drop=True)
     )
 
     # Now, populate your user_vector_dict
-    for _, row in engagement_aggregate.iterrows():
-        user_id = row['user_id']
-        content_id = row['content_id']
+    for index, row in engagement_aggregate.iterrows():
+        user_id, content_id = index
         idx = top_n_content.index(content_id)
 
         user_vector_dict[user_id]['millisecond_engaged_vector'][idx] = row['millisecond_engagement_sum']
