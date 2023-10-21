@@ -35,7 +35,7 @@ class FoxtrotController(AbstractController):
             generators.append(CollaberativeFilteredSimilarUsersGenerator)
         if starting_point.get("yourChoice", False):
             generators.append(YourChoiceGenerator)
-        for gen in [generators]:
+        for gen in generators:
            cur_candidates, cur_scores = gen().get_content_ids(
                TeamName.Foxtrot_F2023,
                user_id, candidate_limit, offset, seed, starting_point

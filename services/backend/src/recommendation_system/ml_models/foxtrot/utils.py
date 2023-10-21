@@ -295,8 +295,10 @@ def preprocess_for_tensor(df, top_artist_styles, top_sources, top_seeds, top_n_c
         user_vector_dict[user_id]['dislike_vector'][idx] = row['dislikes_count']
 
     # Convert to DataFrame
-    user_vector_df = pd.DataFrame.from_dict(user_vector_dict, orient='index')
+    user_vector_list = [{**{'user_id': user_id}, **data} for user_id, data in user_vector_dict.items()]
+    user_vector_df = pd.DataFrame(user_vector_list).set_index('user_id')
     del user_vector_dict
+
 
     # Unpack vector columns into individual columns
     millisecond_columns = [f"ms_engaged_{i}" for i in range(TOP_CONTENT)]
