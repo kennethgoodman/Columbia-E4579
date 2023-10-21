@@ -107,9 +107,9 @@ class ContentPagination(Resource):
             user_id = 0  # if error, do a logged out user, not great, TODO: ensure this is right
         page = int(request.args.get("page", 0))
         limit = int(request.args.get("limit", 10))
-        twoTower = bool(request.args.get("twoTower", True))
-        collabFilter = bool(request.args.get("collabFilter", True))
-        yourChoice = bool(request.args.get("yourChoice", True))
+        twoTower = request.args.get("twoTower", "false") == "false"
+        collabFilter = request.args.get("collabFilter", "false") == "false"
+        yourChoice = request.args.get("yourChoice", "false") == "false"
         content_id = request.args.get("content_id", None)
         controller = ControllerEnum.string_to_controller(
             request.args.get("controller", ControllerEnum.RANDOM.human_string())

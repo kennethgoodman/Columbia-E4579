@@ -445,6 +445,9 @@ class ModelWrapper:
         
         user_tensor = df_to_user_tensor(df)
         user_tensor = user_tensor[:, :753]
+        if user_tensor.shape[1] < 753:
+            zeros = torch.zeros((user_tensor.shape[0], 753 - user_tensor.shape[1]))
+            user_tensor = torch.cat((user_tensor, zeros), dim=1)
         if len(df["user_id"].unique()) != len(user_tensor):
             logging.error("Mismatch in user tensor length")
             return np.array([])
