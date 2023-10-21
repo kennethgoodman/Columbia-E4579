@@ -3,7 +3,7 @@ from src import db
 import pandas as pd
 from src.api.engagement.models import Engagement
 import copy
-from sqlalchemy import text, func, over, and_
+from sqlalchemy import text, func, over, and_, or_
 from sqlalchemy.sql import alias
 from sqlalchemy.sql.expression import bindparam
 
@@ -30,7 +30,10 @@ class DataCollector:
                 ).label('rn')
             )
             .filter(
-                Engagement.user_id >= 1  # first user of Fall 2023
+                or_(
+                    Engagement.user_id >= 77,  # first user of Fall 2023
+                    Engagement.user_id == 1,
+                )
             )
         ).cte()
         self.result = (
