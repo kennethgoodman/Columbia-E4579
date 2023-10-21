@@ -67,6 +67,7 @@ def instantiate_indexes():
             try:
                 data = team_wrappers[team].generate_content_embeddings(df)
                 if len(data) < 101:
+                    raise ValueError(f"len(data) == f{len(data)} < 101")
                     index = None
                 else:
                     index = mrpt.MRPTIndex(data)
@@ -82,6 +83,8 @@ def instantiate_indexes():
 
 def get_ANN_recommednations(embedding, team, K):
     try:
+        if INDEXES[team] is None:
+            return [], []
         K = min(100, K)
         global index_to_content_id, INDEXES
         similar_indices, scores = INDEXES[team].ann(embedding, k=K, return_distances=True)
@@ -93,6 +96,7 @@ def get_ANN_recommednations(embedding, team, K):
         return new_similar_content, new_scores
     except Exception as e:
         print(f"Error during get_ANN_recommednations recommendations for {team}: {e}")
+        print(traceback.format_exc())
         return [], []
 
 def get_ANN_recommendations_from_user(user_id, team, K):

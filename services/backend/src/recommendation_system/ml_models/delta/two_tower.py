@@ -87,6 +87,9 @@ class ModelWrapper:
             logging.error("Mismatch in content tensor length")
             return np.array([])
 
+        if user_tensor.shape[1] < 593:
+            zeros = torch.zeros((user_tensor.shape[0], 593 - user_tensor.shape[1]))
+            user_tensor = torch.cat((user_tensor, zeros), dim=1)
         embeddings = self.model.forward_content(content_tensor).detach().numpy().astype(np.float32)
         if len(embeddings) != len(content_tensor) or embeddings.shape[1] > 64:
             logging.error("Mismatch in embeddings and tensor length or embedding size exceeds 64")
@@ -100,6 +103,9 @@ class ModelWrapper:
             logging.error("Mismatch in user tensor length")
             return np.array([])
 
+        if user_tensor.shape[1] < 753:
+            zeros = torch.zeros((user_tensor.shape[0], 753 - user_tensor.shape[1]))
+            user_tensor = torch.cat((user_tensor, zeros), dim=1)
         embeddings = self.model.forward_user(user_tensor).detach().numpy().astype(np.float32)
         if len(embeddings) != len(user_tensor) or embeddings.shape[1] > 64:
             logging.error("Mismatch in embeddings and tensor length or embedding size exceeds 64")
