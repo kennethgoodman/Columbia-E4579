@@ -85,10 +85,10 @@ def instantiate_indexes():
 
 def get_ANN_recommednations(embedding, team, K):
     try:
-        if INDEXES[team] is None:
-            return [], []
         K = min(100, K)
         global index_to_content_id, INDEXES
+        if INDEXES[team] is None:
+            return [], []
         similar_indices, scores = INDEXES[team].ann(embedding, k=K, return_distances=True)
         new_similar_content, new_scores = [], []
         for idx, score in zip(similar_indices[0], scores[0]):
