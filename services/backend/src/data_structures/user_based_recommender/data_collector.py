@@ -41,7 +41,7 @@ class DataCollector:
                 random_order_cte.c.engagement_value
             )
             .filter(
-                text("rn <= 2000")  # get a max of 2k records per user
+                text("rn <= 1000")  # get a max of 2k records per user
             )
             .order_by(
                 random_order_cte.c.user_id,
