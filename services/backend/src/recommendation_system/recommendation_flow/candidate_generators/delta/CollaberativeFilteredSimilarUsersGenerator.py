@@ -4,7 +4,9 @@ from src.data_structures.user_based_recommender.delta.UserBasedRecommender impor
 
 class CollaberativeFilteredSimilarUsersGenerator(AbstractGenerator):
     def _get_content_ids(self, _, limit, offset, _seed, starting_point):
-        return [], []
-    
+        userBasedRecommender = UserBasedRecommender()
+        content_ids, scores = userBasedRecommender.recommend_items(user_id, num_recommendations=limit + offset)
+        return content_ids[offset:], scores[offset:]
+
     def _get_name(self):
         return "CollaberativeFilteredSimilarUsersGenerator"
