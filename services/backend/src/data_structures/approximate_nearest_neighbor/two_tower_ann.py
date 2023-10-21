@@ -70,7 +70,7 @@ def instantiate_indexes():
                     index = None
                 else:
                     index = mrpt.MRPTIndex(data)
-                    index.build_autotune_sample(0.9, 10)
+                    index.build_autotune_sample(0.9, 200)
                 print(f"Done index instantiation for {team} successfully")
             except Exception as e:
                 print(f"Error during index instantiation for {team}, {e}")
