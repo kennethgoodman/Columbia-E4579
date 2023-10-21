@@ -30,7 +30,7 @@ class DataCollector:
                 ).label('rn')
             )
             .filter(
-                Engagement.user_id >= 77  # first user of Fall 2023
+                Engagement.user_id >= 1  # first user of Fall 2023
             )
         ).cte()
         self.result = (
