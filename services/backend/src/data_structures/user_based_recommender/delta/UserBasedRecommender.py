@@ -55,8 +55,7 @@ class UserBasedRecommender:
                          .count().nlargest(TOP_CONTENT).index)
 
         # Filter interactions_df for top content and user_id between 77 and 150
-        filtered_df = interactions_df[interactions_df['content_id'].isin(top_n_content) &
-                                       interactions_df['user_id'].between(77, 150)]
+        filtered_df = interactions_df[interactions_df['content_id'].isin(top_n_content)]
 
         # Aggregate engagement
         engagement_aggregate = (filtered_df.groupby(['user_id', 'content_id'])
