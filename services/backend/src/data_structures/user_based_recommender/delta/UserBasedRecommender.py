@@ -3,7 +3,6 @@ from src.api.content.models import Content, GeneratedContentMetadata
 from src.api.engagement.models import Engagement
 from src import db
 import pandas as pd
-import heapq
 from scipy.sparse import csr_matrix
 import numpy as np
 from collections import defaultdict
@@ -54,7 +53,7 @@ class UserBasedRecommender:
         top_n_content = (interactions_df.groupby('content_id')['engagement_value']
                          .count().nlargest(TOP_CONTENT).index)
 
-        # Filter interactions_df for top content and user_id between 77 and 150
+        # Filter interactions_df for top content 
         filtered_df = interactions_df[interactions_df['content_id'].isin(top_n_content)]
 
         # Aggregate engagement
