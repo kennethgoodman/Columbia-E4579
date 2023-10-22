@@ -9,7 +9,7 @@ from src.recommendation_system.recommendation_flow.candidate_generators.Abstract
 
 class YourChoiceGenerator(AbstractGenerator):
     def _get_content_ids(self, _, limit, offset, _seed, starting_point):
-        if starting_point is None:
+        if starting_point.get("content_id", None) is None:
             # Create a list to select the content based on the number of "like" they gain from previous users.
             results_popular = (
                 Engagement.query.with_entities(
@@ -56,12 +56,10 @@ class YourChoiceGenerator(AbstractGenerator):
             scores = [i for i in range(len(results),-1,-1)]  
 
             return results, scores
-        elif starting_point.get("content_id", False):
-            content_ids, scores = ann_with_offset(
-                starting_point["content_id"], 0.9, limit, offset, return_distances=True
-            )
-            return content_ids, scores
-        raise NotImplementedError("Need to provide a key we know about")
+        content_ids, scores = ann_with_offset(
+            starting_point["content_id"], 0.9, limit, offset, return_distances=True
+        )
+        return content_ids, scores
 
     def _get_name(self):
         return "YourChoiceGenerator"

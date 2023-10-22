@@ -12,6 +12,7 @@ from PIL import Image
 import requests
 from io import BytesIO
 import pickle
+import traceback
 
 # Get a list image sources based given list of content id
 def fetch_database_data_by_contentid(content_id_list):
@@ -25,6 +26,7 @@ def fetch_database_data_by_contentid(content_id_list):
         ).all()
     except Exception as e:
         print(f"Error fetching data: {e}")
+        print(traceback.format_exc())
         return None
 
 # Get a list image urls
@@ -93,39 +95,10 @@ def fetch_data_by_user_id(user_id):
         ).all()
     except Exception as e:
         print(f"Error fetching data: {e}")
+        print(traceback.format_exc())
         return None
 
 
-
-# this the function to fetch the training data from the database
-def fetch_database_train_data():
-    try:
-        if os.path.isfile("/usr/src/app/src/recommendation_system/ml_models/foxtrot/assets/train_total.pkl"):
-            with open("/usr/src/app/src/recommendation_system/ml_models/foxtrot/assets/train_total.pkl", "rb") as f:
-                return pickle.load(f)
-        res = db.session.query(
-            Engagement.user_id,
-            Engagement.content_id,
-            Engagement.engagement_type,
-            Engagement.engagement_value,
-            #Engagement.created_date,
-            GeneratedContentMetadata.seed,
-            GeneratedContentMetadata.guidance_scale,
-            GeneratedContentMetadata.num_inference_steps,
-            GeneratedContentMetadata.artist_style,
-            GeneratedContentMetadata.source,
-            GeneratedContentMetadata.model_version,
-            GeneratedContentMetadata.prompt,
-            GeneratedContentMetadata.prompt_embedding
-        ).join(
-            GeneratedContentMetadata, Engagement.content_id == GeneratedContentMetadata.content_id
-        ).all()
-        with open("/usr/src/app/src/recommendation_system/ml_models/foxtrot/assets/train_total.pkl", "wb") as file:
-            pickle.dump(res, file)
-        return res
-    except Exception as e:
-        print(f"Error fetching data: {e}")
-        return None
 
 def generate_negative_samples(df, n_negatives_per_positive=1):
     """
@@ -254,12 +227,10 @@ def aggregate_engagement(group):
     })
 
 def get_tops(top_content=500):
-    if os.path.isfile("/usr/src/app/src/recommendation_system/ml_models/foxtrot/assets/tops.pkl"):
-        with open("/usr/src/app/src/recommendation_system/ml_models/foxtrot/assets/tops.pkl", "rb") as f:
+    if os.path.isfile("/usr/src/app/src/recommendation_system/ml_models/foxtrot/tops.pkl"):
+        with open("/usr/src/app/src/recommendation_system/ml_models/foxtrot/tops.pkl", "rb") as f:
             top_artist_styles, top_sources, top_seeds, top_n_content = pickle.load(f)
             return top_artist_styles, top_sources, top_seeds, top_n_content
-    raw_data = fetch_database_train_data()
-    df = raw_database_data_to_df(raw_data)
     # Configuration options
     TOP_ARTIST_STYLES = 30
     TOP_SOURCES = 30
@@ -271,8 +242,6 @@ def get_tops(top_content=500):
     top_sources = df['source'].value_counts().nlargest(TOP_SOURCES).index.tolist()
     top_seeds = df['seed'].value_counts().nlargest(TOP_SEEDS).index.tolist()
     top_n_content = df.groupby('content_id')['engagement_value'].count().nlargest(TOP_CONTENT).index.tolist()
-    with open("/usr/src/app/src/recommendation_system/ml_models/foxtrot/assets/tops.pkl", "wb") as file:
-        pickle.dump((top_artist_styles, top_sources, top_seeds, top_n_content), file)
     return top_artist_styles, top_sources, top_seeds, top_n_content
 
 def preprocess_for_tensor(df, top_artist_styles, top_sources, top_seeds, top_n_content, top_content=500):
@@ -313,12 +282,15 @@ def preprocess_for_tensor(df, top_artist_styles, top_sources, top_seeds, top_n_c
     })
 
     # Group by user_id and content_id, then apply the function
-    engagement_aggregate = df[df['content_id'].isin(top_n_content)].groupby(['user_id', 'content_id']).apply(aggregate_engagement).reset_index()
+    engagement_aggregate = (
+        df[df['content_id'].isin(top_n_content)]
+        .groupby(['user_id', 'content_id'])
+        .apply(aggregate_engagement)
+    )
 
     # Now, populate your user_vector_dict
-    for _, row in engagement_aggregate.iterrows():
-        user_id = row['user_id']
-        content_id = row['content_id']
+    for index, row in engagement_aggregate.iterrows():
+        user_id, content_id = index
         idx = top_n_content.index(content_id)
 
         user_vector_dict[user_id]['millisecond_engaged_vector'][idx] = row['millisecond_engagement_sum']
@@ -328,6 +300,7 @@ def preprocess_for_tensor(df, top_artist_styles, top_sources, top_seeds, top_n_c
     # Convert to DataFrame
     user_vector_df = pd.DataFrame.from_dict(user_vector_dict, orient='index')
     del user_vector_dict
+
 
     # Unpack vector columns into individual columns
     millisecond_columns = [f"ms_engaged_{i}" for i in range(TOP_CONTENT)]

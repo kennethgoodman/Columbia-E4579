@@ -1,4 +1,5 @@
 import os
+import traceback
 
 from flask import Flask
 from flask_admin import Admin
@@ -35,7 +36,7 @@ def create_app(script_info=None):
                 db.session.rollback()  # Rollback the session to a clean state
                 print(f"Table '{table.__tablename__}' does not exist. Error: {e}")
 
-    def before_first_request_instantiate():
+    def before_first_request_instantiate(app):
         from src.data_structures.approximate_nearest_neighbor.two_tower_ann import (
             instantiate_indexes,
         )
@@ -45,12 +46,16 @@ def create_app(script_info=None):
         print("INSTANTIATED INDEXES FOR TEAMS")
 
         print("instantiating user based collabertive filter objects")
-        teams = ["alpha", "beta", "charlie", "delta", "echo", "foxtrot", "golf"]
+        teams = app.config.get("TEAMS_TO_RUN_FOR")
         for team in teams:
             print(f"doing {team}")
             module_path = f"src.data_structures.user_based_recommender.{team}.UserBasedRecommender"
             TeamSpecificUserBasedRecommender = __import__(module_path, fromlist=['UserBasedRecommender']).UserBasedRecommender 
-            TeamSpecificUserBasedRecommender() # initialize singleton 
+            try:
+                TeamSpecificUserBasedRecommender() # initialize singleton 
+            except Exception as e:
+                print(f"Failed to do user based recommender for {team}, {e}")
+                print(traceback.format_exc())
             print(f"done {team}")
         print("instantiated collabertive filter object for teams")
 
@@ -80,6 +85,6 @@ def create_app(script_info=None):
     with app.app_context():
         db.create_all() # only create tables if they don't exist
         before_first_request_checks()
-        before_first_request_instantiate()
+        before_first_request_instantiate(app)
         print("FULLY DONE INSTANTIATION USE THE APP")
     return app

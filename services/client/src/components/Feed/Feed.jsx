@@ -27,6 +27,18 @@ const Feed = (props) => {
     controller: undefined,
     starting_content_id: undefined,
   });
+  const [twoTower, setTwoTower] = useState(true);
+  const [collabFilter, setCollabFilter] = useState(true);
+  const [yourChoice, setYourChoice] = useState(true);
+
+  const handleCheckboxChange = (setCheckboxState, checkboxValue) => {
+    setData([]);  // Clear the current data
+    setFetchParams(prevState => ({
+      ...prevState,
+      page: 0  // Reset page to 0
+    }));
+    setCheckboxState(!checkboxValue);  // Toggle the checkbox value
+  };
 
   useEffect(() => {
     const options = {
@@ -42,7 +54,7 @@ const Feed = (props) => {
       .then((response) => {
         const results = response.data;
         let selection_values = [];
-        results.map((item) => {
+        results.forEach((item) => {
           selection_values.push(
             {'key': item["controller"].toUpperCase(), 'value': item["controller"]}
           )
@@ -116,7 +128,7 @@ const Feed = (props) => {
       };
       options[
         "url"
-      ] = `${process.env.REACT_APP_API_SERVICE_URL}/content?page=${fetchParams["page"]}&limit=50&seed=${props.seed}&controller=${fetchParams["controller"]}&content_id=${fetchParams["starting_content_id"]}`;
+      ] = `${process.env.REACT_APP_API_SERVICE_URL}/content?page=${fetchParams["page"]}&limit=50&seed=${props.seed}&controller=${fetchParams["controller"]}&content_id=${fetchParams["starting_content_id"]}&twoTower=${twoTower}&collabFilter=${collabFilter}&yourChoice=${yourChoice}`;
       setLoading(true);
       axios(options)
         .then((response) => {
@@ -131,7 +143,7 @@ const Feed = (props) => {
     };
 
     fetchPosts();
-  }, [fetchParams]);
+  }, [fetchParams, twoTower, collabFilter, yourChoice]);
 
   const handleChange = (event) => {
     setData([]);
@@ -185,6 +197,20 @@ const Feed = (props) => {
       >
           {buttonText}
       </button>
+      <div className="checkbox-group">
+        <label>
+          <input type="checkbox" checked={twoTower} onChange={() => handleCheckboxChange(setTwoTower, twoTower)} />
+          Two Tower
+        </label>
+        <label>
+          <input type="checkbox" checked={collabFilter} onChange={() => handleCheckboxChange(setCollabFilter, collabFilter)} />
+          Collaborative Filter
+        </label>
+        <label>
+          <input type="checkbox" checked={yourChoice} onChange={() => handleCheckboxChange(setYourChoice, yourChoice)} />
+          Your Choice
+        </label>
+      </div>
       <label className="switch">
         <input type="checkbox" checked={darkMode} onChange={() => setDarkMode(!darkMode)} />
         <span className="slider round" />

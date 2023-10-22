@@ -3,6 +3,7 @@ from src import db
 from src.api.engagement.models import Engagement
 from sqlalchemy.sql.expression import func
 from src.api.content.models import Content, GeneratedContentMetadata
+from src.data_structures.user_based_recommender.data_collector import DataCollector
 
 class UserBasedRecommender:
     _instance = None  # Singleton instance reference
@@ -19,12 +20,7 @@ class UserBasedRecommender:
 
     def gather_data(self):
         # Connect to the database and fetch user-content engagement.
-        self.interactions = db.session.query(
-            Engagement.content_id,
-            Engagement.user_id,
-            Engagement.engagement_type,
-            Engagement.engagement_value
-        ).all()
+        self.interactions = DataCollector().get_data()
         # Create mappings of user_id and content_id to matrix indices
         user_ids = set(interaction.user_id for interaction in self.interactions)
         content_ids = set(interaction.content_id for interaction in self.interactions)

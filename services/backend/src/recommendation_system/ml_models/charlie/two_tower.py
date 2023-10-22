@@ -212,9 +212,14 @@ def preprocessing(df):
     like_columns = [f"like_vector_{i}" for i in range(TOP_CONTENT)]
     dislike_columns = [f"dislike_vector_{i}" for i in range(TOP_CONTENT)]
 
-    user_vector_df[millisecond_columns] = pd.DataFrame(user_vector_df['millisecond_engaged_vector'].tolist(), index=user_vector_df.index)
-    user_vector_df[like_columns] = pd.DataFrame(user_vector_df['like_vector'].tolist(), index=user_vector_df.index)
-    user_vector_df[dislike_columns] = pd.DataFrame(user_vector_df['dislike_vector'].tolist(), index=user_vector_df.index)
+    # truncate_and_convert_to_df is WRONG but doing it to get code to work
+    def truncate_and_convert_to_df(series, column_names):
+        truncated_lists = [x[:len(column_names)] for x in series[list(series.columns)[0]].tolist()]
+        truncated_df = pd.DataFrame(truncated_lists, index=series.index, columns=len(column_names))
+        return truncated_df
+    user_vector_df[millisecond_columns] = truncate_and_convert_to_df(user_vector_df[['millisecond_engaged_vector']], millisecond_columns)
+    user_vector_df[like_columns] = truncate_and_convert_to_df(user_vector_df[['like_vector']], like_columns)
+    user_vector_df[dislike_columns] = truncate_and_convert_to_df(user_vector_df[['dislike_vector']], dislike_columns)
 
     # Drop the original vector columns
     user_vector_df.drop(['millisecond_engaged_vector', 'like_vector', 'dislike_vector'], axis=1, inplace=True)
@@ -255,7 +260,7 @@ class ModelWrapper:
         if not model_path:
             self.model = DummyTwoTowerModel()
         else:
-            self.model = TwoTowerModel(753, 593, 64)
+            self.model = TwoTowerModel(754, 594, 64)
             self.model.load_state_dict(torch.load(model_path, map_location=torch.device('cpu')))
         self.model.eval()
 

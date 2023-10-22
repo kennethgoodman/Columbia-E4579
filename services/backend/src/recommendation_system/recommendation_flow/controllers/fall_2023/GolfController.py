@@ -26,8 +26,14 @@ class GolfController(AbstractController):
             seed *= 1000000
         candidate_limit = 500
         candidates, scores = [], []
-        # TwoTowerANNGenerator,CollaberativeFilteredSimilarUsersGenerator,YourChoiceGenerator
-        for gen in [TwoTowerANNGenerator,CollaberativeFilteredSimilarUsersGenerator,YourChoiceGenerator]:
+        generators = []
+        if starting_point.get("twoTower", False):
+            generators.append(TwoTowerANNGenerator)
+        if starting_point.get("collabFilter", False):
+            generators.append(CollaberativeFilteredSimilarUsersGenerator)
+        if starting_point.get("yourChoice", False):
+            generators.append(YourChoiceGenerator)
+        for gen in generators:
            cur_candidates, cur_scores = gen().get_content_ids(
                TeamName.Golf_F2023,
                user_id, candidate_limit, offset, seed, starting_point

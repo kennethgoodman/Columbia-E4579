@@ -10,7 +10,7 @@ from .AbstractGenerator import AbstractGenerator
 
 class ExampleGenerator(AbstractGenerator):
     def _get_content_ids(self, _, limit, offset, _seed, starting_point):
-        if starting_point is None:
+        if starting_point.get("content_id", None) is None:
             # TODO: should discount by creation_time so closer events have more weight
             results = (
                 Engagement.query.with_entities(
@@ -25,13 +25,11 @@ class ExampleGenerator(AbstractGenerator):
                 .offset(offset)
                 .all()
             )
-            return list(map(lambda x: x[0], results)), None
-        elif starting_point.get("content_id", False):
-            content_ids, scores = ann_with_offset(
-                starting_point["content_id"], 0.9, limit, offset, return_distances=True
-            )
-            return content_ids, scores
-        raise NotImplementedError("Need to provide a key we know about")
+            return list(map(lambda x: x[0], results)), list(map(lambda x: x[1], results))
+        content_ids, scores = ann_with_offset(
+            starting_point["content_id"], 0.9, limit, offset, return_distances=True
+        )
+        return content_ids, scores
     
     def _get_name(self):
         return "Example"

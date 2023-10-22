@@ -12,7 +12,7 @@ from .RandomGenerator import RandomGenerator
 
 class EngagementTimeGenerator(AbstractGenerator):
     def _get_content_ids(self, user_id, limit, offset, seed, starting_point):
-        if starting_point is None:
+        if starting_point.get("content_id", None) is None:
             # TODO: should discount by creation_time so closer events have more weight
             results = (
                 Engagement.query.with_entities(
@@ -54,12 +54,10 @@ class EngagementTimeGenerator(AbstractGenerator):
             return list(map(operator.itemgetter(0), results_with_scores)), list(
                 map(operator.itemgetter(1), results_with_scores)
             )
-        elif starting_point.get("content_id", False):
-            content_ids, scores = ann_with_offset(
-                starting_point["content_id"], 0.9, limit, offset, return_distances=True
-            )
-            return content_ids, scores
-        raise NotImplementedError("Need to provide a key we know about")
+        content_ids, scores = ann_with_offset(
+            starting_point["content_id"], 0.9, limit, offset, return_distances=True
+        )
+        return content_ids, scores
 
     def _get_name(self):
         return "EngagementTime"

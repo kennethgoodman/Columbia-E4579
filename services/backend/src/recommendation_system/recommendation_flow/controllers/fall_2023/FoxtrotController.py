@@ -16,7 +16,9 @@ from src.recommendation_system.recommendation_flow.ranking.RandomRanker import (
 )
 from src.recommendation_system.recommendation_flow.candidate_generators.foxtrot.TwoTowerANNGenerator import TwoTowerANNGenerator
 from src.recommendation_system.recommendation_flow.candidate_generators.foxtrot.CollaberativeFilteredSimilarUsersGenerator import CollaberativeFilteredSimilarUsersGenerator
-from src.recommendation_system.recommendation_flow.candidate_generators.foxtrot.YourChoiceGenerator import YourChoiceGenerator
+from src.recommendation_system.recommendation_flow.candidate_generators.ExampleGenerator import (
+    ExampleGenerator,
+)
 
 from src.api.metrics.models import TeamName
 
@@ -26,13 +28,20 @@ class FoxtrotController(AbstractController):
             seed *= 1000000
         candidate_limit = 500
         candidates, scores = [], []
-        for gen in [TwoTowerANNGenerator, CollaberativeFilteredSimilarUsersGenerator, YourChoiceGenerator]:
+        generators = []
+        if starting_point.get("twoTower", False):
+            generators.append(TwoTowerANNGenerator)
+        if starting_point.get("collabFilter", False):
+            generators.append(CollaberativeFilteredSimilarUsersGenerator)
+        if starting_point.get("yourChoice", False):
+            generators.append(ExampleGenerator)
+        for gen in generators:
            cur_candidates, cur_scores = gen().get_content_ids(
                TeamName.Foxtrot_F2023,
                user_id, candidate_limit, offset, seed, starting_point
            )
            candidates += cur_candidates
-           scores += cur_scores
+           scores += cur_scores if cur_scores else [0] * len(cur_candidates)
         filtered_candidates = RandomFilter().filter_ids(
             candidates, seed, starting_point
         )

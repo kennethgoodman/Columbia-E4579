@@ -1,6 +1,7 @@
 import torch
 import mrpt
 import pandas as pd
+import traceback
 from src import db
 from src.recommendation_system.ml_models.foxtrot.two_tower import ModelWrapper
 from src.api.engagement.models import Engagement
@@ -27,6 +28,7 @@ def fetch_data_stub():
         )
     except Exception as e:
         print(f"Error fetching data: {e}")
+        print(traceback.format_exc())
         return None
 
 def instantiate_indexes(base_data_limit):
@@ -56,10 +58,12 @@ def instantiate_indexes(base_data_limit):
                 res = index
         except Exception as e:
             print(f"Error during index instantiation for foxtrot, {e}")
+            print(traceback.format_exc())
             index = None
 
     except Exception as e:
         print(f"Error during index instantiation: {e}")
+        print(traceback.format_exc())
     return res, index_to_content_id, content_id_to_index
 
 def get_ANN_recommednations(embedding, indexes, index_to_content_id, K):
@@ -73,6 +77,7 @@ def get_ANN_recommednations(embedding, indexes, index_to_content_id, K):
                 new_scores.append(score)
     except Exception as e:
         print(f"Error during ANN recommendations: {e}")
+        print(traceback.format_exc())
         return [], []
     return new_similar_content, new_scores
 
@@ -98,6 +103,7 @@ def get_recommendations_from_user(user_id, base_data_length=1000):
         return get_ANN_recommednations(user_embedding, indexes, index_to_content_id, 100)
     except Exception as e:
         print(f"Error during ANN recommendations: {e}")
+        print(traceback.format_exc())
         return [], []
 
 def get_recommendations_from_content(content_id, base_data_length=1000):
@@ -119,6 +125,7 @@ def get_recommendations_from_content(content_id, base_data_length=1000):
         return get_ANN_recommednations(content_embedding, indexes, index_to_content_id, 100)
     except Exception as e:
         print(f"Error during ANN recommendations: {e}")
+        print(traceback.format_exc())
         return [], []
 
 # Some Plotting
