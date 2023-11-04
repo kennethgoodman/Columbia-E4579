@@ -11,7 +11,7 @@ class CollaberativeFilteredSimilarUsersGenerator(AbstractGenerator):
             res = candidate_generator.recommend_items(user_id, limit, offset)
             return res
         else:
-            _, _, _, top_n_content = get_tops()
+            _, _, _, top_n_content = get_tops(None)
             res = top_n_content
             scores = [1.0] * len(res)
             return res, scores

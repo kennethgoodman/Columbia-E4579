@@ -75,13 +75,13 @@ class DummyTwoTowerModel(nn.Module):
 
 # Functions to convert DataFrame to Tensors
 def df_to_content_tensor(df):
-    top_artist_styles, top_sources, top_seeds, top_n_content = get_tops()
+    top_artist_styles, top_sources, top_seeds, top_n_content = get_tops(df)
     df = preprocess_for_tensor(df, top_artist_styles, top_sources, top_seeds, top_n_content)
     content_tensor, _ = create_content_tensor(df, True)
     return content_tensor
 
 def df_to_user_tensor(df):
-    top_artist_styles, top_sources, top_seeds, top_n_content = get_tops()
+    top_artist_styles, top_sources, top_seeds, top_n_content = get_tops(df)
     df = preprocess_for_tensor(df, top_artist_styles, top_sources, top_seeds, top_n_content)
     user_tensor, _ = create_user_tensor(df, True)
     return user_tensor
