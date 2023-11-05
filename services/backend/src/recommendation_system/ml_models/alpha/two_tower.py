@@ -153,12 +153,15 @@ class ContrastiveLoss(nn.Module):
 
 # Model Wrapper
 class ModelWrapper:
+
     def __init__(self, model_path="two_tower_trained_saved.pth"):
+
         if not model_path:
             self.model = DummyTwoTowerModel()
         else:
             self.model = TwoTowerModel(753, 593, 64)
             self.model.load_state_dict(torch.load(legalize(model_path), map_location=torch.device('cpu')))
+
         self.model.eval()
 
     def generate_content_embeddings(self, df):
@@ -230,8 +233,9 @@ class ModelWrapper:
         user_vector_df = pd.DataFrame.from_dict(user_vector_dict, orient='index')
         del user_vector_dict
 
+
         TOP_CONTENT = len(user_vector_df['millisecond_engaged_vector'].tolist()[0])
-        #print(TOP_CONTENT)
+
 
         # Unpack vector columns into individual columns
         millisecond_columns = [f"ms_engaged_{i}" for i in range(TOP_CONTENT)]
@@ -441,6 +445,9 @@ class ModelWrapper:
         
         user_tensor = df_to_user_tensor(df)
         user_tensor = user_tensor[:, :753]
+        if user_tensor.shape[1] < 753:
+            zeros = torch.zeros((user_tensor.shape[0], 753 - user_tensor.shape[1]))
+            user_tensor = torch.cat((user_tensor, zeros), dim=1)
         if len(df["user_id"].unique()) != len(user_tensor):
             logging.error("Mismatch in user tensor length")
             return np.array([])

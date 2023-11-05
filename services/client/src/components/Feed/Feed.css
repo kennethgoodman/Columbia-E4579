@@ -95,3 +95,20 @@ input:checked + .slider:before {
 .Feed.dark .empty-state p {
   color: #ccc;  /* Lighter grey text for the dark mode */
 }
+
+
+.checkbox-group {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.checkbox-group label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.checkbox-group input {
+  margin-right: 5px;
+}

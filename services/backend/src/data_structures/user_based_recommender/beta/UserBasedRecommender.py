@@ -3,6 +3,13 @@ from sqlalchemy.sql.expression import func
 from src.api.content.models import Content, GeneratedContentMetadata
 from src.api.engagement.models import Engagement
 from src import db
+import numpy as np
+import pandas as pd
+from sklearn.metrics.pairwise import cosine_similarity
+from scipy.sparse import csr_matrix
+import pdb
+from src.api.engagement.models import EngagementType, LikeDislike
+from src.data_structures.user_based_recommender.data_collector import DataCollector
 
 class UserBasedRecommender:
 
@@ -17,25 +24,39 @@ class UserBasedRecommender:
         return cls._instance
 
     def gather_data(self):
-        # Connect to the database and fetch user-content engagement.
-        self.interactions = db.session.query(
-            Engagement.content_id,
-            Engagement.user_id,
-            Engagement.engagement_type,
-            Engagement.engagement_value
-        ).limit(5).all()
+        self.interactions = DataCollector().get_data()
 
-    def compute_similarity(self):
-        # Compute the similarity between users.
-        # For simplicity, we'll use cosine similarity as our metric.
-        # Update self.user_similarity_map with the similarities.
-        pass
+    def compute_similarity(self, threshhold_percentile=70):
+        interactions_df = DataCollector().get_data_df()
+        like_data = interactions_df[interactions_df['engagement_type'] == EngagementType.Like]
+        user_item_matrix = like_data.pivot_table(
+            index='user_id',
+            columns='content_id',
+            values='engagement_value',
+            fill_value=0,
+            aggfunc='sum'
+        )
+        user_ids = user_item_matrix.index.tolist()
+        for i, sim in enumerate(cosine_similarity(csr_matrix(user_item_matrix))):
+            threshold = np.percentile(sim, threshhold_percentile)
+            above_threshold = sim >= threshold
+            self.user_similarity_map[user_ids[i]] = list(np.array(user_ids)[above_threshold])
+            self.user_similarity_map[user_ids[i]].remove(user_ids[i])
 
     def get_similar_users(self, user_id):
         # Fetch the list of similar users for a given user_id from the map.
         return self.user_similarity_map.get(user_id, [])
 
-    def recommend_items(self, user_id, num_recommendations=10):
+    def recommend_items(self, user_id, num_recommendations=500):
         # For a given user, fetch the list of similar users.
         # Recommend items engaged by those users, which the given user hasn't seen.
-        pass
+        similar_users = self.get_similar_users(user_id)
+        seen_items = [interaction.content_id for interaction in self.interactions if interaction.user_id==user_id]
+        recommend_items = set()
+        for interaction in self.interactions:
+
+            if(interaction.engagement_type==EngagementType.Like and interaction.engagement_value==1 and interaction.user_id in similar_users and interaction.content_id not in seen_items):
+                recommend_items.add(interaction.content_id)
+            if len(recommend_items) == num_recommendations:
+                break
+        return list(recommend_items)

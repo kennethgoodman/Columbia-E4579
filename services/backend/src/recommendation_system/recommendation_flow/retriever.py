@@ -3,6 +3,7 @@ import time
 import random
 from src import db
 from flask import request
+import traceback
 
 from src.api.content.models import Content, get_url
 from src.api.users.models import User
@@ -99,8 +100,9 @@ def add_metric_time_took(team_name, user_id, val, limit, offset, seed, starting_
     )
 
 
-def get_content_data(controller, user_id, limit, offset, seed, starting_point=None):
+def get_content_data(controller, user_id, limit, offset, seed, starting_point):
     start = time.time()
+
     if False: # controller == ControllerEnum.ENGAGEMENT_ASSIGNMENT:
         content_ids, new_controller = controller.value().get_content_ids(
             user_id, limit, offset, seed, starting_point
@@ -117,6 +119,7 @@ def get_content_data(controller, user_id, limit, offset, seed, starting_point=No
     except Exception as e:
         db.session.rollback()
         print(f"exception trying to add_metric_time_took {e}")
+        print(traceback.format_exc())
     all_content = Content.query.filter(Content.id.in_(content_ids)).all()
     responses = map(content_to_response, all_content)
     return list(map(lambda x: {**x, "controller": controller.human_string()}, responses))

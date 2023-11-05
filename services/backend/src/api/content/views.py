@@ -107,9 +107,10 @@ class ContentPagination(Resource):
             user_id = 0  # if error, do a logged out user, not great, TODO: ensure this is right
         page = int(request.args.get("page", 0))
         limit = int(request.args.get("limit", 10))
+        twoTower = request.args.get("twoTower", "false") == "true"
+        collabFilter = request.args.get("collabFilter", "false") == "true"
+        yourChoice = request.args.get("yourChoice", "false") == "true"
         content_id = request.args.get("content_id", None)
-        if content_id == "undefined":
-            content_id = None
         controller = ControllerEnum.string_to_controller(
             request.args.get("controller", ControllerEnum.RANDOM.human_string())
             or ControllerEnum.RANDOM.human_string()
@@ -118,9 +119,13 @@ class ContentPagination(Resource):
         offset = page * limit
         # logged-out user is 0
         # don't need page for random (most of the time)
-        starting_point = None
-        if content_id is not None:
-            starting_point = {"content_id": int(content_id)}
+        starting_point = {
+            'twoTower': twoTower,
+            'collabFilter': collabFilter,
+            'yourChoice': yourChoice
+        }
+        if content_id != "undefined":
+            starting_point["content_id"] = int(content_id)
         try:
             responses = get_content_data(
                 controller=controller,
@@ -131,7 +136,8 @@ class ContentPagination(Resource):
                 starting_point=starting_point,
             )
         except Exception as e:
-            print(e)
+            print(f"failed to retrieve get_content_data {e} for {request.args.get('controller')}")
+            print(traceback.format_exc())
             return [{ "errors": str(e), "id": 0, "traceback": traceback.format_exc()}], 500 
         return add_content_data(responses, user_id), 200
 

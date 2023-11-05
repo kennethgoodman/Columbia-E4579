@@ -5,6 +5,7 @@ from src.api.engagement.models import Engagement
 from flask import current_app
 import mrpt
 import pandas as pd
+import traceback
 
 # Global Variables
 INDEXES = {}
@@ -31,6 +32,7 @@ def fetch_data_stub():
         )
     except Exception as e:
         print(f"Error fetching data: {e}")
+        print(traceback.format_exc())
         return None
 
 def instantiate_indexes():
@@ -45,13 +47,18 @@ def instantiate_indexes():
         ).order_by(Engagement.content_id).all()
         df = pd.DataFrame(contents)
 
-        teams = ["alpha", "beta", "charlie", "delta", "echo", "foxtrot", "golf"]
         global team_wrappers
-
+        teams = current_app.config.get("TEAMS_TO_RUN_FOR")
         for team in teams:
             module_path = f"src.recommendation_system.ml_models.{team}.two_tower"
-            TwoTower = __import__(module_path, fromlist=['ModelWrapper']).ModelWrapper
-            team_wrappers[team] = TwoTower()
+            try:
+                ModelWrapper = __import__(module_path, fromlist=['ModelWrapper']).ModelWrapper
+                team_wrappers[team] = ModelWrapper()
+                print(f"Done ModelWrapper instantiation for {team} successfully")
+            except Exception as e:
+                print(f"Error during ModelWrapper instantiation for {team}, {e}")
+                print(traceback.format_exc())
+                team_wrappers[team] = None
 
         global index_to_content_id, content_id_to_index, INDEXES
         index_to_content_id = df['content_id'].to_dict()
@@ -61,23 +68,27 @@ def instantiate_indexes():
             try:
                 data = team_wrappers[team].generate_content_embeddings(df)
                 if len(data) < 101:
+                    raise ValueError(f"len(data) == {len(data)} < 101")
                     index = None
                 else:
                     index = mrpt.MRPTIndex(data)
-                    index.build_autotune_sample(0.9, 10)
+                    index.build_autotune_sample(0.9, 200)
+                print(f"Done index instantiation for {team} successfully")
             except Exception as e:
                 print(f"Error during index instantiation for {team}, {e}")
+                print(traceback.format_exc())
                 index = None
             INDEXES[team] = index
-            del data
-
     except Exception as e:
         print(f"Error during index instantiation: {e}")
+        print(traceback.format_exc())
 
 def get_ANN_recommednations(embedding, team, K):
     try:
         K = min(100, K)
         global index_to_content_id, INDEXES
+        if INDEXES[team] is None:
+            return [], []
         similar_indices, scores = INDEXES[team].ann(embedding, k=K, return_distances=True)
         new_similar_content, new_scores = [], []
         for idx, score in zip(similar_indices[0], scores[0]):
@@ -86,7 +97,8 @@ def get_ANN_recommednations(embedding, team, K):
                 new_scores.append(score) 
         return new_similar_content, new_scores
     except Exception as e:
-        print(f"Error during ANN recommendations: {e}")
+        print(f"Error during get_ANN_recommednations recommendations for {team}: {e}")
+        print(traceback.format_exc())
         return [], []
 
 def get_ANN_recommendations_from_user(user_id, team, K):
@@ -97,6 +109,9 @@ def get_ANN_recommendations_from_user(user_id, team, K):
         ).all()
 
         user_df = pd.DataFrame(user_engagements)
+        
+        if len(user_df) == 0:
+            return [], []
 
         user_embedding = team_wrappers[team].generate_user_embeddings(user_df)
 
@@ -105,7 +120,8 @@ def get_ANN_recommendations_from_user(user_id, team, K):
 
         return get_ANN_recommednations(user_embedding, team, K)
     except Exception as e:
-        print(f"Error during ANN recommendations: {e}")
+        print(f"Error during get_ANN_recommendations_from_user recommendations for {team}: {e}")
+        print(traceback.format_exc())
         return [], []
 
 def get_ANN_recommendations_from_content(content_id, team, K):
@@ -117,6 +133,9 @@ def get_ANN_recommendations_from_content(content_id, team, K):
 
         content_df = pd.DataFrame(user_engagements_for_content)
 
+        if len(content_df) == 0:
+            return [], []
+
         content_embedding = team_wrappers[team].generate_content_embeddings(content_df)
 
         if len(content_embedding) == 0:
@@ -124,5 +143,6 @@ def get_ANN_recommendations_from_content(content_id, team, K):
 
         return get_ANN_recommednations(content_embedding, team, K)
     except Exception as e:
-        print(f"Error during ANN recommendations: {e}")
+        print(f"Error during get_ANN_recommendations_from_content recommendations for {team}: {e}")
+        print(traceback.format_exc())
         return [], []
