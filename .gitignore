@@ -152,3 +152,5 @@ logs/
 /services/backend/seed_data/data/nov_19_dump/content.csv
 /services/backend/seed_data/data/nov_19_dump/engagement.csv
 /services/backend/seed_data/data/nov_19_dump/generated_content_metadata.csv
+services/db/01_user.sql
+services/db/00_create.sql
