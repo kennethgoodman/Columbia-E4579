@@ -44,7 +44,7 @@ class GolfController(AbstractController):
             TeamName.Golf_F2023,
             user_id, candidates, seed, starting_point
         )
-        if starting_point.get('inverse_filter', False):
+        if starting_point.get('inverseFilter', False):
             # get the filtered out candidates
             filtered_candidates = set(candidates) - set(filtered_candidates)
         predictions = RandomModel().predict_probabilities(

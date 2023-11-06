@@ -161,4 +161,4 @@ class BetaFilter(AbstractFilter):
         return pf_one & pf_two & pf_lr
 
     def _get_name(self):
-        return "DeltaFilter"
+        return "BetaFilter"
