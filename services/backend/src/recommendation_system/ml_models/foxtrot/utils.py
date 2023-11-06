@@ -4,6 +4,7 @@ import time
 import pandas as pd
 import numpy as np
 from src import db
+from sqlalchemy import func
 from src.api.content.models import Content, GeneratedContentMetadata
 from src.api.engagement.models import Engagement
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
@@ -98,6 +99,36 @@ def fetch_data_by_user_id(user_id):
         print(traceback.format_exc())
         return None
 
+def fetch_database_train_data():
+    try:
+        if os.path.isfile("train.pkl"):
+            with open("train.pkl", "rb") as f:
+                res = pickle.load(f)
+            return res
+        res = db.session.query(
+            Engagement.user_id,
+            Engagement.content_id,
+            Engagement.engagement_type,
+            Engagement.engagement_value,
+            #Engagement.created_date,
+            GeneratedContentMetadata.seed,
+            GeneratedContentMetadata.guidance_scale,
+            GeneratedContentMetadata.num_inference_steps,
+            GeneratedContentMetadata.artist_style,
+            GeneratedContentMetadata.source,
+            GeneratedContentMetadata.model_version,
+            GeneratedContentMetadata.prompt,
+            GeneratedContentMetadata.prompt_embedding
+        ).join(
+            GeneratedContentMetadata, Engagement.content_id == GeneratedContentMetadata.content_id
+        ).all()
+        with open("train.pkl", "wb+") as f:
+            pickle.dump(res, f)
+        return res
+    except Exception as e:
+        print(f"Error fetching data: {e}")
+        print(traceback.format_exc())
+        return None
 
 
 def generate_negative_samples(df, n_negatives_per_positive=1):
@@ -226,23 +257,52 @@ def aggregate_engagement(group):
         'dislikes_count': dislikes_count
     })
 
-def get_tops(top_content=500):
-    if os.path.isfile("/usr/src/app/src/recommendation_system/ml_models/foxtrot/tops.pkl"):
-        with open("/usr/src/app/src/recommendation_system/ml_models/foxtrot/tops.pkl", "rb") as f:
-            top_artist_styles, top_sources, top_seeds, top_n_content = pickle.load(f)
-            return top_artist_styles, top_sources, top_seeds, top_n_content
-    # Configuration options
-    TOP_ARTIST_STYLES = 30
-    TOP_SOURCES = 30
-    TOP_SEEDS = 14
-    TOP_CONTENT = top_content
+def get_tops_database(target, condition, top_n):
+    try:
+        return db.session.query(
+            target,
+            func.count(condition).label('count')
+        ).select_from(
+            Engagement
+        ).join(
+            GeneratedContentMetadata, Engagement.content_id == GeneratedContentMetadata.content_id
+        ).group_by(
+            target
+        ).order_by(
+            func.count(condition).desc()
+        ).limit(
+            top_n
+        ).all()
+    except Exception as e:
+        print(f"Error fetching data: {e}")
+        print(traceback.format_exc())
+        return None
 
-    # Get the top artist styles, sources, and seeds
-    top_artist_styles = df['artist_style'].value_counts().nlargest(TOP_ARTIST_STYLES).index.tolist()
-    top_sources = df['source'].value_counts().nlargest(TOP_SOURCES).index.tolist()
-    top_seeds = df['seed'].value_counts().nlargest(TOP_SEEDS).index.tolist()
-    top_n_content = df.groupby('content_id')['engagement_value'].count().nlargest(TOP_CONTENT).index.tolist()
-    return top_artist_styles, top_sources, top_seeds, top_n_content
+
+def get_tops(indf, top_content=500):
+    global top_artist_styles, top_sources, top_seeds, top_n_content
+
+    if indf is not None and len(indf["content_id"].unique()) > 1 and len(indf["user_id"].unique()) > 1:
+        # Configuration options
+        TOP_ARTIST_STYLES = 30
+        TOP_SOURCES = 30
+        TOP_SEEDS = 14
+        TOP_CONTENT = top_content
+
+
+
+        # Get the top artist styles, sources, and seeds
+        top_artist_styles = get_tops_database(GeneratedContentMetadata.artist_style, GeneratedContentMetadata.artist_style, TOP_ARTIST_STYLES)
+        top_artist_styles = [style[0] for style in top_artist_styles]
+        top_sources = get_tops_database(GeneratedContentMetadata.source, GeneratedContentMetadata.source, TOP_SOURCES)
+        top_sources = [source[0] for source in top_sources]
+        top_seeds = get_tops_database(GeneratedContentMetadata.seed, GeneratedContentMetadata.seed, TOP_SEEDS)
+        top_seeds = [seed[0] for seed in top_seeds]
+        top_n_content = get_tops_database(GeneratedContentMetadata.content_id, Engagement.engagement_value, TOP_CONTENT)
+        top_n_content = [content[0] for content in top_n_content]
+        return top_artist_styles, top_sources, top_seeds, top_n_content
+    else:
+        return top_artist_styles, top_sources, top_seeds, top_n_content
 
 def preprocess_for_tensor(df, top_artist_styles, top_sources, top_seeds, top_n_content, top_content=500):
     PROMPT_EMBEDDING_LENGTH = 512
@@ -369,7 +429,7 @@ def create_content_tensor(df, aggregate=False):
 def process_df_to_tensor(df):
     # Configuration options
     TOP_CONTENT = 500
-    top_artist_styles, top_sources, top_seeds, top_n_content = get_tops(TOP_CONTENT)
+    top_artist_styles, top_sources, top_seeds, top_n_content = get_tops(df, TOP_CONTENT)
 
     df = preprocess_for_tensor(df, top_artist_styles, top_sources, top_seeds, top_n_content, TOP_CONTENT)
 

@@ -5,8 +5,8 @@ from src.recommendation_system.recommendation_flow.candidate_generators.RandomGe
 from src.recommendation_system.recommendation_flow.controllers.AbstractController import (
     AbstractController,
 )
-from src.recommendation_system.recommendation_flow.filtering.RandomFilter import (
-    RandomFilter,
+from src.recommendation_system.recommendation_flow.filtering.fall_2023.FoxtrotFilter import (
+    FoxtrotFilter,
 )
 from src.recommendation_system.recommendation_flow.model_prediction.RandomModel import (
     RandomModel,
@@ -42,9 +42,13 @@ class FoxtrotController(AbstractController):
            )
            candidates += cur_candidates
            scores += cur_scores if cur_scores else [0] * len(cur_candidates)
-        filtered_candidates = RandomFilter().filter_ids(
-            candidates, seed, starting_point
+        filtered_candidates = FoxtrotFilter().filter_ids(
+            TeamName.Foxtrot_F2023,
+            user_id, candidates, seed, starting_point
         )
+        if starting_point.get('inverseFilter', False):
+            # get the filtered out candidates
+            filtered_candidates = set(candidates) - set(filtered_candidates)
         predictions = RandomModel().predict_probabilities(
             filtered_candidates,
             user_id,

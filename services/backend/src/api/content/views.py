@@ -107,9 +107,14 @@ class ContentPagination(Resource):
             user_id = 0  # if error, do a logged out user, not great, TODO: ensure this is right
         page = int(request.args.get("page", 0))
         limit = int(request.args.get("limit", 10))
-        twoTower = request.args.get("twoTower", "false") == "true"
-        collabFilter = request.args.get("collabFilter", "false") == "true"
-        yourChoice = request.args.get("yourChoice", "false") == "true"
+        twoTower = request.args.get("twoTower", "true") == "true"
+        collabFilter = request.args.get("collabFilter", "true") == "true"
+        yourChoice = request.args.get("yourChoice", "true") == "true"
+        policyFilterOne = request.args.get("policyFilterOne", "true") == "true"
+        policyFilterTwo = request.args.get("policyFilterTwo", "true") == "true"
+        linearRegression = request.args.get("linearRegression", "true") == "true"
+        inverseFilter = request.args.get("inverseFilter", "false") == "true"
+
         content_id = request.args.get("content_id", None)
         controller = ControllerEnum.string_to_controller(
             request.args.get("controller", ControllerEnum.RANDOM.human_string())
@@ -122,7 +127,11 @@ class ContentPagination(Resource):
         starting_point = {
             'twoTower': twoTower,
             'collabFilter': collabFilter,
-            'yourChoice': yourChoice
+            'yourChoice': yourChoice,
+            'policy_filter_one': policyFilterOne,
+            'policy_filter_two': policyFilterTwo,
+            'linear_model': linearRegression,
+            'inverseFilter': inverseFilter,
         }
         if content_id != "undefined":
             starting_point["content_id"] = int(content_id)
@@ -138,7 +147,7 @@ class ContentPagination(Resource):
         except Exception as e:
             print(f"failed to retrieve get_content_data {e} for {request.args.get('controller')}")
             print(traceback.format_exc())
-            return [{ "errors": str(e), "id": 0, "traceback": traceback.format_exc()}], 500 
+            return [{ "errors": str(e), "id": 0, "traceback": traceback.format_exc()}], 500
         return add_content_data(responses, user_id), 200
 
 

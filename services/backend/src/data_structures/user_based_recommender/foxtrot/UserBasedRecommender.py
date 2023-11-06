@@ -42,15 +42,11 @@ class UserBasedRecommender:
 
             if engagement_type == "Like":
                 if value == 1:
-                    user_content_matrix[user_id][content_id] += 2
+                    user_content_matrix[user_id][content_id] += 10000
                 else:
-                    user_content_matrix[user_id][content_id] += -2
+                    user_content_matrix[user_id][content_id] += -10000
             else:
-                # min-max scaling
-                normalized_value = 0
-                if value <= 6000:
-                    normalized_value = (value - self.min_val) / (self.max_val - self.min_val)
-                user_content_matrix[user_id][content_id] += normalized_value
+                user_content_matrix[user_id][content_id] += value
 
         users = sorted(user_content_matrix.keys())
         contents = sorted({interaction[0] for interaction in self.interactions})
@@ -80,7 +76,7 @@ class UserBasedRecommender:
     def recommend_items(self, user_id, limit, offset, num_recommendations=500):
         # For a given user, fetch the list of similar users.
         # Recommend items engaged by those users, which the given user hasn't seen.
-        similar_users = self.user_similarity_map.get(user_id, [])
+        similar_users = self.get_similar_users(user_id)
         content_scores = defaultdict(float)
 
         user_interacted_contents = {interaction[0] for interaction in self.interactions if
