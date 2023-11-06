@@ -213,7 +213,9 @@ class DataCollector:
         coeffs = self.coefficients()
         for (categories, _coefficients), col_name in self.one_hot_encoding_functions():
             for category, coefficient in zip(categories + ['other'], _coefficients):
-                coeffs[col_name + "_" + str(category)] = coefficient
+                if col_name + "_" + str(category) not in coeffs:
+                    coeffs[col_name + "_" + str(category)] = 0
+                coeffs[col_name + "_" + str(category)] += coefficient
 
         self.results['linear_output'] = 0.0
         for col_name, _coefficient in coeffs.items():

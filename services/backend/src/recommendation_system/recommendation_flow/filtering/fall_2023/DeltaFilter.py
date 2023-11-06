@@ -52,18 +52,21 @@ class DataCollectorDelta(DataCollector):
 
     def sources_one_hot(self):
         sources = ['human_prompts',
-                   'r/Showerthoughts']
+                   'r/Showerthoughts',
+                   'r/EarthPorn']
         source_coeffs = [
             0.015505005789178464,
             -0.010298992024823862,
+            0.0,
             -0.005206013764405199]
 
         return sources, source_coeffs
 
     def num_inference_steps_one_hot(self):
-        steps = [20, 100]
+        steps = [20, 50, 100]
         step_coeffs = [
             -7.50395834568939e-05,
+            0.0,
             0.0048317668567876846,
             -0.004756727273321751]
         return steps, step_coeffs
@@ -190,7 +193,7 @@ class DeltaFilter(AbstractFilter):
             pf_lr = set(dc.run_linear_model())
         else:
             pf_lr = set(content_ids)
-        return pf_one & pf_two & pf_lr
+        return set(pf_one) & set(pf_two) & set(pf_lr)
 
     def _get_name(self):
         return "DeltaFilter"

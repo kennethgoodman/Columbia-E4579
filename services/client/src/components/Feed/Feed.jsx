@@ -133,7 +133,7 @@ const Feed = (props) => {
       };
       options[
         "url"
-      ] = `${process.env.REACT_APP_API_SERVICE_URL}/content?page=${fetchParams["page"]}&limit=50&seed=${props.seed}&controller=${fetchParams["controller"]}&content_id=${fetchParams["starting_content_id"]}&twoTower=${twoTower}&collabFilter=${collabFilter}&yourChoice=${yourChoice}&policyFilterOne=${policyFilterOne}&policyFilterTwo=${policyFilterOne}&linearRegression=${linearRegression}&inverseFilter=${inverseFilter}`;
+      ] = `${process.env.REACT_APP_API_SERVICE_URL}/content?page=${fetchParams["page"]}&limit=50&seed=${props.seed}&controller=${fetchParams["controller"]}&content_id=${fetchParams["starting_content_id"]}&twoTower=${twoTower}&collabFilter=${collabFilter}&yourChoice=${yourChoice}&policyFilterOne=${policyFilterOne}&policyFilterTwo=${policyFilterTwo}&linearRegression=${linearRegression}&inverseFilter=${inverseFilter}`;
       setLoading(true);
       axios(options)
         .then((response) => {

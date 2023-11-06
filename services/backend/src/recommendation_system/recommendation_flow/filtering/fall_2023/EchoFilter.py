@@ -101,7 +101,7 @@ class EchoFilter(AbstractFilter):
             pf_lr = set(dc.run_linear_model())
         else:
             pf_lr = set(content_ids)
-        return pf_one & pf_two & pf_lr
+        return set(pf_one) & set(pf_two) & set(pf_lr)
 
     def _get_name(self):
         return "EchoFilter"

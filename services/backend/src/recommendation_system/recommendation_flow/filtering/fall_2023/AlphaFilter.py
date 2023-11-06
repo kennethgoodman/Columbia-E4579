@@ -42,9 +42,9 @@ class DataCollectorAlpha(DataCollector):
 
     def num_inference_steps_one_hot(self):
         return [
-            100
+            20, 50, 100
         ], [
-            0.535, -0.535
+            0, 0, 0.535, -0.535
         ]
 
     def threshold(self):
@@ -123,18 +123,26 @@ class AlphaFilter(AbstractFilter):
         dc.gather_data(user_id, content_ids)
         dc.feature_eng()
         if starting_point.get("policy_filter_one", False):
-            pf_one = dc.policy_filter_one(dc.results, content_ids)  # policy one used here
+            pf_one = set(
+                content_id
+                for content_id in content_ids
+                if dc.policy_filter_one(dc.results, content_id)
+            )
         else:
             pf_one = set(content_ids)
         if starting_point.get("policy_filter_two", False):
-            pf_two = dc.policy_filter_two(dc.results, content_ids)  # policy two used here
+            pf_two = set(
+                content_id
+                for content_id in content_ids
+                if dc.policy_filter_two(dc.results, content_id)
+            )
         else:
             pf_two = set(content_ids)
         if starting_point.get("linear_model", False) and user_id not in [0, None]:
             pf_lr = set(dc.run_linear_model())
         else:
             pf_lr = set(content_ids)
-        return pf_one & pf_two & pf_lr
+        return set(pf_one) & set(pf_two) & set(pf_lr)
 
     def _get_name(self):
         return "AlphaFilter"

@@ -128,9 +128,9 @@ class ContentPagination(Resource):
             'twoTower': twoTower,
             'collabFilter': collabFilter,
             'yourChoice': yourChoice,
-            'policyFilterOne': policyFilterOne,
-            'policyFilterTwo': policyFilterTwo,
-            'linearRegression': linearRegression,
+            'policy_filter_one': policyFilterOne,
+            'policy_filter_two': policyFilterTwo,
+            'linear_model': linearRegression,
             'inverseFilter': inverseFilter,
         }
         if content_id != "undefined":

@@ -55,7 +55,7 @@ class DataCollectorCharlie(DataCollector):
 
   def policy_filter_two(self, training_data, content_id):
       net_likes_threshold = 4
-      training_data = training_data.merge(engagement_data[["content_id", "engagement_type", "engagement_value", ]],
+      training_data = training_data.merge(self.engagement_data[["content_id", "engagement_type", "engagement_value", ]],
                                           on="content_id", how="left")
       net_likes = \
       training_data[(training_data['content_id'] == content_id) & (training_data["engagement_type"] == "Like")][
@@ -90,7 +90,7 @@ class CharlieFilter(AbstractFilter):
             pf_lr = set(dc.run_linear_model())
         else:
             pf_lr = set(content_ids)
-        return pf_one & pf_two & pf_lr
+        return set(pf_one) & set(pf_two) & set(pf_lr)
 
     def _get_name(self):
         return "CharlieFilter"
