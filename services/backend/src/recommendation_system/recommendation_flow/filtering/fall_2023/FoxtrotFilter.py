@@ -5,11 +5,11 @@ from src.recommendation_system.recommendation_flow.filtering.linear_model_helper
 class DataCollectorFoxtrot(DataCollector):
     def coefficients(self):
         return {
-            'content_likes': 0.001327374532861648,
+            'content_likes': 0.004913674532861648,
             'content_dislikes': -0.0025596352777526488,
             'content_engagement_time_avg': -1.1359359152350807e-10,
-            'user_likes': 3.750439880704869e-05,
-            'user_dislikes': -7.111467664335854e-06,
+            'user_likes': 0.003527374532861648,
+            'user_dislikes': -7.111467664335854e-03,
             'user_engagement_time_avg': -4.198888030205803e-09,
         }
 
