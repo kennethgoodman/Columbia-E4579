@@ -96,84 +96,59 @@ class DataCollectorDelta(DataCollector):
         }
 
     def policy_filter_one(self, training_data, content_ids):
-        filtered_data = training_data[training_data['content_id'].isin(content_ids)].drop_duplicates(
-            subset=['content_id'])
+        filtered_data = training_data[training_data['content_id'].isin(content_ids)].drop_duplicates(subset=['content_id'])
+        #list of ids not seen in training data 
+        unseen_ids = [id for id in content_ids if id not in filtered_data['content_id'].to_list()]
+    
+        #calculated desired number of content to remove
+        desired_remove_count = int(len(content_ids) * 0.81)
+    
+        #calculate top 30 quantile avg eng time across contents
+        top_30_eng = training_data['content_engagement_time_avg'].quantile(.7)
+    
+        data_to_remove = filtered_data.loc[filtered_data['content_engagement_time_avg'] < top_30_eng]
+        remove_desired_diff = abs(data_to_remove.shape[0] - desired_remove_count)
+        ids_to_remove = data_to_remove['content_id'].to_list()
+    
+        if data_to_remove.shape[0] < desired_remove_count:
+          #if removed less than desired, remove extra from unseen ids
+          if len(unseen_ids) >= remove_desired_diff:
+            ids_to_remove += unseen_ids[:remove_desired_diff]
+    
+          #if don't have enough unseen ids remove extra from seen ids based on content dislikes
+          else:
+            ids_to_remove += unseen_ids
+            extra_remove_count = remove_desired_diff - len(unseen_ids)
+            extra_to_remove = filtered_data.loc[(filtered_data['content_engagement_time_avg'] >= top_30_eng)].nlargest(extra_remove_count,'content_dislikes', keep='first')['content_id'].to_list()
+            ids_to_remove += extra_to_remove
+    
+        else:
+          #if removed more than desired, remove less from filtered data based on content_likes
+          top_k = data_to_remove.nlargest(remove_desired_diff, 'content_likes', keep='first')['content_id'].to_list()
+          ids_to_remove = [id for id in ids_to_remove if id not in top_k]
+    
+        filtered_ids = [index for index in content_ids if index not in ids_to_remove]
+        
+        return filtered_ids
 
-        ## calculate the number of contents for each artist_style
-        src_counts = filtered_data["source"].value_counts().to_dict()
-
-        keep_sources = ['human_prompts', 'Dances-with-Wolves', 'r/Damnthatsinteresting', 'r/MadeMeSmile',
-                        'Johann Wolfgang von Goethe', 'r/AccidentalArt', 'Laozi']
-
-        # Calculate the total number of contents
-        total_contents = len(content_ids)
-
-        # Calculate the maximum allowable count for sources
-        # max_allowed_count = int(total_contents * 0.00001)
-        max_allowed_count = 0
-
-        ids_to_remove = []
-        # Iterate through artists and check their counts
-        for src in src_counts:
-            if src not in keep_sources:
-                src_count = src_counts[src]
-                if (src_count > max_allowed_count):
-                    remove_count = src_count - max_allowed_count
-                    ids_to_remove.extend(
-                        filtered_data[filtered_data['source'] == src].sample(remove_count)['content_id'])
-                    # print(len(indices_to_remove))
-
-        condition_1 = filtered_data['source'] == 'human_prompts'
-        condition_2 = ~filtered_data['guidance_scale'].isin([7, 10, 15, 17])
-        ids_to_remove.extend(filtered_data[condition_1 & condition_2]['content_id'])
-
-        # change the ratio based on how much linear is expected to filter
-        # if we are dropping too much, we should not do so
-        stop_index = len(ids_to_remove) + 1
-        # if len(indices_to_remove) / len(content_ids) > 3/13:
-        #   stop_index = int(len(content_ids) * 3/13)
-
-        remove_set = set(ids_to_remove[:stop_index])
-        filtered_indices = [id for id in content_ids if id not in remove_set]
-
-        return filtered_indices
 
     def policy_filter_two(self, training_data, content_ids):
-        filtered_data = training_data[training_data['content_id'].isin(content_ids)].drop_duplicates(
-            subset=['content_id'])
-
-        ## calculate the number of contents for each artist_style
-        artstyle_counts = filtered_data["artist_style"].value_counts().to_dict()
-
-        artstyles = ['movie: Batman', 'scifi', 'laura_wheeler_waring', 'marta_minujín', 'kerry_james_marshall',
-                     'jean-michel_basquiat', 'movie: Indiana-Jones-IV', 'unreal_engine', 'anime']
-
-        # Calculate the total number of contents
-        total_contents = len(content_ids)
-
-        # Calculate the maximum allowable count for the artists
-        max_allowed_count = int(total_contents * 0.00001)
-
-        indices_to_remove = []
-        # Iterate through artists and check their counts
-        for style in artstyles:
-            if style in artstyle_counts:
-                style_count = artstyle_counts[style]
-                if (style_count > max_allowed_count):
-                    remove_count = style_count - max_allowed_count
-                    indices_to_remove.extend(
-                        filtered_data[filtered_data['artist_style'] == style].sample(remove_count).index)
-
-        # change the ratio based on how much linear is expected to filter
-        # if we are dropping too much, we should not do so
-        stop_index = len(indices_to_remove) + 1
-        # if len(indices_to_remove) / len(content_ids) > 3/13:
-        #   stop_index = int(len(content_ids) * 3/13)
-
-        remove_set = set(indices_to_remove[:stop_index])
-        filtered_indices = [index for index in content_ids if index not in remove_set]
-
-        return filtered_indices
+        filtered_data = training_data[training_data['content_id'].isin(content_ids)].drop_duplicates(subset=['content_id'])
+        #list of ids not seen in training data 
+        unseen_ids = [id for id in content_ids if id not in filtered_data['content_id'].to_list()]
+    
+        #calculated desired number of content to remove
+        desired_remove_count = int(len(content_ids) * 0.1)
+    
+        ids_to_remove = filtered_data.nlargest(desired_remove_count,'content_dislikes', keep='first')['content_id'].to_list()
+    
+        if(len(ids_to_remove) < desired_remove_count):
+          remove_desired_diff = abs(len(ids_to_remove) - desired_remove_count)
+          ids_to_remove += unseen_ids[:remove_desired_diff]
+    
+        filtered_ids = [index for index in content_ids if index not in ids_to_remove]
+        
+        return filtered_ids
 
 
 class DeltaFilter(AbstractFilter):
