@@ -22,7 +22,7 @@ from src.recommendation_system.recommendation_flow.filtering.linear_model_helper
 
 class DataCollectorCharlie(DataCollector):
 
-	def coefficients(self):
+  def coefficients(self):
     	return {
             'content_likes': -0.00023,
             'content_dislikes': 0.001026,
@@ -54,7 +54,7 @@ class DataCollectorCharlie(DataCollector):
     ]
 
   def threshold(self):
-      return 0.28
+      return 0.280554
 
   def policy_filter_one(self, training_data, content_id):
       desired_styles = ['human_prompts', 'r/EarthPorn', 'r/Showerthoughts']
@@ -101,7 +101,7 @@ class CharlieFilter(AbstractFilter):
             pf_lr = set(dc.run_linear_model())
         else:
             pf_lr = set(content_ids)
-        return set(pf_one) & set(pf_two) & set(pf_lr)
+        return set(pf_one) | set(pf_two) | set(pf_lr)
 
     def _get_name(self):
         return "CharlieFilter"
