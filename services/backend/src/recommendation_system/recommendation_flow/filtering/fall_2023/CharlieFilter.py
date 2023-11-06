@@ -21,6 +21,17 @@ from src.recommendation_system.recommendation_flow.filtering.linear_model_helper
 """# Your Implementation - Example Here, Must Modify"""
 
 class DataCollectorCharlie(DataCollector):
+
+	def coefficients(self):
+        return {
+            'content_likes': -0.00023,
+            'content_dislikes': 0.001026,
+            'content_engagement_time_avg': 3.68948e-7,
+            'user_likes': 4.275072e-6,
+            'user_dislikes': -1.988219e-6,
+            'user_engagement_time_avg': 3.185241e-7,
+        }
+	
   def artist_styles_one_hot(self):
       return [
             "medieval", "oil_on_canvas", "scifi", "leonardo_da_vinci", "movie: Batman", "movie: Gold"
