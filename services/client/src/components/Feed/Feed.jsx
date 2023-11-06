@@ -31,6 +31,10 @@ const Feed = (props) => {
   const [collabFilter, setCollabFilter] = useState(true);
   const [yourChoice, setYourChoice] = useState(true);
 
+  const [policyFilterOne, setPolicyFilterOne] = useState(true);
+  const [policyFilterTwo, setPolicyFilterTwo] = useState(true);
+  const [linearRegression, setLinearRegression] = useState(true);
+
   const handleCheckboxChange = (setCheckboxState, checkboxValue) => {
     setData([]);  // Clear the current data
     setFetchParams(prevState => ({
@@ -49,7 +53,7 @@ const Feed = (props) => {
       },
       url: `${process.env.REACT_APP_API_SERVICE_URL}/content/listcontrollers`
     };
-    
+
     axios(options)
       .then((response) => {
         const results = response.data;
@@ -128,7 +132,7 @@ const Feed = (props) => {
       };
       options[
         "url"
-      ] = `${process.env.REACT_APP_API_SERVICE_URL}/content?page=${fetchParams["page"]}&limit=50&seed=${props.seed}&controller=${fetchParams["controller"]}&content_id=${fetchParams["starting_content_id"]}&twoTower=${twoTower}&collabFilter=${collabFilter}&yourChoice=${yourChoice}`;
+      ] = `${process.env.REACT_APP_API_SERVICE_URL}/content?page=${fetchParams["page"]}&limit=50&seed=${props.seed}&controller=${fetchParams["controller"]}&content_id=${fetchParams["starting_content_id"]}&twoTower=${twoTower}&collabFilter=${collabFilter}&yourChoice=${yourChoice}&policyFilterOne=${policyFilterOne}&policyFilterTwo=${policyFilterOne}&linearRegression=${linearRegression}`;
       setLoading(true);
       axios(options)
         .then((response) => {
@@ -167,7 +171,7 @@ const Feed = (props) => {
     };
     options[
       "url"
-    ] = `${process.env.REACT_APP_API_SERVICE_URL}/engagement/time_engaged/${fetchParams["controller"]}`; 
+    ] = `${process.env.REACT_APP_API_SERVICE_URL}/engagement/time_engaged/${fetchParams["controller"]}`;
     setLoading(true);
     axios(options)
       .then((response) => {
@@ -198,6 +202,7 @@ const Feed = (props) => {
           {buttonText}
       </button>
       <div className="checkbox-group">
+        <p>Candidate Generators:</p>
         <label>
           <input type="checkbox" checked={twoTower} onChange={() => handleCheckboxChange(setTwoTower, twoTower)} />
           Two Tower
@@ -209,6 +214,21 @@ const Feed = (props) => {
         <label>
           <input type="checkbox" checked={yourChoice} onChange={() => handleCheckboxChange(setYourChoice, yourChoice)} />
           Your Choice
+        </label>
+      </div>
+      <div className="checkbox-group">
+        <p>Filters:</p>
+        <label>
+          <input type="checkbox" checked={policyFilterOne} onChange={() => handleCheckboxChange(setPolicyFilterOne, policyFilterOne)} />
+          Policy Filter One
+        </label>
+        <label>
+          <input type="checkbox" checked={policyFilterTwo} onChange={() => handleCheckboxChange(setPolicyFilterTwo, policyFilterTwo)} />
+          Policy Filter Two
+        </label>
+        <label>
+          <input type="checkbox" checked={linearRegression} onChange={() => handleCheckboxChange(setLinearRegression, linearRegression)} />
+          Linear Regression
         </label>
       </div>
       <label className="switch">
@@ -267,4 +287,3 @@ const Feed = (props) => {
 };
 
 export default Feed;
- 

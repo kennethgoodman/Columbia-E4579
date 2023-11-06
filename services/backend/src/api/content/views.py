@@ -110,6 +110,10 @@ class ContentPagination(Resource):
         twoTower = request.args.get("twoTower", "false") == "true"
         collabFilter = request.args.get("collabFilter", "false") == "true"
         yourChoice = request.args.get("yourChoice", "false") == "true"
+        policyFilterOne = request.args.get("policyFilterOne", "false") == "true"
+        policyFilterTwo = request.args.get("policyFilterTwo", "false") == "true"
+        linearRegression = request.args.get("linearRegression", "false") == "true"
+
         content_id = request.args.get("content_id", None)
         controller = ControllerEnum.string_to_controller(
             request.args.get("controller", ControllerEnum.RANDOM.human_string())
@@ -122,7 +126,10 @@ class ContentPagination(Resource):
         starting_point = {
             'twoTower': twoTower,
             'collabFilter': collabFilter,
-            'yourChoice': yourChoice
+            'yourChoice': yourChoice,
+            'policyFilterOne': policyFilterOne,
+            'policyFilterTwo': policyFilterTwo,
+            'linearRegression': linearRegression
         }
         if content_id != "undefined":
             starting_point["content_id"] = int(content_id)
@@ -138,7 +145,7 @@ class ContentPagination(Resource):
         except Exception as e:
             print(f"failed to retrieve get_content_data {e} for {request.args.get('controller')}")
             print(traceback.format_exc())
-            return [{ "errors": str(e), "id": 0, "traceback": traceback.format_exc()}], 500 
+            return [{ "errors": str(e), "id": 0, "traceback": traceback.format_exc()}], 500
         return add_content_data(responses, user_id), 200
 
 
