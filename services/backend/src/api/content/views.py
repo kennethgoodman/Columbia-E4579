@@ -107,12 +107,13 @@ class ContentPagination(Resource):
             user_id = 0  # if error, do a logged out user, not great, TODO: ensure this is right
         page = int(request.args.get("page", 0))
         limit = int(request.args.get("limit", 10))
-        twoTower = request.args.get("twoTower", "false") == "true"
-        collabFilter = request.args.get("collabFilter", "false") == "true"
-        yourChoice = request.args.get("yourChoice", "false") == "true"
-        policyFilterOne = request.args.get("policyFilterOne", "false") == "true"
-        policyFilterTwo = request.args.get("policyFilterTwo", "false") == "true"
-        linearRegression = request.args.get("linearRegression", "false") == "true"
+        twoTower = request.args.get("twoTower", "true") == "true"
+        collabFilter = request.args.get("collabFilter", "true") == "true"
+        yourChoice = request.args.get("yourChoice", "true") == "true"
+        policyFilterOne = request.args.get("policyFilterOne", "true") == "true"
+        policyFilterTwo = request.args.get("policyFilterTwo", "true") == "true"
+        linearRegression = request.args.get("linearRegression", "true") == "true"
+        inverseFilter = request.args.get("inverseFilter", "false") == "true"
 
         content_id = request.args.get("content_id", None)
         controller = ControllerEnum.string_to_controller(
@@ -129,7 +130,8 @@ class ContentPagination(Resource):
             'yourChoice': yourChoice,
             'policyFilterOne': policyFilterOne,
             'policyFilterTwo': policyFilterTwo,
-            'linearRegression': linearRegression
+            'linearRegression': linearRegression,
+            'inverseFilter': inverseFilter,
         }
         if content_id != "undefined":
             starting_point["content_id"] = int(content_id)

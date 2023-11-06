@@ -44,6 +44,9 @@ class EchoController(AbstractController):
             TeamName.Echo_F2023,
             user_id, candidates, seed, starting_point
         )
+        if starting_point.get('inverse_filter', False):
+            # get the filtered out candidates
+            filtered_candidates = set(candidates) - set(filtered_candidates)
         predictions = RandomModel().predict_probabilities(
             filtered_candidates,
             user_id,

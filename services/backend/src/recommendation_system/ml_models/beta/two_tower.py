@@ -21,7 +21,7 @@ class TwoTowerModel(nn.Module):
     def forward_content(self, content_tensor):
         content_embedding = self.content_tower(content_tensor)
         return content_embedding
-        
+
 
     def forward_user(self, user_tensor):
         user_embedding = self.user_tower(user_tensor)
@@ -57,7 +57,7 @@ def df_to_content_tensor(df):
 
     with open(legalize("clip_embed.pkl"), "rb") as f:
         clip_embed = pickle.load(f)
-        
+
     clip_embedding = pd.read_csv(legalize('clip_lookup.csv'))
     clip_embedding['vecs'] = list(clip_embed)
 
@@ -74,18 +74,18 @@ def df_to_content_tensor(df):
                                       'guidance_scale':lambda x: x.iloc[0],
                                       'num_inference_steps':lambda x: x.iloc[0],
                                       'content_id':lambda x:x.iloc[0]})
-    
+
     clip_e = []
-    
+
     for i in df.content_id:
         if i in clip_embedding.content_id:
             clip_embedding[clip_embedding.content_id==i].vecs.iloc[0].astype(np.float32)
         else:
             clip_e.append(np.full((PROMPT_EMBEDDING_LENGTH,), 0, dtype=np.float32))
-            
+
     clip_e = np.array(clip_e)
 
-    
+
     NUM = {
         'artist_style':30,
         'seed':14,
@@ -102,8 +102,8 @@ def df_to_content_tensor(df):
     df['source'] = df['source'].apply(lambda x: x if x in top_sources else 'other')
     df['seed'] = df['seed'].apply(lambda x: str(x) if x in top_seeds else 'other')
 
-    
-    
+
+
     stringify = lambda lst : [str(_) for _ in lst]
     content_onehot = [np.array(
     [[(top == df[column].iloc[i]) for top in stringify(top_data[f'top_{column}s'])] for i in range(len(df))]).astype(np.float32)
@@ -116,34 +116,33 @@ def df_to_content_tensor(df):
 
     content_columns2 = ['content_id','guidance_scale', 'num_inference_steps']
     content_features2 = df[content_columns2]
-    
+
     content_onehott = content_onehot.astype(np.float32)
     clip_e = clip_e.astype(np.float32)
     content_f2 = content_features2.values.astype(np.float32)
 
-    
+
 
     content_features_tensor = torch.FloatTensor(
         np.hstack([content_onehott, clip_e, content_f2])
-    ) 
+    )
     return content_features_tensor
 
 def df_to_user_tensor(df):
     from collections import defaultdict
     import json
 
-    
+
     TOP_CONTENT = 251
     with open(legalize('top_n_content.json'), 'r') as file:
         top_n_content = json.load(file)
-    
+
     user_columns = (
         [f'ms_engaged_{i}' for i in range(TOP_CONTENT)] +
         [f'like_vector_{i}' for i in range(TOP_CONTENT)] +
         [f'dislike_vector_{i}' for i in range(TOP_CONTENT)]
     )
-    print('Successfully loaded data')
-    
+
     # User: Construct groupby-like columns for each user using
     def aggregate_engagement(group):
         # Summing millisecond engagement values
@@ -247,7 +246,7 @@ def df_to_user_tensor(df):
             user_vector_dict[user_id]['like_vector'][idx] = row['likes_count']
             user_vector_dict[user_id]['dislike_vector'][idx] = row['dislikes_count']
 
-        
+
 
         # Convert to DataFrame
         user_vector_df = pd.DataFrame.from_dict(user_vector_dict, orient='index')
@@ -260,11 +259,11 @@ def df_to_user_tensor(df):
         user_vector_df_new = user_vector_df_new.merge(indie[['user_id','score']], right_on='user_id',left_index=True, how = "left").drop(columns=['user_id'])
         user_vector_df_new.fillna(0, inplace=True)
 
-        
+
         user_vector_mil = np.vstack(user_vector_df['millisecond_engaged_vector']).astype(np.float32)
         user_vector_like = np.vstack(user_vector_df['like_vector']).astype(np.float32)
         user_vector_dislike = np.vstack(user_vector_df['dislike_vector']).astype(np.float32)
-        
+
         #print('Sucessfully constructed user_vectors')
         user_features_tensor = torch.FloatTensor(
             np.hstack([user_vector_mil,user_vector_like,user_vector_dislike])
@@ -280,7 +279,7 @@ class ModelWrapper:
             self.model = DummyTwoTowerModel()
         else:
             self.model = TwoTowerModel()
-            
+
             self.model.load_state_dict(torch.load(legalize(model_path), map_location=torch.device('cpu')))
         self.model.eval()
 

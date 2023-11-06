@@ -34,6 +34,7 @@ const Feed = (props) => {
   const [policyFilterOne, setPolicyFilterOne] = useState(true);
   const [policyFilterTwo, setPolicyFilterTwo] = useState(true);
   const [linearRegression, setLinearRegression] = useState(true);
+  const [inverseFilter, setInverseFilter] = useState(false);
 
   const handleCheckboxChange = (setCheckboxState, checkboxValue) => {
     setData([]);  // Clear the current data
@@ -132,7 +133,7 @@ const Feed = (props) => {
       };
       options[
         "url"
-      ] = `${process.env.REACT_APP_API_SERVICE_URL}/content?page=${fetchParams["page"]}&limit=50&seed=${props.seed}&controller=${fetchParams["controller"]}&content_id=${fetchParams["starting_content_id"]}&twoTower=${twoTower}&collabFilter=${collabFilter}&yourChoice=${yourChoice}&policyFilterOne=${policyFilterOne}&policyFilterTwo=${policyFilterOne}&linearRegression=${linearRegression}`;
+      ] = `${process.env.REACT_APP_API_SERVICE_URL}/content?page=${fetchParams["page"]}&limit=50&seed=${props.seed}&controller=${fetchParams["controller"]}&content_id=${fetchParams["starting_content_id"]}&twoTower=${twoTower}&collabFilter=${collabFilter}&yourChoice=${yourChoice}&policyFilterOne=${policyFilterOne}&policyFilterTwo=${policyFilterOne}&linearRegression=${linearRegression}&inverseFilter=${inverseFilter}`;
       setLoading(true);
       axios(options)
         .then((response) => {
@@ -229,6 +230,10 @@ const Feed = (props) => {
         <label>
           <input type="checkbox" checked={linearRegression} onChange={() => handleCheckboxChange(setLinearRegression, linearRegression)} />
           Linear Regression
+        </label>
+        <label>
+          <input type="checkbox" checked={inverseFilter} onChange={() => handleCheckboxChange(setInverseFilter, inverseFilter)} />
+          See What Got Filtered Out
         </label>
       </div>
       <label className="switch">
