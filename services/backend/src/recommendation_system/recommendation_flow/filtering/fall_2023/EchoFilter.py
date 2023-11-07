@@ -67,8 +67,7 @@ class DataCollectorEcho(DataCollector):
         sorted_human_content = sorted_human_content.drop_duplicates(subset=['content_id'])
         bottom_60_percent_cutoff = int(len(sorted_human_content) * 0.75)
         bottom_content_ids = sorted_human_content.iloc[:bottom_60_percent_cutoff]['content_id']
-        lst = list(set(all_content_ids) - set(bottom_content_ids))
-        return lst
+        return  list(set(all_content_ids) - set(bottom_content_ids))
 
     def policy_filter_two(self, training_data, content_ids):
         df = training_data[training_data['content_id'].isin(content_ids)]
@@ -80,8 +79,7 @@ class DataCollectorEcho(DataCollector):
         sorted_movie_content = sorted_movie_content.drop_duplicates(subset=['content_id'])
         bottom_60_percent_cutoff = int(len(sorted_movie_content) * 0.750)
         bottom_content_ids = sorted_movie_content.iloc[:bottom_60_percent_cutoff]['content_id']
-        lst = list(set(all_content_ids) - set(bottom_content_ids))
-        return lst
+        return list(set(all_content_ids) - set(bottom_content_ids))
 
 
 class EchoFilter(AbstractFilter):
@@ -101,7 +99,7 @@ class EchoFilter(AbstractFilter):
             pf_lr = set(dc.run_linear_model())
         else:
             pf_lr = set(content_ids)
-        return set(pf_one) & set(pf_two) & set(pf_lr)
+        return (set(pf_one) | set(pf_two)) & set(pf_lr)
 
     def _get_name(self):
         return "EchoFilter"

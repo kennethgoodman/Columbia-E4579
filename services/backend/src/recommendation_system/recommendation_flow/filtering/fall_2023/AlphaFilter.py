@@ -98,20 +98,14 @@ class DataCollectorAlpha(DataCollector):
         The random package MUST be imported"""
         try:
             source = training_data[training_data.content_id == content_id].source.iloc[0]
-            if source not in [
+            if source in [
                     'human_prompts', 'r/Showerthoughts', 'r/EarthPorn', 'r/scifi', 'r/pics',
                     'r/Damnthatsinteresting', 'r/MadeMeSmile', 'r/educationalgifs',
                     'r/SimplePrompts'
                 ]:
-                random_number = random.random()
-
-                # threshold for selection
-                threshold = 0.90
-
-                # Check if the random number is less than the probability threshold
-                if random_number < threshold:
-                    return True
-            return False
+                return True
+            # Check if the random number is less than the probability threshold
+            return random.random() < 0.90
         except Exception as e:
             print(f"got an an exception {e} in policy_filter_two for Alpha")
             return False

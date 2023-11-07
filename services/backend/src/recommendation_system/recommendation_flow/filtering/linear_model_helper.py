@@ -209,7 +209,7 @@ class DataCollector:
             'user_engagement_time_avg': 0.0,
         }
 
-    def run_linear_model(self):
+    def run_linear_model(self, content_ids_to_run_one=None):
         coeffs = self.coefficients()
         for (categories, _coefficients), col_name in self.one_hot_encoding_functions():
             for category, coefficient in zip(categories + ['other'], _coefficients):
@@ -217,10 +217,13 @@ class DataCollector:
                     coeffs[col_name + "_" + str(category)] = 0
                 coeffs[col_name + "_" + str(category)] += coefficient
 
-        self.results['linear_output'] = 0.0
+        df_to_run_on = self.results.copy()
+        if content_ids_to_run_one is not None:
+            df_to_run_on = df_to_run_on[df_to_run_on['content_id'].isin(content_ids_to_run_one)]
+        df_to_run_on['linear_output'] = 0.0
         for col_name, _coefficient in coeffs.items():
-            self.results['linear_output'] += self.results[col_name] * _coefficient
-        return self.results[self.results['linear_output'] >= self.threshold()]['content_id'].values
+            df_to_run_on['linear_output'] += df_to_run_on[col_name] * _coefficient
+        return df_to_run_on[df_to_run_on['linear_output'] >= self.threshold()]['content_id'].values
 
     def filter_content_ids(self, user_id, content_ids):
         self.gather_data(1, content_ids)

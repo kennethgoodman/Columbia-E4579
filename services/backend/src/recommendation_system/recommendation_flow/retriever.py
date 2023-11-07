@@ -46,14 +46,14 @@ class ControllerEnum(Enum):
         return {
             controller.human_string(): controller for controller in list(ControllerEnum)
         }[controller_string]
-    
+
     @staticmethod
     def controller_to_string(controller):
         for controller_enum in list(ControllerEnum):
             if controller_enum.value() == controller:
                 return controller_enum
         raise ValueError(f"{str(controller)} doesn't exist")
-    
+
     @staticmethod
     def controller_to_team_name(controller):
         return {
@@ -86,15 +86,15 @@ def content_to_response(content):
 def add_metric_time_took(team_name, user_id, val, limit, offset, seed, starting_point):
     add_metric(
         request_id=request.request_id,
-        team_name=team_name, 
-        funnel_name='retriever', 
-        user_id=user_id if user_id else None, 
-        content_id=None, 
-        metric_funnel_type=MetricFunnelType.Controller, 
-        metric_type=MetricType.TimeTakenMS, 
+        team_name=team_name,
+        funnel_name='retriever',
+        user_id=user_id if user_id else None,
+        content_id=None,
+        metric_funnel_type=MetricFunnelType.Controller,
+        metric_type=MetricType.TimeTakenMS,
         metric_value=val,
         metric_metadata={
-            "limit": limit, "offset": offset, 
+            "limit": limit, "offset": offset,
             "seed": seed, "starting_point": starting_point
             }
     )
@@ -103,18 +103,12 @@ def add_metric_time_took(team_name, user_id, val, limit, offset, seed, starting_
 def get_content_data(controller, user_id, limit, offset, seed, starting_point):
     start = time.time()
 
-    if False: # controller == ControllerEnum.ENGAGEMENT_ASSIGNMENT:
-        content_ids, new_controller = controller.value().get_content_ids(
-            user_id, limit, offset, seed, starting_point
-        )
-        controller = ControllerEnum.controller_to_string(new_controller)
-    else:
-        content_ids = controller.value().get_content_ids(
-            user_id, limit, offset, seed, starting_point
-        )
+    content_ids = controller.value().get_content_ids(
+        user_id, limit, offset, seed, starting_point
+    )
     try:
-        add_metric_time_took(ControllerEnum.controller_to_team_name(controller), 
-                             user_id, int(1000 * (time.time() - start)), 
+        add_metric_time_took(ControllerEnum.controller_to_team_name(controller),
+                             user_id, int(1000 * (time.time() - start)),
                              limit, offset, seed, starting_point)
     except Exception as e:
         db.session.rollback()

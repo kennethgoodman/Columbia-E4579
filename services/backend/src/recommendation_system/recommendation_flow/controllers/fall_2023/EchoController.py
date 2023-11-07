@@ -24,7 +24,7 @@ class EchoController(AbstractController):
     def get_content_ids(self, user_id, limit, offset, seed, starting_point):
         if seed <= 1:  # MySql seeds should be [0, # of rows] not [0, 1]
             seed *= 1000000
-        candidate_limit = 500
+        candidate_limit = 100
         candidates, scores = [], []
         generators = []
         if starting_point.get("twoTower", False):
@@ -44,9 +44,6 @@ class EchoController(AbstractController):
             TeamName.Echo_F2023,
             user_id, candidates, seed, starting_point
         )
-        if starting_point.get('inverseFilter', False):
-            # get the filtered out candidates
-            filtered_candidates = set(candidates) - set(filtered_candidates)
         predictions = RandomModel().predict_probabilities(
             filtered_candidates,
             user_id,

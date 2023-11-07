@@ -96,59 +96,33 @@ class DataCollectorDelta(DataCollector):
         }
 
     def policy_filter_one(self, training_data, content_ids):
-        filtered_data = training_data[training_data['content_id'].isin(content_ids)].drop_duplicates(subset=['content_id'])
-        #list of ids not seen in training data 
-        unseen_ids = [id for id in content_ids if id not in filtered_data['content_id'].to_list()]
-    
-        #calculated desired number of content to remove
+        filtered_data = training_data[training_data['content_id'].isin(content_ids)].drop_duplicates(
+            subset=['content_id'])
+        # calculated desired number of content to remove
         desired_remove_count = int(len(content_ids) * 0.81)
-    
-        #calculate top 30 quantile avg eng time across contents
+
+        # calculate top 30 quantile avg eng time across contents
         top_30_eng = training_data['content_engagement_time_avg'].quantile(.7)
-    
+
         data_to_remove = filtered_data.loc[filtered_data['content_engagement_time_avg'] < top_30_eng]
         remove_desired_diff = abs(data_to_remove.shape[0] - desired_remove_count)
         ids_to_remove = data_to_remove['content_id'].to_list()
-    
-        if data_to_remove.shape[0] < desired_remove_count:
-          #if removed less than desired, remove extra from unseen ids
-          if len(unseen_ids) >= remove_desired_diff:
-            ids_to_remove += unseen_ids[:remove_desired_diff]
-    
-          #if don't have enough unseen ids remove extra from seen ids based on content dislikes
-          else:
-            ids_to_remove += unseen_ids
-            extra_remove_count = remove_desired_diff - len(unseen_ids)
-            extra_to_remove = filtered_data.loc[(filtered_data['content_engagement_time_avg'] >= top_30_eng)].nlargest(extra_remove_count,'content_dislikes', keep='first')['content_id'].to_list()
-            ids_to_remove += extra_to_remove
-    
-        else:
-          #if removed more than desired, remove less from filtered data based on content_likes
-          top_k = data_to_remove.nlargest(remove_desired_diff, 'content_likes', keep='first')['content_id'].to_list()
-          ids_to_remove = [id for id in ids_to_remove if id not in top_k]
-    
-        filtered_ids = [index for index in content_ids if index not in ids_to_remove]
-        
-        return filtered_ids
 
+        if data_to_remove.shape[0] > desired_remove_count:
+            # if removed more than desired, remove less from filtered data based on content_likes
+            top_k = data_to_remove.nlargest(remove_desired_diff, 'content_likes', keep='first')['content_id'].to_list()
+            ids_to_remove = [id for id in ids_to_remove if id not in top_k]
+        return [index for index in content_ids if index not in ids_to_remove]
 
     def policy_filter_two(self, training_data, content_ids):
-        filtered_data = training_data[training_data['content_id'].isin(content_ids)].drop_duplicates(subset=['content_id'])
-        #list of ids not seen in training data 
-        unseen_ids = [id for id in content_ids if id not in filtered_data['content_id'].to_list()]
-    
-        #calculated desired number of content to remove
+        filtered_data = training_data[training_data['content_id'].isin(content_ids)].drop_duplicates(
+            subset=['content_id'])
+        # list of ids not seen in training data
+        # calculated desired number of content to remove
         desired_remove_count = int(len(content_ids) * 0.1)
-    
-        ids_to_remove = filtered_data.nlargest(desired_remove_count,'content_dislikes', keep='first')['content_id'].to_list()
-    
-        if(len(ids_to_remove) < desired_remove_count):
-          remove_desired_diff = abs(len(ids_to_remove) - desired_remove_count)
-          ids_to_remove += unseen_ids[:remove_desired_diff]
-    
-        filtered_ids = [index for index in content_ids if index not in ids_to_remove]
-        
-        return filtered_ids
+        ids_to_remove = filtered_data.nlargest(desired_remove_count, 'content_dislikes', keep='first')[
+            'content_id'].to_list()
+        return [index for index in content_ids if index not in ids_to_remove]
 
 
 class DeltaFilter(AbstractFilter):
@@ -157,18 +131,18 @@ class DeltaFilter(AbstractFilter):
         dc.gather_data(user_id, content_ids)
         dc.feature_eng()
         if starting_point.get("policy_filter_one", False):
-            pf_one = dc.policy_filter_one(dc.results, content_ids)  # policy one used here
+            pf_one = dc.policy_filter_one(dc.results, set(content_ids))  # policy one used here
         else:
             pf_one = set(content_ids)
         if starting_point.get("policy_filter_two", False):
-            pf_two = dc.policy_filter_two(dc.results, content_ids)  # policy two used here
+            pf_two = dc.policy_filter_two(dc.results, pf_one)  # policy two used here
         else:
-            pf_two = set(content_ids)
+            pf_two = pf_one
         if starting_point.get("linear_model", False) and user_id not in [0, None]:
-            pf_lr = set(dc.run_linear_model())
+            pf_lr = set(dc.run_linear_model(pf_two))
         else:
-            pf_lr = set(content_ids)
-        return set(pf_one) & set(pf_two) & set(pf_lr)
+            pf_lr = pf_two
+        return pf_lr
 
     def _get_name(self):
         return "DeltaFilter"

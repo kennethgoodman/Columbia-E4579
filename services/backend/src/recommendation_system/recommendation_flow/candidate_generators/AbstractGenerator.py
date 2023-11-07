@@ -1,6 +1,7 @@
 from src import db
 from flask import request
 import traceback
+import time
 
 from src.api.metrics.models import MetricFunnelType, MetricType
 from src.api.metrics.crud import add_metric
@@ -8,17 +9,33 @@ from src.api.metrics.crud import add_metric
 
 class AbstractGenerator:
     def get_content_ids(self, team_name, user_id, limit, offset, seed, starting_point):
+        start = time.time()
         response = self._get_content_ids(user_id, limit, offset, seed, starting_point)
+        end = time.time()
         try:
             add_metric(
                 request_id=request.request_id,
                 team_name=team_name,
                 funnel_name=self._get_name(),
-                user_id=user_id if user_id not in [None, 0] else None, 
+                user_id=user_id if user_id not in [None, 0] else None,
                 content_id=None,
                 metric_funnel_type=MetricFunnelType.CandidateGeneration,
                 metric_type=MetricType.CandidateGenerationNumCandidates,
                 metric_value=len(response[0]) if response is not None and len(response) == 2 else -1,
+                metric_metadata={
+                    "limit": limit, "offset": offset,
+                    "seed": seed, "starting_point": starting_point
+                    }
+            )
+            add_metric(
+                request_id=request.request_id,
+                team_name=team_name,
+                funnel_name=self._get_name(),
+                user_id=user_id if user_id not in [None, 0] else None,
+                content_id=None,
+                metric_funnel_type=MetricFunnelType.CandidateGeneration,
+                metric_type=MetricType.TimeTakenMS,
+                metric_value=int(1000 * (end - start)),
                 metric_metadata={
                     "limit": limit, "offset": offset,
                     "seed": seed, "starting_point": starting_point
