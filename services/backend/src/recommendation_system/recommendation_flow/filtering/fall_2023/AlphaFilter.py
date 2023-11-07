@@ -79,7 +79,7 @@ class DataCollectorAlpha(DataCollector):
         try:
             return training_data[
                    (training_data['content_engagement_time_avg'] <= 1000.0) |
-                   (training_data['content_likes'] - training_data['content_dislikes'] > 0 )
+                   (training_data['content_likes'] - training_data['content_dislikes'] > 0)
                 ]['content_id'].values
         except Exception as e:
             print(f"got an an exception {e} in policy_filter_one for Alpha")

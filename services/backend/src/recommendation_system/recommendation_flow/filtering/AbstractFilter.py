@@ -2,6 +2,8 @@ from src import db
 from flask import request
 import traceback
 import time
+import random
+from flask import current_app
 
 from src.api.metrics.models import MetricFunnelType, MetricType
 from src.api.metrics.crud import add_metric
@@ -9,6 +11,9 @@ from src.api.metrics.crud import add_metric
 class AbstractFilter:
     def filter_ids(self, team_name, user_id, content_ids, seed, starting_point):
         start = time.time()
+        max_cans = current_app.config.get("MAX_CANDIDATES_TO_FILTERING")
+        if len(content_ids) > max_cans:
+            content_ids = random.sample(content_ids, max_cans)
         response = self._filter_ids(user_id, content_ids, seed, starting_point)
         end = time.time()
         try:

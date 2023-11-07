@@ -137,7 +137,7 @@ class DataCollector:
     def get_engagement_data(self, content_ids):
         return fetch_engagement_data(
             Engagement.content_id.in_(content_ids),
-            3
+            50
         )
 
     def get_generated_content_metadata_data(self, content_ids):

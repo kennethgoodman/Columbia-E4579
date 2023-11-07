@@ -10,6 +10,7 @@ class BaseConfig:
     REFRESH_TOKEN_EXPIRATION = 2592000  # 30 days
     NUMBER_OF_CONTENT_IN_ANN = 1000 # UPDATE THIS WHEN DEVELOPING ANN
     INSTANTIATE_PROMPT_ANN = False
+    MAX_CANDIDATES_TO_FILTERING = 5000
     TEAMS_TO_RUN_FOR = ["alpha", "beta", "charlie", "delta", "echo", "foxtrot", "golf"]
 
 
@@ -30,3 +31,4 @@ class ProductionConfig(BaseConfig):
     SECRET_KEY = os.getenv("SECRET_KEY", "")
     NUMBER_OF_CONTENT_IN_ANN = 1000
     INSTANTIATE_PROMPT_ANN = True
+    MAX_CANDIDATES_TO_FILTERING = 1500
