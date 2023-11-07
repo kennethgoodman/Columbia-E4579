@@ -21,14 +21,15 @@ class YourChoiceGenerator(AbstractGenerator):
                 )
                 .group_by(Engagement.content_id)
                 .order_by(func.count().desc())
-                .limit(limit)
+                .limit(int(limit * .8))
                 .offset(offset)
                 .all()
             )
             Example_r = list(map(lambda x: x[0], results_popular))
 
-            # Select the items in "MillisecondsEngagedWith" to choose some items not rated by the user yet.
-            # For the content we select, we order them by the Engagement_Value since longer time of engagement may mean a higher probability users will like.
+            # Select the items in "MillisecondsEngagedWith" to choose some items not rated by the user yet. For the
+            # content we select, we order them by the Engagement_Value since longer time of engagement may mean a
+            # higher probability users will like.
             results_top = (
                 Engagement.query.with_entities(
                     Engagement.content_id, func.sum(Engagement.engagement_value)
@@ -38,7 +39,7 @@ class YourChoiceGenerator(AbstractGenerator):
                 )
                 .group_by(Engagement.content_id)
                 .order_by(func.sum(Engagement.engagement_value).desc())
-                .limit(limit)
+                .limit(int(limit * .2))
                 .offset(offset)
                 .all()
             )
@@ -46,20 +47,13 @@ class YourChoiceGenerator(AbstractGenerator):
             # Extract content IDs from results_top
             Example_t = list(map(lambda x: x[0], results_top))
 
-            # Combine the content we get from two selections.
-            # In order to relieve consumers' visual fatigue, we make this new list have a picture with a higher engagement value appear every five popular pictures to give users a novel feeling.
-            results = []
-            for i, item in enumerate(Example_r):
-                results.append(item)
-                if i % 5 == 4 and i < len(Example_r) - 1:
-                    results.append(Example_t[i // 5])
-            scores = [i for i in range(len(results),-1,-1)]  
-
+            # Combine the content we get from two selections. In order to relieve consumers' visual fatigue,
+            # we make this new list have a picture with a higher engagement value appear every five popular pictures
+            # to give users a novel feeling.
+            results = Example_r + Example_t
+            scores = [i for i in range(len(results), -1, -1)]
             return results, scores
-        content_ids, scores = ann_with_offset(
-            starting_point["content_id"], 0.9, limit, offset, return_distances=True
-        )
-        return content_ids, scores
+        return [], []
 
     def _get_name(self):
         return "YourChoiceGenerator"

@@ -125,7 +125,6 @@ class DataCollectorBeta(DataCollector):
         def filter_by_likes(contents):
             contents['popular'] = contents.content_likes > 0
             value_counts = contents['popular'].value_counts(normalize=True)
-            print(value_counts)
             p = value_counts.loc[True]
             q = value_counts.loc[False]
 
