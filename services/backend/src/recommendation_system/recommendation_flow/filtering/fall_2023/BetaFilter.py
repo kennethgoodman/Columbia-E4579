@@ -126,10 +126,12 @@ class DataCollectorBeta(DataCollector):
             contents['popular'] = contents.content_likes > 0
             value_counts = contents['popular'].value_counts(normalize=True)
             p = value_counts.loc[True]
-            q = value_counts.loc[False]
-
-            a = 0.8 / p
-            b = 0.2 / q
+            try:
+                q = value_counts.loc[False]
+                a = 0.8 / p
+                b = 0.2 / q
+            except Exception as e:
+                return contents[contents.popular].sort_values(by='content_likes')[:int(0.8 * target_size)].index
 
             filtered_content_ids = pd.concat([
                 contents[contents.popular].sort_values(by='content_likes')[:int(a * target_size / (a + b))],
