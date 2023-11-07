@@ -11,6 +11,7 @@ Original file is located at
 
 from src.recommendation_system.recommendation_flow.filtering.AbstractFilter import AbstractFilter
 from src.recommendation_system.recommendation_flow.filtering.linear_model_helper import DataCollector
+import numpy as np
 
 # from sqlalchemy.sql.schema import ScalarElementColumnDefault
 # from typing import Tuple
@@ -55,21 +56,17 @@ class DataCollectorCharlie(DataCollector):
     def threshold(self):
         return 0.280554
 
-    def policy_filter_one(self, training_data, content_id):
-        desired_styles = ['human_prompts', 'r/EarthPorn', 'r/Showerthoughts']
-        artist_style = training_data[training_data['content_id'] == content_id]['artist_style'].values[0]
-        return artist_style in desired_styles
+    def policy_filter_one(self, training_data):
+        return training_data[
+            training_data['artist_style'].isin(['human_prompts', 'r/EarthPorn', 'r/Showerthoughts'])
+        ]['content_id'].values
 
-    def policy_filter_two(self, training_data, content_id):
+    def policy_filter_two(self, training_data):
         net_likes_threshold = 4
-        training_data = training_data.merge(
-            self.engagement_data[["content_id", "engagement_type", "engagement_value", ]],
-            on="content_id", how="left")
-        net_likes = \
-            training_data[
-                (training_data['content_id'] == content_id) & (training_data["engagement_type"] == "Like")][
-                'engagement_value'].sum()
-        return net_likes >= net_likes_threshold
+        grouped = training_data[training_data['engagement_type'] == 'Like'].groupby('content_id').agg({
+            'engagement_value': np.sum
+        })
+        return grouped[grouped['engagement_value'] >= net_likes_threshold].index
 
 
 class CharlieFilter(AbstractFilter):
@@ -78,19 +75,11 @@ class CharlieFilter(AbstractFilter):
         dc.gather_data(user_id, content_ids)
         dc.feature_eng()
         if starting_point.get("policy_filter_one", False):
-            pf_one = set(
-                content_id
-                for content_id in content_ids
-                if dc.policy_filter_one(dc.results, content_id)
-            )
+            pf_one = dc.policy_filter_one(dc.results)
         else:
             pf_one = set(content_ids)
         if starting_point.get("policy_filter_two", False):
-            pf_two = set(
-                content_id
-                for content_id in content_ids
-                if dc.policy_filter_two(dc.results, content_id)
-            )
+            pf_two = dc.policy_filter_two(dc.results)
         else:
             pf_two = set(content_ids)
         if starting_point.get("linear_model", False) and user_id not in [0, None]:
