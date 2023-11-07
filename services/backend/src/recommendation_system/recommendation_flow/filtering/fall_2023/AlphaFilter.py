@@ -1,6 +1,7 @@
 from src.recommendation_system.recommendation_flow.filtering.AbstractFilter import AbstractFilter
 from src.recommendation_system.recommendation_flow.filtering.linear_model_helper import DataCollector
 import random
+import numpy as np
 
 class DataCollectorAlpha(DataCollector):
     def coefficients(self):
@@ -71,41 +72,36 @@ class DataCollectorAlpha(DataCollector):
             'num_inference_steps_other': -44.57077873559393
         }
 
-    def policy_filter_one(self, training_data, content_id):
+    def policy_filter_one(self, training_data):
         """
         Filtering on Likes: only keeping images with a 'decent' number of likes (or over a small negative number, say -1)
         """
         try:
-            if training_data[training_data.content_id == content_id].content_engagement_time_avg.mean() > 1e3:
-                # making sure people saw the img, say at least 1s
-                like_value = training_data[training_data.content_id == content_id].content_likes.iloc[0]
-                dislike_value = training_data[training_data.content_id == content_id].content_dislikes.iloc[0]
-                diff = like_value - dislike_value
-                # only keep first line since we only care about the nb of likes
-                if diff > 0:
-                    return True
-                return False
-            else:
-                return True
+            return training_data[
+                   (training_data['content_engagement_time_avg'] <= 1000.0) |
+                   (training_data['content_likes'] - training_data['content_dislikes'] > 0 )
+                ]['content_id'].values
         except Exception as e:
             print(f"got an an exception {e} in policy_filter_one for Alpha")
             # if no like value, that means
             return True
 
-    def policy_filter_two(self, training_data, content_id):
+    def policy_filter_two(self, training_data):
         """ Checking if source is from the 'other' category;
         most of the movies pictures being in this category, we will return this type of image only x% of the time.
         The random package MUST be imported"""
         try:
-            source = training_data[training_data.content_id == content_id].source.iloc[0]
-            if source in [
+            return training_data[
+                (
+                    training_data['source'].isin([
                     'human_prompts', 'r/Showerthoughts', 'r/EarthPorn', 'r/scifi', 'r/pics',
                     'r/Damnthatsinteresting', 'r/MadeMeSmile', 'r/educationalgifs',
                     'r/SimplePrompts'
-                ]:
-                return True
-            # Check if the random number is less than the probability threshold
-            return random.random() < 0.90
+                    ])
+                ) | (
+                    np.random.randint(0, 10, size=len(training_data)) < 9
+                )
+            ]['content_id'].values
         except Exception as e:
             print(f"got an an exception {e} in policy_filter_two for Alpha")
             return False
@@ -117,19 +113,11 @@ class AlphaFilter(AbstractFilter):
         dc.gather_data(user_id, content_ids)
         dc.feature_eng()
         if starting_point.get("policy_filter_one", False):
-            pf_one = set(
-                content_id
-                for content_id in content_ids
-                if dc.policy_filter_one(dc.results, content_id)
-            )
+            pf_one = dc.policy_filter_one(dc.results)
         else:
             pf_one = set(content_ids)
         if starting_point.get("policy_filter_two", False):
-            pf_two = set(
-                content_id
-                for content_id in content_ids
-                if dc.policy_filter_two(dc.results, content_id)
-            )
+            pf_two = dc.policy_filter_two(dc.results)
         else:
             pf_two = set(content_ids)
         if starting_point.get("linear_model", False) and user_id not in [0, None]:
