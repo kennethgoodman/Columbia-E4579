@@ -62,11 +62,9 @@ class DataCollectorCharlie(DataCollector):
         ]['content_id'].values
 
     def policy_filter_two(self, training_data):
-        net_likes_threshold = 4
-        grouped = training_data[training_data['engagement_type'] == 'Like'].groupby('content_id').agg({
-            'engagement_value': np.sum
-        })
-        return grouped[grouped['engagement_value'] >= net_likes_threshold].index
+        return training_data[
+            training_data['content_likes'] - training_data['content_dislikes'] > 4
+        ]['content_id'].values
 
 
 class CharlieFilter(AbstractFilter):
