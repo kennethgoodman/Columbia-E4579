@@ -1,6 +1,7 @@
-from sqlalchemy import func
 from src import db
 from src.api.engagement.models import Engagement, EngagementType, LikeDislike
+from sqlalchemy import and_, func, text
+from datetime import datetime, timedelta, timezone
 
 
 def get_all_engagements():
@@ -59,16 +60,25 @@ def get_engagement_by_content_and_user_and_type(user_id, content_id, engagement_
     ).first()
 
 
-def get_time_engaged_by_user_and_controller(user_id, controller):
-    # TODO: calculate sum using sql, add controller and engagement value filters in sql
-    engagement_times_by_user = Engagement.query.filter_by(
-        user_id=user_id, engagement_type=EngagementType.MillisecondsEngagedWith
-    ).all()
-    ms_engaged_by_user_with_controller = sum([
-        min(i.engagement_value, 5000) # dont count anything more than 5 seconds
-        for i in engagement_times_by_user 
-        if i.engagement_metadata == controller and 200 <= i.engagement_value <= 5000
-    ])
+def get_time_engaged_by_user_and_controller(user_id: int, controller: str) -> int:
+    # Define the time in EST
+    time_in_est = datetime(2023, 11, 6, 23, 59, tzinfo=timezone(timedelta(hours=-5)))
+
+    # Convert EST time to UTC
+    time_in_utc = time_in_est.astimezone(timezone.utc)
+
+    # Calculate sum using SQL, add controller and engagement value filters in SQL
+    ms_engaged_by_user_with_controller = db.session.query(
+        func.sum(
+            func.least(Engagement.engagement_value, 5000)
+        )
+    ).filter(
+        Engagement.user_id == user_id,
+        Engagement.engagement_type == EngagementType.MillisecondsEngagedWith,
+        func.json_unquote(func.json_extract(Engagement.engagement_metadata, '$.controller')) == controller,
+        Engagement.created_date >= time_in_utc  # filter by the converted UTC datetime
+    ).scalar() or 0
+
     return ms_engaged_by_user_with_controller
 
 
@@ -83,8 +93,8 @@ def add_engagement(user_id, content_id, engagement_type, engagement_value, metad
         )
     else:
         engagement = Engagement(
-            user_id=user_id, 
-            content_id=content_id, 
+            user_id=user_id,
+            content_id=content_id,
             engagement_type=engagement_type,
             engagement_metadata=metadata,
         )
