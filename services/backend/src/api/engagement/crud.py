@@ -79,7 +79,7 @@ def get_time_engaged_by_user_and_controller(user_id: int, controller: str) -> in
         Engagement.created_date >= time_in_utc  # filter by the converted UTC datetime
     ).scalar() or 0
 
-    return ms_engaged_by_user_with_controller
+    return int(ms_engaged_by_user_with_controller) if ms_engaged_by_user_with_controller is not None else 0
 
 
 def add_engagement(user_id, content_id, engagement_type, engagement_value, metadata=None):
