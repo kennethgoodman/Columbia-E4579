@@ -57,7 +57,7 @@ class FoxtrotFilter(AbstractFilter):
         if starting_point.get("policy_filter_two", False):
             dc.policy_filter_two()  # policy two used here
         if starting_point.get("linear_model", False) and user_id not in [0, None]:
-            return dc.run_linear_model()
+            return set(dc.run_linear_model())
         return set(dc.results['content_id'].values)
 
     def _get_name(self):
