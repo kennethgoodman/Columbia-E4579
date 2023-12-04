@@ -8,8 +8,11 @@ from src.recommendation_system.recommendation_flow.filtering.fall_2023.BetaFilte
 from src.recommendation_system.recommendation_flow.model_prediction.RandomModel import (
     RandomModel,
 )
-from src.recommendation_system.recommendation_flow.ranking.RandomRanker import (
-    RandomRanker,
+from src.recommendation_system.recommendation_flow.model_prediction.fall_2023.beta.BetaModel import (
+    BetaFeatureGeneration, BetaModel,
+)
+from src.recommendation_system.recommendation_flow.ranking.fall_2023.BetaRanker import (
+    BetaRanker
 )
 from src.recommendation_system.recommendation_flow.candidate_generators.beta.TwoTowerANNGenerator import TwoTowerANNGenerator
 from src.recommendation_system.recommendation_flow.candidate_generators.beta.CollaberativeFilteredSimilarUsersGenerator import CollaberativeFilteredSimilarUsersGenerator
@@ -43,7 +46,13 @@ class BetaController(AbstractController):
             TeamName.Beta_F2023,
             user_id, candidates, seed, starting_point, dc=dc
         )
-        predictions = RandomModel().predict_probabilities(
+        if starting_point.get('randomPredictions'):
+            model = RandomModel()
+            betaFG = None
+        else:
+            model = BetaModel()
+            betaFG = BetaFeatureGeneration(dc, filtered_candidates)
+        predictions = model.predict_probabilities(
             TeamName.Beta_F2023,
             filtered_candidates,
             user_id,
@@ -54,6 +63,10 @@ class BetaController(AbstractController):
             }
             if scores is not None
             else {},
+            fg=betaFG,
         )
-        rank = RandomRanker().rank_ids(TeamName.Beta_F2023, user_id, filtered_candidates, limit, predictions, seed, starting_point)
+        rank = BetaRanker().rank_ids(
+            TeamName.Beta_F2023,
+            user_id, filtered_candidates, limit, predictions, seed, starting_point, betaFG.X_all
+        )
         return rank
