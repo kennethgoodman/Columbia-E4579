@@ -35,6 +35,8 @@ const Feed = (props) => {
   const [policyFilterTwo, setPolicyFilterTwo] = useState(true);
   const [linearRegression, setLinearRegression] = useState(true);
   const [inverseFilter, setInverseFilter] = useState(false);
+  const [randomPredictions, setRandomPredictions] = useState(false);
+  const [inverseRanker, setInverseRanker] = useState(false);
 
   const handleCheckboxChange = (setCheckboxState, checkboxValue) => {
     setData([]);  // Clear the current data
@@ -133,7 +135,7 @@ const Feed = (props) => {
       };
       options[
         "url"
-      ] = `${process.env.REACT_APP_API_SERVICE_URL}/content?page=${fetchParams["page"]}&limit=50&seed=${props.seed}&controller=${fetchParams["controller"]}&content_id=${fetchParams["starting_content_id"]}&twoTower=${twoTower}&collabFilter=${collabFilter}&yourChoice=${yourChoice}&policyFilterOne=${policyFilterOne}&policyFilterTwo=${policyFilterTwo}&linearRegression=${linearRegression}&inverseFilter=${inverseFilter}`;
+      ] = `${process.env.REACT_APP_API_SERVICE_URL}/content?page=${fetchParams["page"]}&limit=50&seed=${props.seed}&controller=${fetchParams["controller"]}&content_id=${fetchParams["starting_content_id"]}&twoTower=${twoTower}&collabFilter=${collabFilter}&yourChoice=${yourChoice}&policyFilterOne=${policyFilterOne}&policyFilterTwo=${policyFilterTwo}&linearRegression=${linearRegression}&inverseFilter=${inverseFilter}&inverseRanker=${inverseRanker}&randomPredictions=${randomPredictions}`;
       setLoading(true);
       axios(options)
         .then((response) => {
@@ -234,6 +236,17 @@ const Feed = (props) => {
         <label>
           <input type="checkbox" checked={inverseFilter} onChange={() => handleCheckboxChange(setInverseFilter, inverseFilter)} />
           See What Got Filtered Out
+        </label>
+      </div>
+      <div className="checkbox-group">
+        <p>Prediction/Ranking:</p>
+        <label>
+          <input type="checkbox" checked={randomRanking} onChange={() => handleCheckboxChange(setRandomPredictions, randomPredictions)} />
+          Use Random Predictions
+        </label>
+        <label>
+          <input type="checkbox" checked={inverseRanker} onChange={() => handleCheckboxChange(setInverseRanker, inverseRanker)} />
+          Inverse The Ranking
         </label>
       </div>
       <label className="switch">
