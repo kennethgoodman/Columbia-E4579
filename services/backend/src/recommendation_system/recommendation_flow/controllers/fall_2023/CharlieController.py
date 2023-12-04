@@ -9,6 +9,9 @@ from src.recommendation_system.recommendation_flow.shared_data_objects.data_coll
 from src.recommendation_system.recommendation_flow.filtering.fall_2023.CharlieFilter import (
     CharlieFilter,
 )
+from src.recommendation_system.recommendation_flow.model_prediction.RandomModel import (
+    RandomModel,
+)
 from src.recommendation_system.recommendation_flow.model_prediction.fall_2023.charlie.CharlieModel import (
     CharlieFeatureGeneration, CharlieModel,
 )
@@ -43,8 +46,13 @@ class CharlieController(AbstractController):
             TeamName.Charlie_F2023,
             user_id, candidates, seed, starting_point, dc=dc
         )
-        charlieFG = CharlieFeatureGeneration(dc, filtered_candidates)
-        predictions = CharlieModel().predict_probabilities(
+        if starting_point.get('randomPredictions'):
+            model = RandomModel()
+            charlieFG = None
+        else:
+            model = CharlieModel()
+            charlieFG = CharlieFeatureGeneration(dc, filtered_candidates)
+        predictions = model.predict_probabilities(
             TeamName.Charlie_F2023,
             filtered_candidates,
             user_id,

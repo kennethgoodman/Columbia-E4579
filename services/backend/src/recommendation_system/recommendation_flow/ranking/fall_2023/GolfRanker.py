@@ -20,7 +20,7 @@ class GolfRanker(AbstractRanker):
         user_df['content_id'] = content_ids
         # Rank
         ranked_df = user_df.sort_values('score', ascending=False)
-        return ranked_df['content_id'][:limit].tolist()
+        return ranked_df['content_id'].tolist()
 
     def _get_name(self):
         return "GolfRanker"
