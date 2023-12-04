@@ -51,7 +51,7 @@ class EchoRanker(AbstractRanker):
                 duplicate_ids.append(current_id)
                 continue
             result_ids.append(current_id)
-        return result_ids[:limit]
+        return result_ids
 
     def _get_name(self):
         return "EchoRanker"

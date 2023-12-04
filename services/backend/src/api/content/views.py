@@ -114,6 +114,8 @@ class ContentPagination(Resource):
         policyFilterTwo = request.args.get("policyFilterTwo", "true") == "true"
         linearRegression = request.args.get("linearRegression", "true") == "true"
         inverseFilter = request.args.get("inverseFilter", "false") == "true"
+        randomPredictions = request.args.get("randomPredictions", "false") == "true"
+        inverseRanker = request.args.get("inverseRanker", "false") == "true"
 
         content_id = request.args.get("content_id", None)
         controller = ControllerEnum.string_to_controller(
@@ -132,6 +134,8 @@ class ContentPagination(Resource):
             'policy_filter_two': policyFilterTwo,
             'linear_model': linearRegression,
             'inverseFilter': inverseFilter,
+            'randomPredictions': randomPredictions,
+            'inverseRanker': inverseRanker
         }
         if content_id != "undefined":
             starting_point["content_id"] = int(content_id)

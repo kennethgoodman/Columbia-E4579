@@ -30,7 +30,7 @@ class CharlieRanker(AbstractRanker):
         user_data.loc[artist_style_mask, 'rank'] -= 0.1
 
         ranked_pred = user_data.sort_values('rank', ascending=False)
-        return ranked_pred['content_id'].tolist()[:limit]
+        return ranked_pred['content_id'].tolist()
 
     def _get_name(self):
         return "CharlieRanker"
