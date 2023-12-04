@@ -1,74 +1,12 @@
-from src import db
 import pandas as pd
-import copy
-from sqlalchemy import text, func, over, and_, cast, String
-from sqlalchemy.sql import alias
-from sqlalchemy.sql.expression import bindparam
-from src.api.content.models import Content, GeneratedContentMetadata
-from src.api.engagement.models import Engagement
-from flask import current_app
-import traceback
-from typing import List
 from sklearn.preprocessing import OneHotEncoder
 import numpy as np
 
 
-def fetch_engagement_data(_filter, n_rows_per_content):
-    cte = db.session.query(
-        Engagement.content_id,
-        Engagement.user_id,
-        cast(Engagement.engagement_type, String).label('engagement_type'),
-        Engagement.engagement_value,
-        func.row_number().over(
-            partition_by=Engagement.content_id,
-            order_by=Engagement.user_id  # Adjust the ordering as per your requirement
-        ).label('row_num')
-    ).filter(
-        _filter
-    ).cte()
+class AbstractFeatureEng:
+    def __init__(self, dc):
+        self.dc = dc
 
-    cte_alias = alias(cte, name='cte_alias')
-
-    try:
-        return pd.DataFrame(
-            db.session.query(cte_alias).filter(cte_alias.c.row_num <= n_rows_per_content).all(),
-            columns=[
-                'content_id', 'user_id', 'engagement_type', 'engagement_value', 'row_num'
-            ]
-        )
-    except Exception as e:
-        print(f"Error fetching engagement data: {e}")
-        print(traceback.format_exc())
-        return None
-
-
-def fetch_generated_content_metadata_data(content_ids):
-    try:
-        return pd.DataFrame(
-            db.session.query(
-                GeneratedContentMetadata.content_id,
-                GeneratedContentMetadata.guidance_scale,
-                GeneratedContentMetadata.num_inference_steps,
-                GeneratedContentMetadata.artist_style,
-                GeneratedContentMetadata.source,
-            ).filter(
-                GeneratedContentMetadata.content_id.in_(content_ids)
-            ).all(),
-            columns=[
-                'content_id',
-                'guidance_scale',
-                'num_inference_steps',
-                'artist_style',
-                'source'
-            ]
-        )
-    except Exception as e:
-        print(f"Error fetching generated content metadata data: {e}")
-        print(traceback.format_exc())
-        return None
-
-
-class DataCollector:
     def artist_styles_one_hot(self):
         raise NotImplementedError(
             "you need to implement this, needs to be two lists, one for string one for coefficient, coefficient list "
@@ -134,37 +72,6 @@ class DataCollector:
         self.feature_generation_content_one_hot_encoding()
         self.feature_generation_content_engagement_value()
 
-    def get_engagement_data(self, content_ids):
-        return fetch_engagement_data(
-            Engagement.content_id.in_(content_ids),
-            50
-        )
-
-    def get_generated_content_metadata_data(self, content_ids):
-        return fetch_generated_content_metadata_data(
-            content_ids
-        )
-
-    def get_user_data(self, user_id):
-        return fetch_engagement_data(
-            Engagement.user_id == user_id,
-            3
-        )
-
-    def gather_data(self, user_id, content_ids):
-        self.engagement_data = self.get_engagement_data(content_ids)
-        self.generated_content_metadata_data = self.get_generated_content_metadata_data(content_ids)
-        self.user_data = self.get_user_data(user_id)
-
-    def gather_training_data(self):
-        self.engagement_data = pd.read_csv('sample_data/engagement.csv', sep="\t")
-        self.generated_content_metadata_data = pd.read_csv('sample_data/generated_content_metadata.csv', sep="\t")
-        self.user_data = pd.read_csv('sample_data/engagement.csv', sep="\t")
-
-    def feature_eng_training(self):
-        self.training_results = self.feature_eng()
-        return self.training_results
-
     def feature_eng(self):
         user_attr = self.feature_generation_user()
         if len(user_attr) == 0:
@@ -192,7 +99,6 @@ class DataCollector:
             on='content_id',
             how='left'
         ).fillna(0)
-
         return self.results
 
     def threshold(self):
@@ -225,7 +131,7 @@ class DataCollector:
             df_to_run_on['linear_output'] += df_to_run_on[col_name] * _coefficient
         return df_to_run_on[df_to_run_on['linear_output'] >= self.threshold()]['content_id'].values
 
-    def filter_content_ids(self, user_id, content_ids):
-        self.gather_data(1, content_ids)
+    def filter_content_ids(self, dc, content_ids):
+        self.engagement_data, self.generated_content_metadata_data, self.user_data = dc.return_data_copy()
         self.feature_eng()
         return self.run_linear_model()

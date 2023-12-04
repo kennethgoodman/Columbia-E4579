@@ -1,7 +1,4 @@
 
-from src.recommendation_system.recommendation_flow.candidate_generators.RandomGenerator import (
-    RandomGenerator,
-)
 from src.recommendation_system.recommendation_flow.controllers.AbstractController import (
     AbstractController,
 )
@@ -17,7 +14,7 @@ from src.recommendation_system.recommendation_flow.ranking.RandomRanker import (
 from src.recommendation_system.recommendation_flow.candidate_generators.golf.TwoTowerANNGenerator import TwoTowerANNGenerator
 from src.recommendation_system.recommendation_flow.candidate_generators.golf.CollaberativeFilteredSimilarUsersGenerator import CollaberativeFilteredSimilarUsersGenerator
 from src.recommendation_system.recommendation_flow.candidate_generators.golf.YourChoiceGenerator import YourChoiceGenerator
-
+from src.recommendation_system.recommendation_flow.shared_data_objects.data_collector import DataCollector
 from src.api.metrics.models import TeamName
 
 class GolfController(AbstractController):
@@ -40,9 +37,11 @@ class GolfController(AbstractController):
            )
            candidates += cur_candidates
            scores += cur_scores
+        dc = DataCollector()
+        dc.gather_data(user_id, candidates)
         filtered_candidates = GolfFilter().filter_ids(
             TeamName.Golf_F2023,
-            user_id, candidates, seed, starting_point
+            dc, user_id, candidates, seed, starting_point
         )
         predictions = RandomModel().predict_probabilities(
             filtered_candidates,

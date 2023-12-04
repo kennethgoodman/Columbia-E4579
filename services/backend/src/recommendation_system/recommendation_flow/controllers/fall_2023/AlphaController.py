@@ -1,6 +1,3 @@
-from src.recommendation_system.recommendation_flow.candidate_generators.RandomGenerator import (
-    RandomGenerator,
-)
 from src.recommendation_system.recommendation_flow.controllers.AbstractController import (
     AbstractController,
 )
@@ -22,7 +19,7 @@ from src.recommendation_system.recommendation_flow.candidate_generators.alpha.Co
 from src.recommendation_system.recommendation_flow.candidate_generators.alpha.YourChoiceGenerator import (
     YourChoiceGenerator,
 )
-
+from src.recommendation_system.recommendation_flow.shared_data_objects.data_collector import DataCollector
 from src.api.metrics.models import TeamName
 
 
@@ -50,9 +47,11 @@ class AlphaController(AbstractController):
             )
             candidates += cur_candidates
             scores += cur_scores
+        dc = DataCollector()
+        dc.gather_data(user_id, candidates)
         filtered_candidates = AlphaFilter().filter_ids(
             TeamName.Alpha_F2023,
-            user_id, candidates, seed, starting_point
+            dc, user_id, candidates, seed, starting_point
         )
         predictions = RandomModel().predict_probabilities(
             filtered_candidates,

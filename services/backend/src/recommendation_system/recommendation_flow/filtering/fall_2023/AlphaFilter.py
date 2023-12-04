@@ -1,9 +1,9 @@
 from src.recommendation_system.recommendation_flow.filtering.AbstractFilter import AbstractFilter
-from src.recommendation_system.recommendation_flow.filtering.linear_model_helper import DataCollector
-import random
+from src.recommendation_system.recommendation_flow.filtering.linear_model_helper import AbstractFeatureEng
 import numpy as np
 
-class DataCollectorAlpha(DataCollector):
+
+class FeatureEngAlpha(AbstractFeatureEng):
     def coefficients(self):
         return {
             'content_likes': 0.411,
@@ -108,20 +108,19 @@ class DataCollectorAlpha(DataCollector):
 
 
 class AlphaFilter(AbstractFilter):
-    def _filter_ids(self, user_id, content_ids, seed, starting_point):
-        dc = DataCollectorAlpha()
-        dc.gather_data(user_id, content_ids)
-        dc.feature_eng()
+    def _filter_ids(self, dc, user_id, content_ids, seed, starting_point):
+        alpha_feature_eng = FeatureEngAlpha(dc)
+        alpha_feature_eng.feature_eng()
         if starting_point.get("policy_filter_one", False):
-            pf_one = dc.policy_filter_one(dc.results)
+            pf_one = alpha_feature_eng.policy_filter_one(alpha_feature_eng.results)
         else:
             pf_one = set(content_ids)
         if starting_point.get("policy_filter_two", False):
-            pf_two = dc.policy_filter_two(dc.results)
+            pf_two = alpha_feature_eng.policy_filter_two(alpha_feature_eng.results)
         else:
             pf_two = set(content_ids)
         if starting_point.get("linear_model", False) and user_id not in [0, None]:
-            pf_lr = set(dc.run_linear_model())
+            pf_lr = set(alpha_feature_eng.run_linear_model())
         else:
             pf_lr = set(content_ids)
         return set(pf_one) & set(pf_two) & set(pf_lr)

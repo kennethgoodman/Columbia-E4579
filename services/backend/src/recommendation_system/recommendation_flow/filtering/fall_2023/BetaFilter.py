@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 
 from src.recommendation_system.recommendation_flow.filtering.AbstractFilter import AbstractFilter
-from src.recommendation_system.recommendation_flow.filtering.linear_model_helper import DataCollector
+from src.recommendation_system.recommendation_flow.filtering.linear_model_helper import AbstractFeatureEng
 import pandas as pd
 import numpy as np
 
-class DataCollectorBeta(DataCollector):
+
+
+class FeatureEngBeta(AbstractFeatureEng):
     def artist_styles_one_hot(self):
         return ['van_gogh', 'jean-michel_basquiat', 'detailed_portrait', 'kerry_james_marshall', 'medieval'], [
             0.08419699216085753, -0.07851817041961259, 0.056928033643688675, -0.028233440372052384, 0.09795210363137236,
@@ -143,20 +145,19 @@ class DataCollectorBeta(DataCollector):
 
 
 class BetaFilter(AbstractFilter):
-    def _filter_ids(self, user_id, content_ids, seed, starting_point):
-        dc = DataCollectorBeta()
-        dc.gather_data(user_id, content_ids)
-        dc.feature_eng()
+    def _filter_ids(self, dc, user_id, content_ids, seed, starting_point):
+        beta_feature_eng = FeatureEngBeta(dc)
+        beta_feature_eng.feature_eng()
         if starting_point.get("policy_filter_one", False):
-            pf_one = dc.policy_filter_one(dc.results)  # policy one used here
+            pf_one = beta_feature_eng.policy_filter_one(beta_feature_eng.results)  # policy one used here
         else:
             pf_one = set(content_ids)
         if starting_point.get("policy_filter_two", False):
-            pf_two = dc.policy_filter_two(dc.results)  # policy two used here
+            pf_two = beta_feature_eng.policy_filter_two(beta_feature_eng.results)  # policy two used here
         else:
             pf_two = set(content_ids)
         if starting_point.get("linear_model", False) and user_id not in [0, None]:
-            pf_lr = set(dc.run_linear_model())
+            pf_lr = set(beta_feature_eng.run_linear_model())
         else:
             pf_lr = set(content_ids)
         return set(pf_one) & set(pf_two) & set(pf_lr)
