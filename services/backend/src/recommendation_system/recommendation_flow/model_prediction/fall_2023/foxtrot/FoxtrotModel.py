@@ -35,17 +35,9 @@ class MyModel:
         res = res.reshape(-1)
         return res
 import sys
-import pickletools
 sys.modules['__main__'].MyModel = MyModel
 with open(legalize('foxtrot_model.pkl'), 'rb') as f:
-    model_like = MyModel(GradientBoostingRegressor(max_depth=8, learning_rate=0.05, n_estimators=180))
-    model_dislike = MyModel(GradientBoostingRegressor(max_depth=9, learning_rate=0.05, n_estimators=160))
-    model_engtime = MyModel(GradientBoostingRegressor(max_depth=8, learning_rate=0.05, n_estimators=180))
-    MODEL = {
-        'like': model_like,
-        'dislike': model_dislike,
-        'engage_time': model_engtime
-    }
+    MODEL = pickle.load(f)
 del sys.modules['__main__'].MyModel
 
 
