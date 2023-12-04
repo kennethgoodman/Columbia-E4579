@@ -48,7 +48,7 @@ class FeatureEngFoxtrot(AbstractFeatureEng):
 
 
 class FoxtrotFilter(AbstractFilter):
-    def _filter_ids(self, dc, user_id, content_ids, seed, starting_point):
+    def _filter_ids(self, user_id, content_ids, seed, starting_point, amount=None, dc=None):
         foxtrot_feature_eng = FeatureEngFoxtrot(dc)
         foxtrot_feature_eng.feature_eng()
         if starting_point.get("policy_filter_one", False):

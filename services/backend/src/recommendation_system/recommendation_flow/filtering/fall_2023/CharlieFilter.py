@@ -60,7 +60,7 @@ class FeatureEngCharlie(AbstractFeatureEng):
 
 
 class CharlieFilter(AbstractFilter):
-    def _filter_ids(self, dc, user_id, content_ids, seed, starting_point):
+    def _filter_ids(self, user_id, content_ids, seed, starting_point, amount=None, dc=None):
         charlie_feature_eng = FeatureEngCharlie(dc)
         charlie_feature_eng.feature_eng()
         if starting_point.get("policy_filter_one", False):

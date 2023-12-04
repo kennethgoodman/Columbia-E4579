@@ -6,6 +6,10 @@ import numpy as np
 class AbstractFeatureEng:
     def __init__(self, dc):
         self.dc = dc
+        self.engagement_data, self.generated_content_metadata_data, self.user_data = (
+            self.dc.return_data_copy()
+        )
+        print("lengths:", len(self.engagement_data), len(self.generated_content_metadata_data), len(self.user_data))
 
     def artist_styles_one_hot(self):
         raise NotImplementedError(
@@ -73,32 +77,40 @@ class AbstractFeatureEng:
         self.feature_generation_content_engagement_value()
 
     def feature_eng(self):
+        print("calling feature_eng")
         user_attr = self.feature_generation_user()
+        print("len user_attr", len(user_attr))
         if len(user_attr) == 0:
             self.results = pd.DataFrame()
             return self.results
         content_engagement_features = self.feature_generation_content_engagement_value()
+        print("len content_engagement_features", len(content_engagement_features))
         generated_content_features = self.feature_generation_content_one_hot_encoding()
+        print("len generated_content_features", len(generated_content_features))
         interaction_pairs = self.engagement_data[
             ['user_id', 'content_id']].drop_duplicates()
+        print("len interaction_pairs", len(interaction_pairs))
         self.results = pd.merge(
             interaction_pairs,
             user_attr,
             on='user_id',
             how='left'
         ).fillna(0)
+        print("len results1", len(self.results))
         content_results = pd.merge(
             generated_content_features,
             content_engagement_features,
             on='content_id',
             how='left'
         ).fillna(0)
+        print("len content_results", len(content_results))
         self.results = pd.merge(
             self.results,
             content_results,
             on='content_id',
             how='left'
         ).fillna(0)
+        print("len results", len(self.results))
         return self.results
 
     def threshold(self):

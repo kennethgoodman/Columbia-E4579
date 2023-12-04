@@ -84,7 +84,7 @@ class FeatureEngAlpha(AbstractFeatureEng):
         except Exception as e:
             print(f"got an an exception {e} in policy_filter_one for Alpha")
             # if no like value, that means
-            return True
+            return []
 
     def policy_filter_two(self, training_data):
         """ Checking if source is from the 'other' category;
@@ -104,25 +104,26 @@ class FeatureEngAlpha(AbstractFeatureEng):
             ]['content_id'].values
         except Exception as e:
             print(f"got an an exception {e} in policy_filter_two for Alpha")
-            return False
+            return []
 
 
 class AlphaFilter(AbstractFilter):
-    def _filter_ids(self, dc, user_id, content_ids, seed, starting_point):
+    def _filter_ids(self, user_id, content_ids, seed, starting_point, amount=None, dc=None):
         alpha_feature_eng = FeatureEngAlpha(dc)
         alpha_feature_eng.feature_eng()
+        content_ids = set(content_ids)
         if starting_point.get("policy_filter_one", False):
             pf_one = alpha_feature_eng.policy_filter_one(alpha_feature_eng.results)
         else:
-            pf_one = set(content_ids)
+            pf_one = content_ids
         if starting_point.get("policy_filter_two", False):
             pf_two = alpha_feature_eng.policy_filter_two(alpha_feature_eng.results)
         else:
-            pf_two = set(content_ids)
+            pf_two = content_ids
         if starting_point.get("linear_model", False) and user_id not in [0, None]:
             pf_lr = set(alpha_feature_eng.run_linear_model())
         else:
-            pf_lr = set(content_ids)
+            pf_lr = content_ids
         return set(pf_one) & set(pf_two) & set(pf_lr)
 
     def _get_name(self):

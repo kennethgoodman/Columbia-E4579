@@ -145,7 +145,7 @@ class FeatureEngBeta(AbstractFeatureEng):
 
 
 class BetaFilter(AbstractFilter):
-    def _filter_ids(self, dc, user_id, content_ids, seed, starting_point):
+    def _filter_ids(self, user_id, content_ids, seed, starting_point, amount=None, dc=None):
         beta_feature_eng = FeatureEngBeta(dc)
         beta_feature_eng.feature_eng()
         if starting_point.get("policy_filter_one", False):

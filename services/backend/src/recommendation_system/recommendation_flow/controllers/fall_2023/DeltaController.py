@@ -41,9 +41,10 @@ class DeltaController(AbstractController):
         dc.gather_data(user_id, candidates)
         filtered_candidates = DeltaFilter().filter_ids(
             TeamName.Delta_F2023,
-            dc, user_id, candidates, seed, starting_point
+            user_id, candidates, seed, starting_point, dc=dc
         )
         predictions = RandomModel().predict_probabilities(
+            TeamName.Delta_F2023,
             filtered_candidates,
             user_id,
             seed=seed,
@@ -54,5 +55,5 @@ class DeltaController(AbstractController):
             if scores is not None
             else {},
         )
-        rank = RandomRanker().rank_ids(limit, predictions, seed, starting_point)
+        rank = RandomRanker().rank_ids(TeamName.Delta_F2023, user_id, filtered_candidates, limit, predictions, seed, starting_point)
         return rank

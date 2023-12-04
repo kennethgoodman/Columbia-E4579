@@ -158,7 +158,7 @@ class FeatureEngDelta(AbstractFeatureEng):
 
 
 class DeltaFilter(AbstractFilter):
-    def _filter_ids(self, dc, user_id, content_ids, seed, starting_point):
+    def _filter_ids(self, user_id, content_ids, seed, starting_point, amount=None, dc=None):
         delta_feature_eng = FeatureEngDelta(dc)
         delta_feature_eng.feature_eng()
         if starting_point.get("policy_filter_one", False):

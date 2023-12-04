@@ -16,7 +16,7 @@ legalize = lambda s: os.path.join(script_dir, s)
 with open(legalize('golf_model.pkl'), 'rb') as f:
     MODEL = pickle.load(f)
 
-import pickletools
+
 with open(legalize('golf_postprocessor.pkl'), 'rb') as f:
     POST_PROCESSOR = pickle.load(f)
 
@@ -71,7 +71,7 @@ class GolfFeatureGeneration(AbstractFeatureGeneration):
     def load_postprocessor(self):
         return POST_PROCESSOR
 
-    def predict_probabilities(self, content_ids, user_id, seed, candidate_scores) -> Tuple[list, list, list]:
+    def predict_probabilities(self, X) -> Tuple[list, list, list, list]:
         """Predicts the 3 target variables by using the model that you trained.
         Make sure you load the model properly.
 
@@ -83,20 +83,21 @@ class GolfFeatureGeneration(AbstractFeatureGeneration):
                                  predicted probability of dislike,
                                  predicted engagement time)
         """
-        pred_like = MODEL['like'].predict(self.X)
-        pred_dislike = MODEL['dislike'].predict(self.X)
-        pred_engtime = MODEL['engage_time'].predict(self.X)
+        pred_like = MODEL['like'].predict(X)
+        pred_dislike = MODEL['dislike'].predict(X)
+        pred_engtime = MODEL['engage_time'].predict(X)
 
-        lenx = len(self.X)
+        lenx = len(X)
         frac = int(lenx/7)
         pred_like[-frac:] = np.random.uniform(0, 1, frac)
         pred_dislike[-frac:] = np.random.uniform(0, 1, frac)
         pred_engtime[-frac:] = np.random.uniform(0, 1, frac)
-        return pred_like, pred_dislike, pred_engtime
+        return pred_like, pred_dislike, pred_engtime, X.index.values
 
 class GolfModel(AbstractModel):
     def _predict_probabilities(self, content_ids, user_id, seed=None, **kwargs):
-        return kwargs['fg'].predict_probabilities()
+        X = self.X.loc[user_id].loc[content_ids]
+        return kwargs['fg'].predict_probabilities(X)
 
     def _get_name(self):
         return "GolfModel"

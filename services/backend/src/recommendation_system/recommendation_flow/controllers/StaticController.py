@@ -26,9 +26,10 @@ class StaticController(AbstractController):
             user_id, candidates_limit, offset, seed, starting_point
         )
         filtered_candidates = RandomFilter().filter_ids(
-            candidates, seed, starting_point
+            TeamName.Static,  user_id, candidates, seed, starting_point, amount=0.1
         )
         predictions = RandomModel().predict_probabilities(
+            TeamName.Static,
             filtered_candidates,
             user_id,
             seed=seed,
@@ -37,5 +38,5 @@ class StaticController(AbstractController):
                 for content_id, score in zip(candidates, scores or [])
             },
         )
-        rank = RandomRanker().rank_ids(limit, predictions, seed, starting_point)
+        rank = RandomRanker().rank_ids(TeamName.Static, user_id, filtered_candidates, limit, predictions, seed, starting_point)
         return rank

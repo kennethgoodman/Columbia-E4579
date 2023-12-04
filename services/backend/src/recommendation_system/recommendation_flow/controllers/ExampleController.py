@@ -10,8 +10,8 @@ from src.recommendation_system.recommendation_flow.filtering.ExampleFilter impor
 from src.recommendation_system.recommendation_flow.model_prediction.ExampleModel import (
     ExampleModel,
 )
-from src.recommendation_system.recommendation_flow.ranking.RandomRanker import (
-    RandomRanker,
+from src.recommendation_system.recommendation_flow.ranking.ExampleRanker import (
+    ExampleRanker,
 )
 from src.api.metrics.models import TeamName
 
@@ -25,9 +25,10 @@ class ExampleController(AbstractController):
             user_id, candidates_limit, offset, seed, starting_point
         )
         filtered_candidates = ExampleFilter().filter_ids(
-            candidates, seed, starting_point
+            TeamName.Example,  user_id, candidates, seed, starting_point
         )
         predictions = ExampleModel().predict_probabilities(
+            TeamName.Example,
             filtered_candidates,
             user_id,
             seed=seed,
@@ -38,5 +39,5 @@ class ExampleController(AbstractController):
             if scores is not None
             else {},
         )
-        rank = RandomRanker().rank_ids(limit, predictions, seed, starting_point)
+        rank = ExampleRanker().rank_ids(TeamName.Example, user_id, filtered_candidates, limit, predictions, seed, starting_point)
         return rank

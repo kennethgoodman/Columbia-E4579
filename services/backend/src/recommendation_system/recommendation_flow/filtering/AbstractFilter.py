@@ -9,12 +9,12 @@ from src.api.metrics.models import MetricFunnelType, MetricType
 from src.api.metrics.crud import add_metric
 
 class AbstractFilter:
-    def filter_ids(self, team_name, user_id, content_ids, seed, starting_point):
-        start = time.time()
+    def filter_ids(self, team_name, user_id, content_ids, seed, starting_point, amount=None, dc=None):
         max_cans = current_app.config.get("MAX_CANDIDATES_TO_FILTERING")
         if len(content_ids) > max_cans:
             content_ids = random.sample(content_ids, max_cans)
-        response = self._filter_ids(user_id, content_ids, seed, starting_point)
+        start = time.time()
+        response = self._filter_ids(user_id, content_ids, seed, starting_point, amount, dc)
         end = time.time()
         try:
             add_metric(
@@ -52,7 +52,7 @@ class AbstractFilter:
             return list(set(content_ids) - set(response))
         return response
 
-    def _filter_ids(self, user_id, content_ids, seed, starting_point):
+    def _filter_ids(self, user_id, content_ids, seed, starting_point, amount=None, dc=None):
         raise NotImplementedError("you need to implement")
 
     def _get_name(self):

@@ -15,6 +15,7 @@ import numpy as np
 
 def fetch_engagement_data(_filter, n_rows_per_content):
     cte = db.session.query(
+        Engagement.created_date,
         Engagement.content_id,
         Engagement.user_id,
         cast(Engagement.engagement_type, String).label('engagement_type'),
@@ -33,7 +34,7 @@ def fetch_engagement_data(_filter, n_rows_per_content):
         return pd.DataFrame(
             db.session.query(cte_alias).filter(cte_alias.c.row_num <= n_rows_per_content).all(),
             columns=[
-                'content_id', 'user_id', 'engagement_type', 'engagement_value', 'row_num'
+                'created_date', 'content_id', 'user_id', 'engagement_type', 'engagement_value', 'row_num'
             ]
         )
     except Exception as e:
@@ -97,3 +98,6 @@ class DataCollector:
             copy.deepcopy(self.generated_content_metadata_data),
             copy.deepcopy(self.user_data)
         )
+
+    def return_user_data_copy(self):
+        return copy.deepcopy(self.user_data)

@@ -5,10 +5,10 @@ from .AbstractRanker import AbstractRanker
 
 
 class RandomRanker(AbstractRanker):
-    def rank_ids(self, limit, probabilities, seed, starting_point):
-        k = limit
-        top_k = heapq.nlargest(k, probabilities, key=lambda x: x["p_engage"])
-        top_k_ids = list(map(lambda x: x["content_id"], top_k))
+    def _rank_ids(self, user_id, content_ids, limit, probabilities, seed, starting_point, X=None):
         if seed:
             random.seed(seed)
-        return random.sample(top_k_ids, len(top_k_ids))  # shuffle
+        return random.sample(content_ids, min(limit, len(content_ids)))  # shuffle
+
+    def _get_name(self):
+        return "RandomRanker"
