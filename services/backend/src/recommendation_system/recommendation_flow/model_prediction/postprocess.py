@@ -49,12 +49,7 @@ class AbstractFeatureGeneration:
         self.engagement_data, self.generated_content_metadata_data, self.user_data = (
             self.dc.return_data_copy()
         )
-        self.engagement_data = self.engagement_data[
-            self.engagement_data['content_id'].isin(content_ids)
-        ]
-        self.generated_content_metadata = self.generated_content_metadata_data = self.generated_content_metadata_data[
-            self.generated_content_metadata_data['content_id'].isin(content_ids)
-        ]
+        self.generated_content_metadata = self.generated_content_metadata_data = self.generated_content_metadata_data
         self.postprocessor = self.load_postprocessor()
         self.set_X()
 

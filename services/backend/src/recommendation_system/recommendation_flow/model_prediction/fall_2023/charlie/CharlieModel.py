@@ -105,8 +105,8 @@ class CharlieFeatureGeneration(AbstractFeatureGeneration):
 
 class CharlieModel(AbstractModel):
     def _predict_probabilities(self, content_ids, user_id, seed=None, **kwargs):
-        X = self.X.loc[user_id].loc[content_ids]
+        X = kwargs['fg'].X.loc[user_id].loc[content_ids]
         return kwargs['fg'].predict_probabilities(X)
 
     def _get_name(self):
-        return "GolfModel"
+        return "CharlieModel"

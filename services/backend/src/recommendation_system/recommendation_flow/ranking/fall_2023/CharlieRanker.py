@@ -33,4 +33,4 @@ class CharlieRanker(AbstractRanker):
         return ranked_pred['content_id'].tolist()[:limit]
 
     def _get_name(self):
-        return "GolfRanker"
+        return "CharlieRanker"
