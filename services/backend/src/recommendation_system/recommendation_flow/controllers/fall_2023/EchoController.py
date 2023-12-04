@@ -10,6 +10,9 @@ from src.recommendation_system.recommendation_flow.shared_data_objects.data_coll
 from src.recommendation_system.recommendation_flow.filtering.fall_2023.EchoFilter import (
     EchoFilter,
 )
+from src.recommendation_system.recommendation_flow.model_prediction.RandomModel import (
+    RandomModel,
+)
 from src.recommendation_system.recommendation_flow.model_prediction.fall_2023.echo.EchoModel import (
     EchoFeatureGeneration, EchoModel,
 )
@@ -44,8 +47,13 @@ class EchoController(AbstractController):
             TeamName.Echo_F2023,
             user_id, candidates, seed, starting_point, dc=dc
         )
-        echoFG = EchoFeatureGeneration(dc, filtered_candidates)
-        predictions = EchoModel().predict_probabilities(
+        if starting_point.get('randomPredictions'):
+            model = RandomModel()
+            echoFG = None
+        else:
+            model = EchoModel()
+            echoFG = EchoFeatureGeneration(dc, filtered_candidates)
+        predictions = model.predict_probabilities(
             TeamName.Echo_F2023,
             filtered_candidates,
             user_id,

@@ -10,6 +10,9 @@ from src.recommendation_system.recommendation_flow.candidate_generators.golf.You
 from src.recommendation_system.recommendation_flow.filtering.fall_2023.GolfFilter import (
     GolfFilter,
 )
+from src.recommendation_system.recommendation_flow.model_prediction.RandomModel import (
+    RandomModel,
+)
 from src.recommendation_system.recommendation_flow.model_prediction.fall_2023.golf.GolfModel import (
     GolfFeatureGeneration, GolfModel,
 )
@@ -45,8 +48,13 @@ class GolfController(AbstractController):
             TeamName.Golf_F2023,
             user_id, candidates, seed, starting_point, dc=dc
         )
-        golfFG = GolfFeatureGeneration(dc, filtered_candidates)
-        predictions = GolfModel().predict_probabilities(
+        if starting_point.get('randomPredictions'):
+            model = RandomModel()
+            golfFG = None
+        else:
+            model = GolfModel()
+            golfFG = GolfFeatureGeneration(dc, filtered_candidates)
+        predictions = model.predict_probabilities(
             TeamName.Golf_F2023,
             filtered_candidates,
             user_id,

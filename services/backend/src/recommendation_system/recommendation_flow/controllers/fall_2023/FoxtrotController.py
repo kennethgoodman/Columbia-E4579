@@ -7,8 +7,11 @@ from src.recommendation_system.recommendation_flow.filtering.fall_2023.FoxtrotFi
 from src.recommendation_system.recommendation_flow.model_prediction.RandomModel import (
     RandomModel,
 )
-from src.recommendation_system.recommendation_flow.ranking.RandomRanker import (
-    RandomRanker,
+from src.recommendation_system.recommendation_flow.model_prediction.fall_2023.foxtrot.FoxtrotModel import (
+    FoxtrotFeatureGeneration, FoxtrotModel,
+)
+from src.recommendation_system.recommendation_flow.ranking.fall_2023.FoxtrotRanker import (
+    FoxtrotRanker,
 )
 from src.recommendation_system.recommendation_flow.candidate_generators.foxtrot.TwoTowerANNGenerator import TwoTowerANNGenerator
 from src.recommendation_system.recommendation_flow.candidate_generators.foxtrot.CollaberativeFilteredSimilarUsersGenerator import CollaberativeFilteredSimilarUsersGenerator
@@ -44,7 +47,13 @@ class FoxtrotController(AbstractController):
             TeamName.Foxtrot_F2023,
             user_id, candidates, seed, starting_point, dc=dc
         )
-        predictions = RandomModel().predict_probabilities(
+        if starting_point.get('randomPredictions'):
+            model = RandomModel()
+            foxtrotFG = None
+        else:
+            model = FoxtrotModel()
+            foxtrotFG = FoxtrotFeatureGeneration(dc, filtered_candidates)
+        predictions = model.predict_probabilities(
             TeamName.Foxtrot_F2023,
             filtered_candidates,
             user_id,
@@ -55,6 +64,10 @@ class FoxtrotController(AbstractController):
             }
             if scores is not None
             else {},
+            fg=foxtrotFG,
         )
-        rank = RandomRanker().rank_ids(TeamName.Foxtrot_F2023, user_id, filtered_candidates, limit, predictions, seed, starting_point)
+        rank = FoxtrotRanker().rank_ids(
+            TeamName.Foxtrot_F2023,
+            user_id, filtered_candidates, limit, predictions, seed, starting_point, foxtrotFG.X_all
+        )
         return rank
