@@ -1,8 +1,8 @@
 from src.recommendation_system.recommendation_flow.filtering.AbstractFilter import AbstractFilter
-from src.recommendation_system.recommendation_flow.filtering.linear_model_helper import DataCollector
+from src.recommendation_system.recommendation_flow.filtering.linear_model_helper import AbstractFeatureEng
 
 
-class DataCollectorEcho(DataCollector):
+class FeatureEngEcho(AbstractFeatureEng):
     def coefficients(self):
         return {
             'content_likes': 0.001327374532861648,
@@ -83,20 +83,19 @@ class DataCollectorEcho(DataCollector):
 
 
 class EchoFilter(AbstractFilter):
-    def _filter_ids(self, user_id, content_ids, seed, starting_point):
-        dc = DataCollectorEcho()
-        dc.gather_data(user_id, content_ids)
-        dc.feature_eng()
+    def _filter_ids(self, user_id, content_ids, seed, starting_point, amount=None, dc=None):
+        echo_feature_eng = FeatureEngEcho(dc)
+        echo_feature_eng.feature_eng()
         if starting_point.get("policy_filter_one", False):
-            pf_one = dc.policy_filter_one(dc.results, content_ids)  # policy one used here
+            pf_one = echo_feature_eng.policy_filter_one(echo_feature_eng.results, content_ids)  # policy one used here
         else:
             pf_one = set(content_ids)
         if starting_point.get("policy_filter_two", False):
-            pf_two = dc.policy_filter_two(dc.results, content_ids)  # policy two used here
+            pf_two = echo_feature_eng.policy_filter_two(echo_feature_eng.results, content_ids)  # policy two used here
         else:
             pf_two = set(content_ids)
         if starting_point.get("linear_model", False) and user_id not in [0, None]:
-            pf_lr = set(dc.run_linear_model())
+            pf_lr = set(echo_feature_eng.run_linear_model())
         else:
             pf_lr = set(content_ids)
         return (set(pf_one) | set(pf_two)) & set(pf_lr)

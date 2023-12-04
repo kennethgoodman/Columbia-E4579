@@ -1,8 +1,8 @@
 from src.recommendation_system.recommendation_flow.filtering.AbstractFilter import AbstractFilter
-from src.recommendation_system.recommendation_flow.filtering.linear_model_helper import DataCollector
+from src.recommendation_system.recommendation_flow.filtering.linear_model_helper import AbstractFeatureEng
 
 
-class DataCollectorFoxtrot(DataCollector):
+class FeatureEngFoxtrot(AbstractFeatureEng):
     def coefficients(self):
         return {
             'content_likes': 0.004913674532861648,
@@ -48,17 +48,16 @@ class DataCollectorFoxtrot(DataCollector):
 
 
 class FoxtrotFilter(AbstractFilter):
-    def _filter_ids(self, user_id, content_ids, seed, starting_point):
-        dc = DataCollectorFoxtrot()
-        dc.gather_data(user_id, content_ids)
-        dc.feature_eng()
+    def _filter_ids(self, user_id, content_ids, seed, starting_point, amount=None, dc=None):
+        foxtrot_feature_eng = FeatureEngFoxtrot(dc)
+        foxtrot_feature_eng.feature_eng()
         if starting_point.get("policy_filter_one", False):
-            dc.policy_filter_one()  # policy one used here
+            foxtrot_feature_eng.policy_filter_one()  # policy one used here
         if starting_point.get("policy_filter_two", False):
-            dc.policy_filter_two()  # policy two used here
+            foxtrot_feature_eng.policy_filter_two()  # policy two used here
         if starting_point.get("linear_model", False) and user_id not in [0, None]:
-            return set(dc.run_linear_model())
-        return set(dc.results['content_id'].values)
+            return set(foxtrot_feature_eng.run_linear_model())
+        return set(foxtrot_feature_eng.results['content_id'].values)
 
     def _get_name(self):
         return "FoxtrotFilter"

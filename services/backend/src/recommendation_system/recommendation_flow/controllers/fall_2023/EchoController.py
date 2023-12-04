@@ -1,23 +1,21 @@
 
-from src.recommendation_system.recommendation_flow.candidate_generators.RandomGenerator import (
-    RandomGenerator,
-)
 from src.recommendation_system.recommendation_flow.controllers.AbstractController import (
     AbstractController,
 )
-from src.recommendation_system.recommendation_flow.filtering.fall_2023.EchoFilter import (
-    EchoFilter,
-)
-from src.recommendation_system.recommendation_flow.model_prediction.RandomModel import (
-    RandomModel,
-)
-from src.recommendation_system.recommendation_flow.ranking.RandomRanker import (
-    RandomRanker,
-)
+
 from src.recommendation_system.recommendation_flow.candidate_generators.echo.TwoTowerANNGenerator import TwoTowerANNGenerator
 from src.recommendation_system.recommendation_flow.candidate_generators.echo.CollaberativeFilteredSimilarUsersGenerator import CollaberativeFilteredSimilarUsersGenerator
 from src.recommendation_system.recommendation_flow.candidate_generators.echo.YourChoiceGenerator import YourChoiceGenerator
-
+from src.recommendation_system.recommendation_flow.shared_data_objects.data_collector import DataCollector
+from src.recommendation_system.recommendation_flow.filtering.fall_2023.EchoFilter import (
+    EchoFilter,
+)
+from src.recommendation_system.recommendation_flow.model_prediction.fall_2023.echo.EchoModel import (
+    EchoFeatureGeneration, EchoModel,
+)
+from src.recommendation_system.recommendation_flow.ranking.fall_2023.EchoRanker import (
+    EchoRanker,
+)
 from src.api.metrics.models import TeamName
 
 class EchoController(AbstractController):
@@ -40,11 +38,15 @@ class EchoController(AbstractController):
            )
            candidates += cur_candidates
            scores += cur_scores
+        dc = DataCollector()
+        dc.gather_data(user_id, candidates)
         filtered_candidates = EchoFilter().filter_ids(
             TeamName.Echo_F2023,
-            user_id, candidates, seed, starting_point
+            user_id, candidates, seed, starting_point, dc=dc
         )
-        predictions = RandomModel().predict_probabilities(
+        echoFG = EchoFeatureGeneration(dc, filtered_candidates)
+        predictions = EchoModel().predict_probabilities(
+            TeamName.Echo_F2023,
             filtered_candidates,
             user_id,
             seed=seed,
@@ -54,6 +56,10 @@ class EchoController(AbstractController):
             }
             if scores is not None
             else {},
+            fg=echoFG,
         )
-        rank = RandomRanker().rank_ids(limit, predictions, seed, starting_point)
+        rank = EchoRanker().rank_ids(
+            TeamName.Echo_F2023,
+            user_id, filtered_candidates, limit, predictions, seed, starting_point, echoFG.X_all
+        )
         return rank

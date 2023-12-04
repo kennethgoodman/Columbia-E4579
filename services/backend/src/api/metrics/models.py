@@ -28,7 +28,7 @@ class MetricType(Enum):
     RankingNumCandidates = 4
     PredictionMeanBeingShown = 5
     TimeTakenMS = 6
-    Reserved1 = 7
+    RankedCandidates = 7
     Reserved2 = 8
     Reserved3 = 9
     Reserved4 = 10

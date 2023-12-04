@@ -27,9 +27,10 @@ class EngagementTimeController(AbstractController):
             user_id, candidates_limit, offset, seed, starting_point
         )
         filtered_candidates = RandomFilter().filter_ids(
-            candidates, seed, starting_point
+            TeamName.EngagementTime, user_id, candidates, seed, starting_point, amount=0.1
         )
         predictions = RandomModel().predict_probabilities(
+            TeamName.EngagementTime,
             filtered_candidates,
             user_id,
             seed=seed,
@@ -40,5 +41,5 @@ class EngagementTimeController(AbstractController):
             if scores is not None
             else {},
         )
-        rank = RandomRanker().rank_ids(limit, predictions, seed, starting_point)
+        rank = RandomRanker().rank_ids(TeamName.EngagementTime, user_id, filtered_candidates, limit, predictions, seed, starting_point)
         return rank

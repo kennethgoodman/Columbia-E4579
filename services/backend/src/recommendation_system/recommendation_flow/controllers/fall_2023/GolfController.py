@@ -1,23 +1,22 @@
 
-from src.recommendation_system.recommendation_flow.candidate_generators.RandomGenerator import (
-    RandomGenerator,
-)
 from src.recommendation_system.recommendation_flow.controllers.AbstractController import (
     AbstractController,
 )
-from src.recommendation_system.recommendation_flow.filtering.fall_2023.GolfFilter import (
-    GolfFilter,
-)
-from src.recommendation_system.recommendation_flow.model_prediction.RandomModel import (
-    RandomModel,
-)
-from src.recommendation_system.recommendation_flow.ranking.RandomRanker import (
-    RandomRanker,
-)
+
+
 from src.recommendation_system.recommendation_flow.candidate_generators.golf.TwoTowerANNGenerator import TwoTowerANNGenerator
 from src.recommendation_system.recommendation_flow.candidate_generators.golf.CollaberativeFilteredSimilarUsersGenerator import CollaberativeFilteredSimilarUsersGenerator
 from src.recommendation_system.recommendation_flow.candidate_generators.golf.YourChoiceGenerator import YourChoiceGenerator
-
+from src.recommendation_system.recommendation_flow.filtering.fall_2023.GolfFilter import (
+    GolfFilter,
+)
+from src.recommendation_system.recommendation_flow.model_prediction.fall_2023.golf.GolfModel import (
+    GolfFeatureGeneration, GolfModel,
+)
+from src.recommendation_system.recommendation_flow.ranking.fall_2023.GolfRanker import (
+    GolfRanker,
+)
+from src.recommendation_system.recommendation_flow.shared_data_objects.data_collector import DataCollector
 from src.api.metrics.models import TeamName
 
 class GolfController(AbstractController):
@@ -40,11 +39,15 @@ class GolfController(AbstractController):
            )
            candidates += cur_candidates
            scores += cur_scores
+        dc = DataCollector()
+        dc.gather_data(user_id, candidates)
         filtered_candidates = GolfFilter().filter_ids(
             TeamName.Golf_F2023,
-            user_id, candidates, seed, starting_point
+            user_id, candidates, seed, starting_point, dc=dc
         )
-        predictions = RandomModel().predict_probabilities(
+        golfFG = GolfFeatureGeneration(dc, filtered_candidates)
+        predictions = GolfModel().predict_probabilities(
+            TeamName.Golf_F2023,
             filtered_candidates,
             user_id,
             seed=seed,
@@ -54,6 +57,10 @@ class GolfController(AbstractController):
             }
             if scores is not None
             else {},
+            fg=golfFG,
         )
-        rank = RandomRanker().rank_ids(limit, predictions, seed, starting_point)
+        rank = GolfRanker().rank_ids(
+            TeamName.Golf_F2023,
+            user_id, filtered_candidates, limit, predictions, seed, starting_point, golfFG.X_all
+        )
         return rank

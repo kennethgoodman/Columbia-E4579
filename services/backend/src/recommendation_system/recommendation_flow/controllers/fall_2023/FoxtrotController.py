@@ -1,7 +1,3 @@
-
-from src.recommendation_system.recommendation_flow.candidate_generators.RandomGenerator import (
-    RandomGenerator,
-)
 from src.recommendation_system.recommendation_flow.controllers.AbstractController import (
     AbstractController,
 )
@@ -19,7 +15,7 @@ from src.recommendation_system.recommendation_flow.candidate_generators.foxtrot.
 from src.recommendation_system.recommendation_flow.candidate_generators.ExampleGenerator import (
     ExampleGenerator,
 )
-
+from src.recommendation_system.recommendation_flow.shared_data_objects.data_collector import DataCollector
 from src.api.metrics.models import TeamName
 
 class FoxtrotController(AbstractController):
@@ -42,11 +38,14 @@ class FoxtrotController(AbstractController):
            )
            candidates += cur_candidates
            scores += cur_scores if cur_scores else [0] * len(cur_candidates)
+        dc = DataCollector()
+        dc.gather_data(user_id, candidates)
         filtered_candidates = FoxtrotFilter().filter_ids(
             TeamName.Foxtrot_F2023,
-            user_id, candidates, seed, starting_point
+            user_id, candidates, seed, starting_point, dc=dc
         )
         predictions = RandomModel().predict_probabilities(
+            TeamName.Foxtrot_F2023,
             filtered_candidates,
             user_id,
             seed=seed,
@@ -57,5 +56,5 @@ class FoxtrotController(AbstractController):
             if scores is not None
             else {},
         )
-        rank = RandomRanker().rank_ids(limit, predictions, seed, starting_point)
+        rank = RandomRanker().rank_ids(TeamName.Foxtrot_F2023, user_id, filtered_candidates, limit, predictions, seed, starting_point)
         return rank

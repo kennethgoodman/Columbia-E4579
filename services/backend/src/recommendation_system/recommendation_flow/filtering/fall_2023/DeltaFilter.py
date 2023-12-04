@@ -1,8 +1,8 @@
 from src.recommendation_system.recommendation_flow.filtering.AbstractFilter import AbstractFilter
-from src.recommendation_system.recommendation_flow.filtering.linear_model_helper import DataCollector
+from src.recommendation_system.recommendation_flow.filtering.linear_model_helper import AbstractFeatureEng
 
 
-class DataCollectorDelta(DataCollector):
+class FeatureEngDelta(AbstractFeatureEng):
     def coefficients(self):
         return {
             'content_likes': 0.008504499974045877,
@@ -95,24 +95,24 @@ class DataCollectorDelta(DataCollector):
             'num_inference_steps_other': -44.57077873559393
         }
 
-    
+
     def policy_filter_one(self, training_data, content_ids):
         filtered_data = training_data[training_data['content_id'].isin(content_ids)].drop_duplicates(subset=['content_id'])
         seen_ids = filtered_data['content_id'].to_list()
         content_id_set = set(content_ids)
-        #list of ids not seen in training data 
+        #list of ids not seen in training data
         unseen_ids = [id for id in content_id_set if id not in seen_ids]
-    
+
         #calculated desired number of content to remove
         desired_remove_count = int(len(content_id_set) * 0.82)
-    
+
         #calculate top 35 quantile avg eng time across contents
         top_eng = training_data['content_engagement_time_avg'].quantile(.65)
-    
+
         data_to_remove = filtered_data.loc[filtered_data['content_engagement_time_avg'] < top_eng]
         ids_to_remove = data_to_remove['content_id'].to_list()
         remove_desired_diff = abs(len(ids_to_remove) - desired_remove_count)
-    
+
         if len(ids_to_remove) < desired_remove_count:
           #if removed less than desired, remove extra from unseen ids and seen ids based on dislikes
           #remove at least one third of remaining seen ids, the ones with highest dislikes
@@ -120,58 +120,57 @@ class DataCollectorDelta(DataCollector):
           seen_remove_count = max(int(seen_remained_count * 0.3), remove_desired_diff - len(unseen_ids))
           seen_to_remove = filtered_data.loc[filtered_data['content_engagement_time_avg'] >= top_eng].nlargest(seen_remove_count,'content_dislikes', keep='first')['content_id'].to_list()
           ids_to_remove += seen_to_remove
-    
+
           unseen_remove_count = desired_remove_count - len(ids_to_remove)
           ids_to_remove += unseen_ids[:unseen_remove_count]
-    
+
         else:
           #if removed more than desired, remove less from filtered data based on content_likes
           top_k = data_to_remove.nlargest(remove_desired_diff, 'content_likes', keep='first')['content_id'].to_list()
           ids_to_remove = [id for id in ids_to_remove if id not in top_k]
-    
+
         filtered_ids = [index for index in content_id_set if index not in ids_to_remove]
-    
+
         return filtered_ids
-    
+
 
 
     def policy_filter_two(self, training_data, content_ids):
         filtered_data = training_data[training_data['content_id'].isin(content_ids)].drop_duplicates(subset=['content_id'])
         seen_ids = filtered_data['content_id'].to_list()
         content_id_set = set(content_ids)
-        #list of ids not seen in training data 
+        #list of ids not seen in training data
         unseen_ids = [id for id in content_id_set if id not in seen_ids]
-    
+
         #calculated desired number of content to remove
         half_desired_remove_count = int(len(content_id_set) * 0.03)
-        
+
         #remove content with highest dislikes (half of desired remove count)
         ids_to_remove = set(filtered_data.nlargest(half_desired_remove_count,'content_dislikes', keep='first')['content_id'])
-        
+
         #remove content with lowest likes from remaining content having specific artstyles (half of desired remove count)
         exclude_artstyles = ['movie: Batman', 'scifi', 'laura_wheeler_waring', 'marta_minujín','kerry_james_marshall', 'jean-michel_basquiat', 'movie: Indiana-Jones-IV', 'unreal_engine', 'anime']
         ids_to_remove.update(filtered_data[filtered_data['artist_style'].isin(exclude_artstyles) & ~filtered_data['content_id'].isin(ids_to_remove)].nsmallest(half_desired_remove_count, 'content_likes', keep='first')['content_id'])
-    
+
         filtered_ids = [index for index in content_id_set if index not in ids_to_remove]
-        
+
         return filtered_ids
 
 
 class DeltaFilter(AbstractFilter):
-    def _filter_ids(self, user_id, content_ids, seed, starting_point):
-        dc = DataCollectorDelta()
-        dc.gather_data(user_id, content_ids)
-        dc.feature_eng()
+    def _filter_ids(self, user_id, content_ids, seed, starting_point, amount=None, dc=None):
+        delta_feature_eng = FeatureEngDelta(dc)
+        delta_feature_eng.feature_eng()
         if starting_point.get("policy_filter_one", False):
-            pf_one = dc.policy_filter_one(dc.results, set(content_ids))  # policy one used here
+            pf_one = delta_feature_eng.policy_filter_one(delta_feature_eng.results, set(content_ids))
         else:
             pf_one = set(content_ids)
         if starting_point.get("policy_filter_two", False):
-            pf_two = dc.policy_filter_two(dc.results, pf_one)  # policy two used here
+            pf_two = delta_feature_eng.policy_filter_two(delta_feature_eng.results, pf_one)
         else:
             pf_two = pf_one
         if starting_point.get("linear_model", False) and user_id not in [0, None]:
-            pf_lr = set(dc.run_linear_model(pf_two))
+            pf_lr = set(delta_feature_eng.run_linear_model(pf_two))
         else:
             pf_lr = pf_two
         return pf_lr

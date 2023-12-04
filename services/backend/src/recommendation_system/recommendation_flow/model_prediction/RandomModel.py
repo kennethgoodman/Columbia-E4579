@@ -4,16 +4,15 @@ from .AbstractModel import AbstractModel
 
 
 class RandomModel(AbstractModel):
-    def predict_probabilities(self, content_ids, user_id, seed=None, **kwargs):
+    def _predict_probabilities(self, content_ids, user_id, seed=None, **kwargs):
         if seed:
             random.seed(seed)
-        return list(
-            map(
-                lambda content_id: {
-                    "content_id": content_id,
-                    "p_engage": random.random(),
-                    "score": kwargs.get("scores", {}).get(content_id, {}).get("score", None),
-                },
-                content_ids,
-            )
-        )
+        content_ids = list(content_ids)
+        like = [random.random() for _ in content_ids]
+        dislike = [random.random() for _ in content_ids]
+        eng = [random.random() for _ in content_ids]
+        return like, dislike, eng, content_ids
+
+    def _get_name(self):
+        return "RandomModel"
+

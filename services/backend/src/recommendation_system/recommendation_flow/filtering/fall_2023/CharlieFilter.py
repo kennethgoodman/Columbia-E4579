@@ -10,18 +10,10 @@ Original file is located at
 """
 
 from src.recommendation_system.recommendation_flow.filtering.AbstractFilter import AbstractFilter
-from src.recommendation_system.recommendation_flow.filtering.linear_model_helper import DataCollector
-import numpy as np
-
-# from sqlalchemy.sql.schema import ScalarElementColumnDefault
-# from typing import Tuple
-# from google.colab import drive
+from src.recommendation_system.recommendation_flow.filtering.linear_model_helper import AbstractFeatureEng
 
 
-"""# Your Implementation - Example Here, Must Modify"""
-
-
-class DataCollectorCharlie(DataCollector):
+class FeatureEngCharlie(AbstractFeatureEng):
     def coefficients(self):
         return {
             'content_likes': -0.00023,
@@ -68,20 +60,19 @@ class DataCollectorCharlie(DataCollector):
 
 
 class CharlieFilter(AbstractFilter):
-    def _filter_ids(self, user_id, content_ids, seed, starting_point):
-        dc = DataCollectorCharlie()
-        dc.gather_data(user_id, content_ids)
-        dc.feature_eng()
+    def _filter_ids(self, user_id, content_ids, seed, starting_point, amount=None, dc=None):
+        charlie_feature_eng = FeatureEngCharlie(dc)
+        charlie_feature_eng.feature_eng()
         if starting_point.get("policy_filter_one", False):
-            pf_one = dc.policy_filter_one(dc.results)
+            pf_one = charlie_feature_eng.policy_filter_one(charlie_feature_eng.results)
         else:
             pf_one = set(content_ids)
         if starting_point.get("policy_filter_two", False):
-            pf_two = dc.policy_filter_two(dc.results)
+            pf_two = charlie_feature_eng.policy_filter_two(charlie_feature_eng.results)
         else:
             pf_two = set(content_ids)
         if starting_point.get("linear_model", False) and user_id not in [0, None]:
-            pf_lr = set(dc.run_linear_model())
+            pf_lr = set(charlie_feature_eng.run_linear_model())
         else:
             pf_lr = set(content_ids)
         return set(pf_one) | set(pf_two) | set(pf_lr)

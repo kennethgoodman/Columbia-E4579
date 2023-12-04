@@ -5,11 +5,11 @@ from .AbstractFilter import AbstractFilter
 
 
 class ExampleFilter(AbstractFilter):
-    def filter_ids(self, content_ids, _, starting_point):
+    def _filter_ids(self, user_id, content_ids, _, starting_point, amount=None, dc=None):
         sql_statement = text(f"""
-            SELECT content_id 
-            FROM engagement 
-            WHERE engagement_type = 'Like' 
+            SELECT content_id
+            FROM engagement
+            WHERE engagement_type = 'Like'
                 and engagement_value = -1 -- dislikes
                 and content_id in ({','.join(map(str, content_ids))})
             GROUP BY content_id
@@ -23,3 +23,6 @@ class ExampleFilter(AbstractFilter):
                 continue
             filtered_content_ids.append(content_id)
         return filtered_content_ids
+
+    def _get_name(self):
+        return "ExampleFilter"
