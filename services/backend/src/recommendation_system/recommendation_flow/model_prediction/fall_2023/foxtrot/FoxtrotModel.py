@@ -13,8 +13,40 @@ from src.recommendation_system.recommendation_flow.model_prediction.AbstractMode
 script_dir = os.path.dirname(os.path.abspath(__file__))
 legalize = lambda s: os.path.join(script_dir, s)
 
+from sklearn.ensemble import GradientBoostingRegressor
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.linear_model import LinearRegression
+from sklearn.preprocessing import MinMaxScaler
+import numpy as np
+class MyModel:
+
+    def __init__(self, model):
+        self.scaler = MinMaxScaler(feature_range=(0, 1))
+        self.model = model
+
+    def fit(self, X, y):
+        y = self.scaler.fit_transform(y.values.reshape(-1, 1))
+        self.model.fit(X, y.reshape(-1))
+        # self.model.fit(X, y)
+
+    def predict(self, X):
+        res = self.model.predict(X)
+        res = self.scaler.inverse_transform(res.reshape(-1, 1))
+        res = res.reshape(-1)
+        return res
+import sys
+import pickletools
+sys.modules['__main__'].MyModel = MyModel
 with open(legalize('foxtrot_model.pkl'), 'rb') as f:
-    MODEL = pickle.load(f)
+    model_like = MyModel(GradientBoostingRegressor(max_depth=8, learning_rate=0.05, n_estimators=180))
+    model_dislike = MyModel(GradientBoostingRegressor(max_depth=9, learning_rate=0.05, n_estimators=160))
+    model_engtime = MyModel(GradientBoostingRegressor(max_depth=8, learning_rate=0.05, n_estimators=180))
+    MODEL = {
+        'like': model_like,
+        'dislike': model_dislike,
+        'engage_time': model_engtime
+    }
+del sys.modules['__main__'].MyModel
 
 
 with open(legalize('foxtrot_postprocessor.pkl'), 'rb') as f:

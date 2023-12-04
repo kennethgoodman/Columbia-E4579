@@ -5,6 +5,7 @@ from sklearn.preprocessing import StandardScaler
 class BetaRanker(AbstractRanker):
     def _rank_ids(self, user_id, content_ids, limit, probabilities, seed, starting_point, X=None):
         score_df = X[(X['user_id'] == user_id) & (X['content_id'].isin(content_ids))].dropna()
+        score_df['like'], score_df['dislike'], score_df['engage_time'], score_df['content_id'] = probabilities
         score_df['rank_value'] = (10 * score_df['like']) - (5 * score_df['dislike']) - (
                     5 * score_df['engage_time'] / 380000)
         ranked_pred = score_df.sort_values('rank_value', ascending=False)

@@ -47,12 +47,11 @@ class FoxtrotController(AbstractController):
             TeamName.Foxtrot_F2023,
             user_id, candidates, seed, starting_point, dc=dc
         )
+        foxtrotFG = FoxtrotFeatureGeneration(dc, filtered_candidates)
         if starting_point.get('randomPredictions'):
             model = RandomModel()
-            foxtrotFG = None
         else:
             model = FoxtrotModel()
-            foxtrotFG = FoxtrotFeatureGeneration(dc, filtered_candidates)
         predictions = model.predict_probabilities(
             TeamName.Foxtrot_F2023,
             filtered_candidates,

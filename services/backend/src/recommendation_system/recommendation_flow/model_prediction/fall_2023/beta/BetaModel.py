@@ -13,8 +13,22 @@ from src.recommendation_system.recommendation_flow.model_prediction.AbstractMode
 script_dir = os.path.dirname(os.path.abspath(__file__))
 legalize = lambda s: os.path.join(script_dir, s)
 
+from sklearn.ensemble import RandomForestRegressor
+class DummyModel:
+    def __init__(self):
+        self.model = RandomForestRegressor(n_estimators=100, random_state=42, max_depth=50)
+
+    def fit(self, X, y):
+        self.model.fit(X, y)
+        return self
+
+    def predict(self, X):
+        return self.model.predict(X)
+import sys
+sys.modules['__main__'].DummyModel = DummyModel
 with open(legalize('beta_model.pkl'), 'rb') as f:
     MODEL = pickle.load(f)
+del sys.modules['__main__'].DummyModel
 
 
 with open(legalize('beta_postprocessor.pkl'), 'rb') as f:
@@ -86,9 +100,9 @@ class BetaFeatureGeneration(AbstractFeatureGeneration):
                                  predicted probability of dislike,
                                  predicted engagement time)
         """
-        pred_like = MODEL['like'].predict(X)
-        pred_dislike = MODEL['dislike'].predict(X)
-        pred_engtime = MODEL['engage_time'].predict(X)
+        pred_like = MODEL['like'].rf.predict(X)
+        pred_dislike = MODEL['dislike'].rf.predict(X)
+        pred_engtime = MODEL['engage_time'].rf.predict(X)
         return pred_like, pred_dislike, pred_engtime, X.index.values
 
 

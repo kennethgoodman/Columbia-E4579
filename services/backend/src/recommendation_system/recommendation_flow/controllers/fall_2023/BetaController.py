@@ -46,12 +46,11 @@ class BetaController(AbstractController):
             TeamName.Beta_F2023,
             user_id, candidates, seed, starting_point, dc=dc
         )
+        betaFG = BetaFeatureGeneration(dc, filtered_candidates)
         if starting_point.get('randomPredictions'):
             model = RandomModel()
-            betaFG = None
         else:
             model = BetaModel()
-            betaFG = BetaFeatureGeneration(dc, filtered_candidates)
         predictions = model.predict_probabilities(
             TeamName.Beta_F2023,
             filtered_candidates,

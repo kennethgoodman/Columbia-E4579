@@ -47,12 +47,11 @@ class EchoController(AbstractController):
             TeamName.Echo_F2023,
             user_id, candidates, seed, starting_point, dc=dc
         )
+        echoFG = EchoFeatureGeneration(dc, filtered_candidates)
         if starting_point.get('randomPredictions'):
             model = RandomModel()
-            echoFG = None
         else:
             model = EchoModel()
-            echoFG = EchoFeatureGeneration(dc, filtered_candidates)
         predictions = model.predict_probabilities(
             TeamName.Echo_F2023,
             filtered_candidates,

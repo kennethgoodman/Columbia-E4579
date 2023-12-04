@@ -8,8 +8,11 @@ from src.recommendation_system.recommendation_flow.filtering.fall_2023.DeltaFilt
 from src.recommendation_system.recommendation_flow.model_prediction.RandomModel import (
     RandomModel,
 )
-from src.recommendation_system.recommendation_flow.ranking.RandomRanker import (
-    RandomRanker,
+from src.recommendation_system.recommendation_flow.model_prediction.fall_2023.delta.DeltaModel import (
+    DeltaFeatureGeneration, DeltaModel,
+)
+from src.recommendation_system.recommendation_flow.ranking.fall_2023.DeltaRanker import (
+    DeltaRanker,
 )
 from src.recommendation_system.recommendation_flow.candidate_generators.delta.TwoTowerANNGenerator import TwoTowerANNGenerator
 from src.recommendation_system.recommendation_flow.candidate_generators.delta.CollaberativeFilteredSimilarUsersGenerator import CollaberativeFilteredSimilarUsersGenerator
@@ -43,7 +46,12 @@ class DeltaController(AbstractController):
             TeamName.Delta_F2023,
             user_id, candidates, seed, starting_point, dc=dc
         )
-        predictions = RandomModel().predict_probabilities(
+        deltaFG = DeltaFeatureGeneration(dc, filtered_candidates)
+        if starting_point.get('randomPredictions'):
+            model = RandomModel()
+        else:
+            model = DeltaModel()
+        predictions = model.predict_probabilities(
             TeamName.Delta_F2023,
             filtered_candidates,
             user_id,
@@ -54,6 +62,10 @@ class DeltaController(AbstractController):
             }
             if scores is not None
             else {},
+            fg=deltaFG,
         )
-        rank = RandomRanker().rank_ids(TeamName.Delta_F2023, user_id, filtered_candidates, limit, predictions, seed, starting_point)
+        rank = DeltaRanker().rank_ids(
+            TeamName.Delta_F2023,
+            user_id, filtered_candidates, limit, predictions, seed, starting_point, deltaFG.X_all
+        )
         return rank

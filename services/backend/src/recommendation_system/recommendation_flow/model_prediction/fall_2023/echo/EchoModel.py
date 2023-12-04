@@ -34,6 +34,7 @@ class RankingModel(nn.Module):
 sys.modules['__main__'].RankingModel = RankingModel
 with open(legalize('echo_model.pkl'), 'rb') as f:
     MODEL = pickle.load(f)
+del sys.modules['__main__'].RankingModel
 
 with open(legalize('echo_postprocessor.pkl'), 'rb') as f:
     POST_PROCESSOR = pickle.load(f)

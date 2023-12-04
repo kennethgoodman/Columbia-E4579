@@ -61,7 +61,8 @@ class AbstractRanker:
             print(f"exception trying to add_metric {team_name}, {user_id}, {self._get_name()}, {e}")
             print(traceback.format_exc())
         if starting_point.get('inverseRanker'):
-            return response[::-1]  # inverse it
+            print("inverseing")
+            response.reverse()  # inverse it
         return response
 
     def _rank_ids(self, user_id, content_ids, limit, probabilities, seed, starting_point, X=None):

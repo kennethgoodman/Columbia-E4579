@@ -46,12 +46,11 @@ class CharlieController(AbstractController):
             TeamName.Charlie_F2023,
             user_id, candidates, seed, starting_point, dc=dc
         )
+        charlieFG = CharlieFeatureGeneration(dc, filtered_candidates)
         if starting_point.get('randomPredictions'):
             model = RandomModel()
-            charlieFG = None
         else:
             model = CharlieModel()
-            charlieFG = CharlieFeatureGeneration(dc, filtered_candidates)
         predictions = model.predict_probabilities(
             TeamName.Charlie_F2023,
             filtered_candidates,

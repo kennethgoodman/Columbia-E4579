@@ -48,12 +48,11 @@ class GolfController(AbstractController):
             TeamName.Golf_F2023,
             user_id, candidates, seed, starting_point, dc=dc
         )
+        golfFG = GolfFeatureGeneration(dc, filtered_candidates)
         if starting_point.get('randomPredictions'):
             model = RandomModel()
-            golfFG = None
         else:
             model = GolfModel()
-            golfFG = GolfFeatureGeneration(dc, filtered_candidates)
         predictions = model.predict_probabilities(
             TeamName.Golf_F2023,
             filtered_candidates,

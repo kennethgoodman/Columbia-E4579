@@ -5,9 +5,10 @@ from src.recommendation_system.recommendation_flow.ranking.AbstractRanker import
 class FoxtrotRanker(AbstractRanker):
     def _rank_ids(self, user_id, content_ids, limit, probabilities, seed, starting_point, X=None):
         score_df = X[(X['user_id'] == user_id) & (X['content_id'].isin(content_ids))].dropna()
+        score_df['like'], score_df['dislike'], score_df['engage_time'], score_df['content_id'] = probabilities
         # Calculate score
         def get_artist(content_id):
-            content = self.generated_content_metadata
+            content = score_df
             artist = content[content['content_id'] == content_id]['artist_style'].to_string()
             return artist[artist.rindex(' ', 0, ) + 1:]
 

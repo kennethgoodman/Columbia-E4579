@@ -241,7 +241,7 @@ const Feed = (props) => {
       <div className="checkbox-group">
         <p>Prediction/Ranking:</p>
         <label>
-          <input type="checkbox" checked={randomRanking} onChange={() => handleCheckboxChange(setRandomPredictions, randomPredictions)} />
+          <input type="checkbox" checked={randomPredictions} onChange={() => handleCheckboxChange(setRandomPredictions, randomPredictions)} />
           Use Random Predictions
         </label>
         <label>

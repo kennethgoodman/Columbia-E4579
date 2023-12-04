@@ -7,8 +7,11 @@ from src.recommendation_system.recommendation_flow.filtering.fall_2023.AlphaFilt
 from src.recommendation_system.recommendation_flow.model_prediction.RandomModel import (
     RandomModel,
 )
-from src.recommendation_system.recommendation_flow.ranking.RandomRanker import (
-    RandomRanker,
+from src.recommendation_system.recommendation_flow.model_prediction.fall_2023.alpha.AlphaModel import (
+    AlphaFeatureGeneration, AlphaModel,
+)
+from src.recommendation_system.recommendation_flow.ranking.fall_2023.AlphaRanker import (
+    AlphaRanker
 )
 from src.recommendation_system.recommendation_flow.candidate_generators.alpha.TwoTowerANNGenerator import (
     TwoTowerANNGenerator,
@@ -53,7 +56,12 @@ class AlphaController(AbstractController):
             TeamName.Alpha_F2023,
             user_id, candidates, seed, starting_point, dc=dc
         )
-        predictions = RandomModel().predict_probabilities(
+        alphaFG = AlphaFeatureGeneration(dc, filtered_candidates)
+        if starting_point.get('randomPredictions'):
+            model = RandomModel()
+        else:
+            model = AlphaModel()
+        predictions = model.predict_probabilities(
             TeamName.Alpha_F2023,
             filtered_candidates,
             user_id,
@@ -64,6 +72,10 @@ class AlphaController(AbstractController):
             }
             if scores is not None
             else {},
+            fg=alphaFG,
         )
-        rank = RandomRanker().rank_ids(TeamName.Alpha_F2023, user_id, filtered_candidates, limit, predictions, seed, starting_point)
+        rank = AlphaRanker().rank_ids(
+            TeamName.Alpha_F2023,
+            user_id, filtered_candidates, limit, predictions, seed, starting_point, alphaFG.X_all
+        )
         return rank
