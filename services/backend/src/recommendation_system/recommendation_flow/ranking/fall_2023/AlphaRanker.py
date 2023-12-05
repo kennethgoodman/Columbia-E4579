@@ -35,10 +35,10 @@ class AlphaRanker(AbstractRanker):
         for style, size in style_counts.items():
             if style == 'movie' and size / len(output_df) > 0.3:
                 excl_movie_size = len(output_df) - size
-                style_counts[style] = 0.3
                 movie_diff = size / len(output_df) - 0.3
-            else:
                 style_counts[style] = size / excl_movie_size + ((size / excl_movie_size) * movie_diff)
+            else:
+                style_counts[style] = 0.3
 
         # Initialize an empty list to store the DataFrames
         dfs_to_concat = []

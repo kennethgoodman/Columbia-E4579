@@ -100,9 +100,9 @@ class BetaFeatureGeneration(AbstractFeatureGeneration):
                                  predicted probability of dislike,
                                  predicted engagement time)
         """
-        pred_like = MODEL['like'].rf.predict(X)
-        pred_dislike = MODEL['dislike'].rf.predict(X)
-        pred_engtime = MODEL['engage_time'].rf.predict(X)
+        pred_like = MODEL['like'].predict(X)
+        pred_dislike = MODEL['dislike'].predict(X)
+        pred_engtime = MODEL['engage_time'].predict(X)
         return pred_like, pred_dislike, pred_engtime, X.index.values
 
 
