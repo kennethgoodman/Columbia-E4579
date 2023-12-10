@@ -33,26 +33,23 @@ class CharlieFeatureGeneration(AbstractFeatureGeneration):
         """
         user_data_copy = self.user_data.drop_duplicates().copy()
         e_time = user_data_copy[user_data_copy["engagement_type"] == "MillisecondsEngagedWith"]
-        e_time = e_time.pivot_table(values="engagement_value", index=["content_id", "user_id"], aggfunc="sum")
-        e_time.reset_index(drop=False, inplace=True)
+        e_time.reset_index(drop=True, inplace=True)
+        content_count = pd.DataFrame(e_time[["user_id", "content_id"]].groupby("user_id").size())
+        e_time_per_user = e_time[["user_id", "engagement_value"]].groupby("user_id").mean()
         like_dislike = user_data_copy[user_data_copy["engagement_type"] != "MillisecondsEngagedWith"]
         like_dislike.rename(columns={"engagement_value": "reaction"}, inplace=True)
         like_dislike = like_dislike.merge(e_time[["content_id", "user_id", "engagement_value"]], on=["content_id", "user_id"])
-        like_summary = like_dislike[like_dislike.reaction == 1].pivot_table(values="engagement_value", index="user_id", aggfunc="mean")
-        like_summary.rename(columns={"engagement_value": "like_avg_engagement_time"}, inplace=True)
-        like_summary.reset_index(drop=False, inplace=True)
-        dislike_summary = like_dislike[like_dislike.reaction == -1].pivot_table(values="engagement_value", index="user_id", aggfunc="mean")
-        dislike_summary.rename(columns={"engagement_value": "dislike_avg_engagement_time"}, inplace=True)
-        dislike_summary.reset_index(drop=False, inplace=True)
-        counts = user_data_copy.pivot_table(values="content_id", index="user_id", aggfunc="count")
-        time_sum = e_time.pivot_table(values="engagement_value", index="user_id", aggfunc="mean")
-        counts.reset_index(drop=False, inplace=True)
-        time_sum.reset_index(drop=False, inplace=True)
-        feature_df = pd.merge(left=counts, right=time_sum, on="user_id")
-        feature_df = feature_df.merge(like_summary, on="user_id", how="outer")
-        feature_df = feature_df.merge(dislike_summary, on="user_id", how="outer")
+        like_dislike.drop(columns=["engagement_metadata", "created_date"], inplace=True)
+        like = like_dislike[like_dislike.reaction == 1]
+        dislike = like_dislike[like_dislike.reaction == -1]
+        like_avg_time_per_user = like[["user_id", "engagement_value"]].groupby("user_id").mean()
+        dislike_avg_time_per_user = dislike[["user_id", "engagement_value"]].groupby("user_id").mean()
+        feature_df = content_count.merge(e_time_per_user, left_index=True, right_index=True, how="outer")
+        feature_df = feature_df.merge(like_avg_time_per_user, left_index=True, right_index=True, how="left")
+        feature_df = feature_df.merge(dislike_avg_time_per_user, left_index=True, right_index=True, how="left")
+        feature_df.columns = ["content_count", "avg_engagement_time", "like_avg_engagement_time", "dislike_avg_engagement_time"]
+        feature_df.reset_index(drop=False, inplace=True)
         feature_df = feature_df.fillna(0)
-        feature_df = feature_df.rename(columns={"content_id": "content_count", "engagement_value": "avg_engagement_time"})
         return feature_df, ["content_count", "avg_engagement_time", "like_avg_engagement_time", "dislike_avg_engagement_time"], []
 
     def feature_generation_content(self) -> Tuple[pd.DataFrame, List[str], List[str]]:
