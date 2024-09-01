@@ -11,14 +11,7 @@ from src.recommendation_system.recommendation_flow.controllers import (
     RandomController,
     ExampleController,
     EngagementTimeController,
-    StaticController,
-    AlphaController,
-    BetaController,
-    CharlieController,
-    DeltaController,
-    EchoController,
-    FoxtrotController,
-    GolfController
+    StaticController
 )
 
 from src.api.metrics.models import MetricFunnelType, MetricType, TeamName
@@ -30,13 +23,6 @@ class ControllerEnum(Enum):
     EXAMPLE = ExampleController
     ENGAGEMENT_TIME = EngagementTimeController
     STATIC = StaticController
-    ALPHA = AlphaController
-    BETA = BetaController
-    CHARLIE = CharlieController
-    DELTA = DeltaController
-    ECHO = EchoController
-    FOXTROT = FoxtrotController
-    GOLF = GolfController
 
     def human_string(self):
         return str(self).split(".")[1]
@@ -59,13 +45,6 @@ class ControllerEnum(Enum):
         return {
             ControllerEnum.RANDOM: TeamName.Random,
             ControllerEnum.EXAMPLE: TeamName.Example,
-            ControllerEnum.ALPHA: TeamName.Alpha_F2023,
-            ControllerEnum.BETA: TeamName.Beta_F2023,
-            ControllerEnum.CHARLIE: TeamName.Charlie_F2023,
-            ControllerEnum.DELTA: TeamName.Delta_F2023,
-            ControllerEnum.ECHO: TeamName.Echo_F2023,
-            ControllerEnum.FOXTROT: TeamName.Foxtrot_F2023,
-            ControllerEnum.GOLF: TeamName.Golf_F2023,
             ControllerEnum.ENGAGEMENT_TIME: TeamName.EngagementTime,
             ControllerEnum.STATIC: TeamName.Static
         }[controller]
