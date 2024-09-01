@@ -48,6 +48,7 @@ content = content_namespace.model(
         "height": fields.Integer(required=False),
         "url": fields.String(required=False),
         "download_url": fields.String(required=False),
+        "type": fields.String(required=True),
         "errors": fields.String(required=False),
         "traceback": fields.String(required=False),
         "controller": fields.String(required=False),
