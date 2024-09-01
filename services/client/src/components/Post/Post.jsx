@@ -30,8 +30,8 @@ const Post = (props) => {
   const [totalDislikes, setTotalDislikes] = useState(props.post.total_dislikes);
   const [isAuthenticated, _] = useState(getRefreshTokenIfExists() !== null);
 
-  const image_ref = useRef(null);
-  useIntersectionObserver(props.controller, props.content_id, image_ref, {});
+  const contentRef = useRef(null);
+  useIntersectionObserver(props.controller, props.content_id, contentRef, {});
 
   const like = (callback) => {
     axios(get_options("like", props.content_id))
