@@ -8,6 +8,7 @@ from sqlalchemy.ext.declarative import DeclarativeMeta
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from src import db
+from sqlalchemy import Text
 from src.api.engagement.models import Engagement
 
 # As per https://stackoverflow.com/questions/63542818/mypy-and-inheriting-from-a-class-that-is-an-attribute-on-an-instance
@@ -89,6 +90,7 @@ class GeneratedContentMetadata(BaseModel):
     model = db.Column(SqlEnum(ModelType), nullable=False)
     model_version = db.Column(db.String(10), nullable=False)
     prompt_embedding = db.Column(db.JSON, nullable=True)
+    text = db.Column(Text, nullable=True)
 
 
 class NonGeneratedContentMetadata(BaseModel):
