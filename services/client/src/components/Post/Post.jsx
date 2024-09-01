@@ -124,12 +124,9 @@ const Post = (props) => {
         );
       case 'text':
         return (
-          <p 
-            ref={contentRef} 
-            className={`postBody ${darkMode ? 'dark' : ''}`}
-          >
+          <div className={`textPostContent ${darkMode ? 'dark' : ''}`} ref={contentRef}>
             {props.post.text}
-          </p>
+          </div>
         );
       default:
         return null;

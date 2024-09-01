@@ -72,3 +72,16 @@ img {
 .likesContainer.dark {
   color: #fff;
 }
+
+.textPostContent {
+  font-size: 1.2rem; /* Adjust font size as needed */
+  padding: 15px;
+  border-radius: 8px;
+  background-color: rgba(220, 220, 220, 0.8); /* Light background for contrast */
+  margin-bottom: 10px; /* Add some spacing below */
+}
+
+.textPostContent.dark {
+  background-color: rgba(50, 50, 50, 0.8); /* Darker background for dark mode */
+  color: #f0f0f0; /* Adjust text color for dark mode */
+}
