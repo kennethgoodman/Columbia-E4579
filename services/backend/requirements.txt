@@ -35,7 +35,6 @@ lightgbm==3.3.1
 MarkupSafe==2.1.3
 mccabe==0.6.1
 mpmath==1.3.0
-mrpt @ git+https://github.com/vioshyvo/mrpt/@88cc6f40782ca0f8de7491279766ded01d767861
 mypy-extensions==1.0.0
 mysql-connector-python==8.1.0
 mysqlclient==2.2.0
