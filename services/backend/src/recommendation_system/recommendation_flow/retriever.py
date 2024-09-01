@@ -57,7 +57,7 @@ def content_to_response(content):
     if url is not None:
         text = f"""{generated_content_metadata.original_prompt}\n In the style of {generated_content_metadata.artist_style}"""
     else:
-        text = generated_content_metadata.original_prompt
+        text = content.text
     return {
         "id": content.id,
         "download_url": get_url(content),
@@ -66,7 +66,7 @@ def content_to_response(content):
         "prompt": generated_content_metadata.prompt,
         "style": generated_content_metadata.artist_style,
         "original_prompt": generated_content_metadata.original_prompt,
-        "type": "image"
+        "type": "image" if url is not None else "text"
     }
 
 def add_metric_time_took(team_name, user_id, val, limit, offset, seed, starting_point):
