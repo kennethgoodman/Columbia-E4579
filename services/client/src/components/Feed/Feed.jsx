@@ -204,7 +204,7 @@ const Feed = (props) => {
       >
           {buttonText}
       </button>
-      <div className="checkbox-group">
+      {/*<div className="checkbox-group">
         <p>Candidate Generators:</p>
         <label>
           <input type="checkbox" checked={twoTower} onChange={() => handleCheckboxChange(setTwoTower, twoTower)} />
@@ -248,7 +248,7 @@ const Feed = (props) => {
           <input type="checkbox" checked={inverseRanker} onChange={() => handleCheckboxChange(setInverseRanker, inverseRanker)} />
           Inverse The Ranking
         </label>
-      </div>
+      </div>*/}
       <label className="switch">
         <input type="checkbox" checked={darkMode} onChange={() => setDarkMode(!darkMode)} />
         <span className="slider round" />

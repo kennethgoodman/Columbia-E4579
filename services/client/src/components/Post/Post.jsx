@@ -111,20 +111,36 @@ const Post = (props) => {
     from: { opacity: 0 },
   });
 
+  const renderPostContent = () => {
+    switch (props.post.type) {
+      case 'image':
+        return (
+          <img
+            ref={contentRef}
+            src={props.post.download_url}
+            alt={props.post.text}
+            onDoubleClick={handleLikes}
+          />
+        );
+      case 'text':
+        return (
+          <p 
+            ref={contentRef} 
+            className={`postBody ${darkMode ? 'dark' : ''}`}
+          >
+            {props.post.text}
+          </p>
+        );
+      default:
+        return null;
+    }
+  };
+
   return (
     <div className={`postContainer ${darkMode ? 'dark' : ''}`}>
       <ToastContainer />
       <h4 className={`postAuthor ${darkMode ? 'dark' : ''}`}>{props.post.author}</h4>
-      <button onClick={() => props.handleSeeMore(props.content_id)}>
-        See More Like This
-      </button>
-      <img
-        ref={image_ref}
-        src={props.post.download_url}
-        alt={props.post.text}
-        onDoubleClick={handleLikes}
-      />
-      <p className={`postBody ${darkMode ? 'dark' : ''}`}>{props.post.text}</p>
+      {renderPostContent()}
       {isAuthenticated && (
         <div className={`likesContainer ${darkMode ? 'dark' : ''}`}>
           <animated.div style={likeButtonSpring}>
