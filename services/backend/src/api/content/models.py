@@ -15,7 +15,7 @@ BaseModel: DeclarativeMeta = db.Model
 
 
 def get_url(content):
-    if s3_id == "":
+    if content.s3_id == "":
         return None
     return f"https://{content.s3_bucket}.s3.amazonaws.com/{content.s3_id}"
 
