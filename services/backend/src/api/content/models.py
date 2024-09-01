@@ -61,10 +61,12 @@ class GeneratedType(Enum):
     GPT3Txt2Img = 2
     Img2Txt2Img = 3
     Img2Img = 4
+    Text2Text = 5
 
 
 class ModelType(Enum):
     StableDiffusion = 1
+    GeminiPro = 2
 
 
 class GeneratedContentMetadata(BaseModel):
