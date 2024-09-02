@@ -53,10 +53,13 @@ class ControllerEnum(Enum):
 def content_to_response(content):
     generated_content_metadata = content.generated_content_metadata
     text = "N/A ERROR"
+    type_ = "N/A ERROR"
     url = get_url(content)
-    if url is not None:
+    if content.media_type == MediaType.Image:
+        type_ = "image"
         text = f"""{generated_content_metadata.original_prompt}\n In the style of {generated_content_metadata.artist_style}"""
     else:
+        type_ = "text"
         text = generated_content_metadata.text
     return {
         "id": content.id,
@@ -66,7 +69,7 @@ def content_to_response(content):
         "prompt": generated_content_metadata.prompt,
         "style": generated_content_metadata.artist_style,
         "original_prompt": generated_content_metadata.original_prompt,
-        "type": "image" if url is not None else "text"
+        "type": type_
     }
 
 def add_metric_time_took(team_name, user_id, val, limit, offset, seed, starting_point):
