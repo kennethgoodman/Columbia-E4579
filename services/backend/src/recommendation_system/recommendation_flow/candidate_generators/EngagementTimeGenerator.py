@@ -26,32 +26,11 @@ class EngagementTimeGenerator(AbstractGenerator):
             .offset(offset)
             .all()
         )
-        num_results = len(results)
-        if num_results == 0:
+        if len(results) == 0:
             return RandomGenerator()._get_content_ids(
                 user_id, limit, offset, seed, starting_point
             )
-        new_limit = 2 * (limit // num_results + 1)  # get 2x so we can take the best
-        new_offset = offset // num_results + 1
-        new_result, new_scores = [], []
-        for (content_id, ms) in results:
-            # can probably do this faster as a heap so instead of `2 * limit * (1+log2(limit))` in `limit * log2(limit)`
-            content_ids, scores = ann_with_offset(
-                content_id, 0.9, 2 * new_limit, new_offset, return_distances=True
-            )
-            new_result.extend(content_ids)
-            # TODO: score and ms should probably be normalized so multiplication makes sense
-            new_scores.extend(map(lambda score: score * ms, scores))
-        if len(new_result) == 0:
-            return RandomGenerator().get_content_ids(
-                user_id, limit, offset, seed, starting_point
-            )
-        results_with_scores = sorted(
-            list(zip(new_result, new_scores)), key=operator.itemgetter(1)
-        )[:limit]
-        return list(map(operator.itemgetter(0), results_with_scores)), list(
-            map(operator.itemgetter(1), results_with_scores)
-        )
+        return results, [1.0] * num_results
 
     def _get_name(self):
         return "EngagementTime"

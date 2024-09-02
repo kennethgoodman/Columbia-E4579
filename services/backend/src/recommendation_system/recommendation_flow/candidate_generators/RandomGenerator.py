@@ -15,7 +15,7 @@ class RandomGenerator(AbstractGenerator):
             .offset(offset)
             .all()
         )
-        return list(map(lambda x: x[0], results)), None
+        return list(map(lambda x: x[0], results)), [1.0] * len(results)
     
     def _get_name(self):
         return "Random"
@@ -32,7 +32,7 @@ class RandomGeneratorText(AbstractGenerator):
             .offset(offset)
             .all()
         )
-        return list(map(lambda x: x[0], results)), None
+        return list(map(lambda x: x[0], results)), [1.0] * len(results)
     
     def _get_name(self):
         return "RandomText"
@@ -50,7 +50,7 @@ class RandomGeneratorImage(AbstractGenerator):
             .offset(offset)
             .all()
         )
-        return list(map(lambda x: x[0], results)), None
+        return list(map(lambda x: x[0], results)), [1.0] * len(results)
     
     def _get_name(self):
         return "RandomImage"
