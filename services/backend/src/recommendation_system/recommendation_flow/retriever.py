@@ -5,7 +5,7 @@ from src import db
 from flask import request
 import traceback
 
-from src.api.content.models import Content, get_url
+from src.api.content.models import Content, get_url, MediaType
 from src.api.users.models import User
 from src.recommendation_system.recommendation_flow.controllers import (
     RandomController,
