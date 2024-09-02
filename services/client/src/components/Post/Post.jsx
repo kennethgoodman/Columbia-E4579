@@ -115,17 +115,22 @@ const Post = (props) => {
     switch (props.post.type) {
       case 'image':
         return (
-          <img
-            ref={contentRef}
-            src={props.post.download_url}
-            alt={props.post.text}
-            onDoubleClick={handleLikes}
-          />
+          <div className="imagePostContent" ref={contentRef}>
+            <img
+              src={props.post.download_url}
+              alt={props.post.text}
+              onDoubleClick={handleLikes}
+            />
+            <div className={`promptOverlay ${darkMode ? 'dark' : ''}`}>
+              <p>{props.post.prompt}</p>
+            </div>
+          </div>
         );
       case 'text':
         return (
           <div className={`textPostContent ${darkMode ? 'dark' : ''}`} ref={contentRef}>
-            {props.post.text}
+            <p>{props.post.text}</p>
+            <p className="textPostPrompt">- {props.post.prompt}</p>
           </div>
         );
       default:

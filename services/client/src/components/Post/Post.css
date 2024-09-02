@@ -73,15 +73,67 @@ img {
   color: #fff;
 }
 
+/* Image Post Styling */
+.imagePostContent {
+  position: relative;
+  overflow: hidden; 
+  border-radius: 10px; /* Maintain consistent border-radius */
+  margin-bottom: 10px; /* Add spacing below image */
+}
+
+.imagePostContent img {
+  width: 100%; 
+  transition: transform 0.3s ease; /* Smooth zoom effect */
+}
+
+.imagePostContent:hover img {
+  transform: scale(1.05);
+}
+
+/* Prompt Overlay for Images */
+.promptOverlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 10px;
+  opacity: 0;
+  transform: translateY(100%); 
+  transition: all 0.3s ease;
+}
+
+.imagePostContent:hover .promptOverlay {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.promptOverlay.dark {
+  background-color: rgba(255, 255, 255, 0.8);
+  color: black;
+}
+
+/* Text Post Styling - No major changes needed */
 .textPostContent {
-  font-size: 1.2rem; /* Adjust font size as needed */
+  font-size: 1.2rem;
   padding: 15px;
   border-radius: 8px;
-  background-color: rgba(220, 220, 220, 0.8); /* Light background for contrast */
-  margin-bottom: 10px; /* Add some spacing below */
+  background-color: rgba(220, 220, 220, 0.8); 
+  margin-bottom: 10px; 
 }
 
 .textPostContent.dark {
-  background-color: rgba(50, 50, 50, 0.8); /* Darker background for dark mode */
-  color: #f0f0f0; /* Adjust text color for dark mode */
+  background-color: rgba(50, 50, 50, 0.8);
+  color: #f0f0f0;
+}
+
+.textPostPrompt {
+  font-style: italic;
+  font-size: 0.9em;
+  color: #555;
+}
+
+.textPostPrompt.dark {
+  color: #ccc;
 }

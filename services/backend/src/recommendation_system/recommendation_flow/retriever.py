@@ -52,24 +52,26 @@ class ControllerEnum(Enum):
 
 def content_to_response(content):
     generated_content_metadata = content.generated_content_metadata
-    text = "N/A ERROR"
-    type_ = "N/A ERROR"
-    url = get_url(content)
     if content.media_type == MediaType.Image:
-        type_ = "image"
-        text = f"""{generated_content_metadata.original_prompt}\n In the style of {generated_content_metadata.artist_style}"""
-    else:
-        type_ = "text"
-        text = generated_content_metadata.text
+        return {
+            "id": content.id,
+            "download_url": get_url(content),
+            "author": generated_content_metadata.source,  # TODO: change to a query?
+            "text": f"""{generated_content_metadata.original_prompt}\n In the style of {generated_content_metadata.artist_style}""",
+            "prompt": generated_content_metadata.prompt,
+            "style": generated_content_metadata.artist_style,
+            "original_prompt": generated_content_metadata.original_prompt,
+            "type": "image"
+        }
     return {
         "id": content.id,
-        "download_url": get_url(content),
-        "author": generated_content_metadata.source,  # TODO: change to a query?
-        "text": text,
+        "download_url": None,
+        "author": generated_content_metadata.model + " " + generated_content_metadata.model_version,
+        "text": generated_content_metadata.text
         "prompt": generated_content_metadata.prompt,
         "style": generated_content_metadata.artist_style,
         "original_prompt": generated_content_metadata.original_prompt,
-        "type": type_
+        "type": "text"
     }
 
 def add_metric_time_took(team_name, user_id, val, limit, offset, seed, starting_point):
