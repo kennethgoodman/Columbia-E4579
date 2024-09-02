@@ -66,7 +66,7 @@ def content_to_response(content):
     return {
         "id": content.id,
         "download_url": None,
-        "author": str(generated_content_metadata.model) + " " + generated_content_metadata.model_version,
+        "author": (str(generated_content_metadata.model) + " " + generated_content_metadata.model_version).replace("ModelType.", "")
         "text": generated_content_metadata.text,
         "prompt": generated_content_metadata.prompt,
         "style": generated_content_metadata.artist_style,
