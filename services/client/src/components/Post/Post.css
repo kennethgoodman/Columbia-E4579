@@ -102,6 +102,8 @@ img {
   opacity: 0;
   transform: translateY(100%); 
   transition: all 0.3s ease;
+  font-size: 0.8rem; /* Smaller base font size for overlay */
+  word-break: break-word; /* Allow long words to break */
 }
 
 .imagePostContent:hover .promptOverlay {
@@ -136,4 +138,26 @@ img {
 
 .textPostPrompt.dark {
   color: #ccc;
+}
+
+/* Media Query for Mobile Responsiveness */
+@media (max-width: 768px) { /* Adjust breakpoint as needed */
+  .postContainer {
+    margin: 1rem; /* Smaller margin on mobile */
+    font-size: 14px; /* Slightly smaller base font size */
+  }
+
+  .imagePostContent img {
+    border-radius: 5px; /* Smaller border radius on images */
+  }
+
+  .promptOverlay {
+    font-size: 0.7rem; /* Even smaller font size on mobile */
+    padding: 8px; /* Smaller padding */
+  }
+}
+
+/* Fix for Question Mark Icon (Likely Font Related) */
+.promptOverlay p {
+  margin: 0; /* Remove any default paragraph margins */
 }
