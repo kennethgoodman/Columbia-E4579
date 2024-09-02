@@ -1,5 +1,5 @@
 from src.recommendation_system.recommendation_flow.candidate_generators.RandomGenerator import (
-    RandomGenerator,
+    RandomGenerator, RandomGeneratorText, RandomGeneratorImage
 )
 from src.recommendation_system.recommendation_flow.controllers.AbstractController import (
     AbstractController,
@@ -22,10 +22,15 @@ class RandomController(AbstractController):
         candidates_limit = (
             limit * 10 * 10
         )  # 10% gets filtered out and take top 10% of rank
-        candidates, scores = RandomGenerator().get_content_ids(
+        candidatesText, scoresText = RandomGeneratorText().get_content_ids(
             TeamName.Random,
-            user_id, candidates_limit, offset, seed, starting_point
+            user_id, candidates_limit / 2, offset, seed, starting_point
         )
+        candidatesImgs, scoresImgs = RandomGeneratorImage().get_content_ids(
+            TeamName.Random,
+            user_id, candidates_limit / 2, offset, seed, starting_point
+        )
+        candidates, scores = candidatesText + candidatesImgs, scoresText + scoresImgs
         filtered_candidates = RandomFilter().filter_ids(
             TeamName.Random, user_id, candidates, seed, starting_point, amount=0.1
         )
