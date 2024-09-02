@@ -57,7 +57,7 @@ def content_to_response(content):
     if url is not None:
         text = f"""{generated_content_metadata.original_prompt}\n In the style of {generated_content_metadata.artist_style}"""
     else:
-        text = content.text
+        text = generated_content_metadata.text
     return {
         "id": content.id,
         "download_url": get_url(content),
