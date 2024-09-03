@@ -3,6 +3,7 @@ import os
 from src.api.content.models import (
 	Content, GeneratedContentMetadata, MediaType, GeneratedType, ModelType
 )
+from src import create_app, db
 from src.api.users.models import User
 from src.api.users.crud import get_user_by_username
 import random

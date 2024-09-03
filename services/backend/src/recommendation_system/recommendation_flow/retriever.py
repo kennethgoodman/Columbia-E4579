@@ -9,6 +9,8 @@ from src.api.content.models import Content, get_url, MediaType
 from src.api.users.models import User
 from src.recommendation_system.recommendation_flow.controllers import (
     RandomController,
+    RandomTextController,
+    RandomImageController,
     ExampleController,
     EngagementTimeController,
     StaticController
@@ -19,10 +21,12 @@ from src.api.metrics.crud import add_metric
 
 
 class ControllerEnum(Enum):
-    RANDOM = RandomController
-    EXAMPLE = ExampleController
-    ENGAGEMENT_TIME = EngagementTimeController
-    STATIC = StaticController
+    # RANDOM = RandomController
+    RANDOM_TEXT = RandomTextController
+    RANDOM_IMAGE = RandomImageController
+    POPULAR = ExampleController
+    # ENGAGEMENT_TIME = EngagementTimeController
+    # STATIC = StaticController
 
     def human_string(self):
         return str(self).split(".")[1]
@@ -43,10 +47,12 @@ class ControllerEnum(Enum):
     @staticmethod
     def controller_to_team_name(controller):
         return {
-            ControllerEnum.RANDOM: TeamName.Random,
-            ControllerEnum.EXAMPLE: TeamName.Example,
-            ControllerEnum.ENGAGEMENT_TIME: TeamName.EngagementTime,
-            ControllerEnum.STATIC: TeamName.Static
+            # ControllerEnum.RANDOM: TeamName.Random,
+            ControllerEnum.POPULAR: TeamName.Example,
+            # ControllerEnum.ENGAGEMENT_TIME: TeamName.EngagementTime,
+            # ControllerEnum.STATIC: TeamName.Static,
+            ControllerEnum.RANDOM_TEXT: TeamName.Random,
+            ControllerEnum.RANDOM_IMAGE: TeamName.Random,
         }[controller]
 
 
@@ -56,8 +62,8 @@ def content_to_response(content):
         return {
             "id": content.id,
             "download_url": get_url(content),
-            "author": generated_content_metadata.source,  # TODO: change to a query?
-            "text": f"""{generated_content_metadata.original_prompt}\n In the style of {generated_content_metadata.artist_style}""",
+            "author": (str(generated_content_metadata.model) + " " + generated_content_metadata.model_version).replace("ModelType.", ""),
+            "text": f"""{generated_content_metadata.original_prompt}\n In the style of {generated_content_metadata.artist_style}. - Sourced from {generated_content_metadata.source}""",
             "prompt": generated_content_metadata.prompt,
             "style": generated_content_metadata.artist_style,
             "original_prompt": generated_content_metadata.original_prompt,

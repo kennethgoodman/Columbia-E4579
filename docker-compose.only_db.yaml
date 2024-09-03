@@ -1,0 +1,17 @@
+version: "3.8"
+
+services:
+  api-db:
+    build:
+      context: services/db
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "127.0.0.1:3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: mysql
+      MYSQL_DATABASE: api_dev
+      MYSQL_USER: mysql
+      MYSQL_PASSWORD: mysql
+    expose:
+      - 5432

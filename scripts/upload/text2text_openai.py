@@ -19,7 +19,7 @@ def commit_content(author_id, text, original_prompt, prompt, style):
         content=new_content,
         generated_type=GeneratedType.Text2Text,
         model=ModelType.GPT,
-        model_version="4o",
+        model_version="3.5-turbo",
         prompt=prompt,
         artist_style=style,
         original_prompt=original_prompt,
@@ -176,7 +176,7 @@ def main(n):
 		for _ in tqdm(range(n)):
 			args = get_prompt()
 			completion = client.chat.completions.create(
-			    model="gpt-4o",
+			    model="gpt-3.5-turbo",
 			    messages=[
 			    	{"role": "system", "content": """Be a creative AI, this is going to be used for a recommendation system class,
 			so being creative is important so we have a wide range of content to recommend from. Its ok if something doesn't make sense. We want a wide range of excellence so shoot for the stars."""},
@@ -184,7 +184,7 @@ def main(n):
 			    ]
 			)
 			try:
-				commit_content(author_id, completion.choices[0].message, args['original_prompt'], args['prompt'], args['style'])
+				commit_content(author_id, completion.choices[0].message.content, args['original_prompt'], args['prompt'], args['style'])
 			except Exception as e:
 				print(args['prompt'], e)
 
