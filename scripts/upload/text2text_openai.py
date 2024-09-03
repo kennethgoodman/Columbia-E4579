@@ -1,17 +1,14 @@
-import google.generativeai as genai
+from openai import OpenAI
 import os
 from src.api.content.models import (
 	Content, GeneratedContentMetadata, MediaType, GeneratedType, ModelType
 )
 from src.api.users.models import User
+from src import create_app, db
 from src.api.users.crud import get_user_by_username
 import random
 
-genai.configure(api_key=os.environ["GOOGLE_API_KEY"])
-model = genai.GenerativeModel("gemini-1.5-flash",
-	system_instruction=
-	"""Be a creative AI, this is going to be used for a recommendation system class,
-		so being creative is important so we have a wide range of content to recommend from. Its ok if something doesn't make sense. We want a wide range of excellence so shoot for the stars.""")
+client = OpenAI()
 
 def commit_content(author_id, text, original_prompt, prompt, style):
     new_content = Content(
@@ -21,8 +18,8 @@ def commit_content(author_id, text, original_prompt, prompt, style):
     new_metadata = GeneratedContentMetadata(
         content=new_content,
         generated_type=GeneratedType.Text2Text,
-        model=ModelType.GeminiPro,
-        model_version="1.5-flash",
+        model=ModelType.GPT,
+        model_version="4o",
         prompt=prompt,
         artist_style=style,
         original_prompt=original_prompt,
@@ -172,27 +169,25 @@ def get_prompt():
 	}
 		
 
-def get_text_for_content(prompt):
-	response = model.generate_content(prompt)
-	return response.text
-
 def main(n):
 	from tqdm import tqdm
-	author_id = get_user_by_username("ksg2151").id
-	for _ in tqdm(range(n)):
-		args = get_prompt()
-		try:
-			r = model.generate_content(args['prompt'], safety_settings={"HARASSMENT": "BLOCK_ONLY_HIGH", 'SEXUALLY_EXPLICIT': 'BLOCK_ONLY_HIGH'})
-			commit_content(author_id, r.text, args['original_prompt'], args['prompt'], args['style'])
-		except:
-			print(args['prompt'], '\n', r, '\n' * 3)
+	with app.app_context():
+		author_id = get_user_by_username("ksg2151").id
+		for _ in tqdm(range(n)):
+			args = get_prompt()
+			completion = client.chat.completions.create(
+			    model="gpt-4o",
+			    messages=[
+			    	{"role": "system", "content": """Be a creative AI, this is going to be used for a recommendation system class,
+			so being creative is important so we have a wide range of content to recommend from. Its ok if something doesn't make sense. We want a wide range of excellence so shoot for the stars."""},
+			        {"role": "user", "content": args['prompt']}
+			    ]
+			)
+			try:
+				commit_content(author_id, completion.choices[0].message, args['original_prompt'], args['prompt'], args['style'])
+			except Exception as e:
+				print(args['prompt'], e)
 
 
 if __name__ == '__main__':
 	main()
-
-
-
-
-
-

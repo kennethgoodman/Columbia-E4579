@@ -68,6 +68,9 @@ class GeneratedType(Enum):
 class ModelType(Enum):
     StableDiffusion = 1
     GeminiPro = 2
+    GPT = 3
+    Claude = 4
+    Llama = 5
 
 
 class GeneratedContentMetadata(BaseModel):
