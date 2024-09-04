@@ -21,7 +21,7 @@ from src.api.metrics.crud import add_metric
 
 
 class ControllerEnum(Enum):
-    # RANDOM = RandomController
+    RANDOM = RandomController
     RANDOM_TEXT = RandomTextController
     RANDOM_IMAGE = RandomImageController
     POPULAR = ExampleController
