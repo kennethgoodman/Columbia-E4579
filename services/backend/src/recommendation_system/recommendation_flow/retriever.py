@@ -47,7 +47,7 @@ class ControllerEnum(Enum):
     @staticmethod
     def controller_to_team_name(controller):
         return {
-            # ControllerEnum.RANDOM: TeamName.Random,
+            ControllerEnum.RANDOM: TeamName.Random,
             ControllerEnum.POPULAR: TeamName.Example,
             # ControllerEnum.ENGAGEMENT_TIME: TeamName.EngagementTime,
             # ControllerEnum.STATIC: TeamName.Static,

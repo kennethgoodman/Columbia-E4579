@@ -15,7 +15,7 @@ from src.recommendation_system.recommendation_flow.ranking.RandomRanker import (
 )
 from src.api.metrics.models import TeamName
 
-class RandomController(AbstractController):
+class RandomImageController(AbstractController):
     def get_content_ids(self, user_id, limit, offset, seed, starting_point):
         if seed <= 1:  # MySql seeds should be [0, # of rows] not [0, 1]
             seed *= 1000000
