@@ -71,6 +71,10 @@ class ModelType(Enum):
     GPT = 3
     Claude = 4
     Llama = 5
+    Phi = 6
+    Qwen = 7
+    Gemma = 8
+    Mistral = 9
 
 
 class GeneratedContentMetadata(BaseModel):
