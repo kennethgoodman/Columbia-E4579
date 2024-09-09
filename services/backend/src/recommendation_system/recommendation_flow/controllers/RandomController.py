@@ -31,7 +31,7 @@ class RandomController(AbstractController):
             user_id, candidates_limit / 2, offset, seed, starting_point
         )
         candidates, scores = [], []
-        for i in range(max(len(candidatesText, candidatesImgs))):
+        for i in range(max(len(candidatesText), len(candidatesImgs))):
             if i < len(candidatesText):
                 candidates.append(candidatesText[i])
                 scores.append(scoresText[i])
