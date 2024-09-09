@@ -30,7 +30,14 @@ class RandomController(AbstractController):
             TeamName.Random,
             user_id, candidates_limit / 2, offset, seed, starting_point
         )
-        candidates, scores = candidatesText + candidatesImgs, scoresText + scoresImgs
+        candidates, scores = [], []
+        for i in range(max(len(candidatesText, candidatesImgs))):
+            if i < len(candidatesText):
+                candidates.append(candidatesText[i])
+                scores.append(scoresText[i])
+            if i < len(candidatesImgs):
+                candidates.append(candidatesImgs[i])
+                scores.append(scoresImgs[i])
         filtered_candidates = RandomFilter().filter_ids(
             TeamName.Random, user_id, candidates, seed, starting_point, amount=0.1
         )
