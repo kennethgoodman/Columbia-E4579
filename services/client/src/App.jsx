@@ -25,7 +25,7 @@ const App = () => {
     messageType: null,
     messageText: null,
     showModal: false,
-    seed: Math.random() * 1000000,
+    seed: Math.random() * 180000,
   });
 
   const createMessage = (type, text) => {

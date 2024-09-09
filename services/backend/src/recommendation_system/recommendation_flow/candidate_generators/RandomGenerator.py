@@ -10,6 +10,7 @@ class RandomGenerator(AbstractGenerator):
     def _get_content_ids(self, user_id, limit, offset, seed, starting_point):
         results = (
             Content.query.with_entities(Content.id)
+            .filter(func.mod(Content.id * seed, 10) < 1)
             .order_by(func.random(seed))
             .limit(limit)
             .offset(offset)
@@ -27,6 +28,7 @@ class RandomGeneratorText(AbstractGenerator):
             .filter_by(
                 media_type=MediaType.Text,
             )
+            .filter(func.mod(Content.id * seed, 10) < 1)
             .order_by(func.random(seed))
             .limit(limit)
             .offset(offset)
@@ -45,6 +47,7 @@ class RandomGeneratorImage(AbstractGenerator):
             .filter_by(
                 media_type=MediaType.Image,
             )
+            .filter(func.mod(Content.id * seed, 10) < 1)
             .order_by(func.random(seed))
             .limit(limit)
             .offset(offset)
