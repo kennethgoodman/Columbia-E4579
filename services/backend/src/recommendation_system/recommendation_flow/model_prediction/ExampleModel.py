@@ -7,6 +7,8 @@ from .AbstractModel import AbstractModel
 
 class ExampleModel(AbstractModel):
     def _predict_probabilities(self, content_ids, user_id, seed=None, **kwargs):
+        if len(content_ids) == 0:
+            return [], [], [], []
         get_styles_for_content_ids = text(f"""
             SELECT content_id, COALESCE(artist_style, '')
             from generated_content_metadata

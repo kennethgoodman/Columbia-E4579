@@ -17,16 +17,16 @@ class ExampleFilter(AbstractFilter):
             GROUP BY content_id
         """)
         ids_to_filter_out = []
-        # with db.engine.connect() as con:
-        #     ids_to_filter_out = list(con.execute(sql_statement))
-        #     ids_to_filter_out = set(
-        #         map(lambda x: x[0], 
-        #             filter(
-        #                 lambda x: x[1] / max(x[2], 1) < 1.5, # 50% more likes
-        #                 ids_to_filter_out
-        #             )
-        #         )
-        #     )
+        with db.engine.connect() as con:
+            ids_to_filter_out = list(con.execute(sql_statement))
+            ids_to_filter_out = set(
+                map(lambda x: x[0], 
+                    filter(
+                        lambda x: x[1] / max(x[2], 1) > 1.2
+                        ids_to_filter_out
+                    )
+                )
+            )
         filtered_content_ids = []
         for content_id in content_ids:
             if content_id in ids_to_filter_out:
