@@ -24,7 +24,7 @@ def create_app(script_info=None):
         from src.api.engagement.models import Engagement
         from src.api.content.models import Content, GeneratedContentMetadata
         from src.api.users.models import User
-        for table in [Engagement, Content, GeneratedContentMetadata, User]:
+        for table in [Engagement, Content, User]:
             try:
                 row_count = db.session.query(func.count(table.id)).scalar()
                 if row_count == 0:
