@@ -7,16 +7,25 @@ from .AbstractFilter import AbstractFilter
 class ExampleFilter(AbstractFilter):
     def _filter_ids(self, user_id, content_ids, _, starting_point, amount=None, dc=None):
         sql_statement = text(f"""
-            SELECT content_id
+            SELECT content_id, 
+                SUM(CASE WHEN engagement_value = 1 THEN 1 ELSE 0 END) as likes, 
+                SUM(CASE WHEN engagement_value = -1 THEN 1 ELSE 0 END) as dislikes,
+                count(*)
             FROM engagement
             WHERE engagement_type = 'Like'
-                and engagement_value = -1 -- dislikes
                 and content_id in ({','.join(map(str, content_ids))})
             GROUP BY content_id
         """)
         with db.engine.connect() as con:
             ids_to_filter_out = list(con.execute(sql_statement))
-            ids_to_filter_out = set(map(lambda x: x[0], ids_to_filter_out))
+            ids_to_filter_out = set(
+                map(lambda x: x[0], 
+                    filter(
+                        lambda x: x[1] / max(x[2], 1) < 1.5, # 50% more likes
+                        ids_to_filter_out
+                    )
+                )
+            )
         filtered_content_ids = []
         for content_id in content_ids:
             if content_id in ids_to_filter_out:

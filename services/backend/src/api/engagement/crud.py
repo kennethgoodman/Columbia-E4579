@@ -70,7 +70,7 @@ def get_time_engaged_by_user_and_controller(user_id: int, controller: str) -> in
     # Calculate sum using SQL, add controller and engagement value filters in SQL
     ms_engaged_by_user_with_controller = db.session.query(
         func.sum(
-            func.least(Engagement.engagement_value, 5000)
+            func.least(Engagement.engagement_value, 15000)
         )
     ).filter(
         Engagement.user_id == user_id,
