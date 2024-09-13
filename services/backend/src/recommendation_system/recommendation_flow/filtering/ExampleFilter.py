@@ -19,7 +19,22 @@ class ExampleFilter(AbstractFilter):
         ids_to_filter_out = []
         with db.engine.connect() as con:
             ids_to_filter_out_ = list(con.execute(sql_statement))
-            ids_to_filter_out = sorted(map(lambda x: x[1], ids_to_filter_out_))[len(ids_to_filter_out_)//4*3:] # top 75%
+            line = sorted(
+                map(
+                    lambda x: x[1] / max(x[2], 1), 
+                    ids_to_filter_out_
+                )
+            )[
+                len(ids_to_filter_out_)//4*3
+            ] # top 75%
+            ids_to_filter_out = set(
+                map(lambda x: x[0], 
+                    filter(
+                        lambda x: x[1] / max(x[2], 1) > line,
+                        ids_to_filter_out_
+                    )
+                )
+            )
         filtered_content_ids = []
         for content_id in content_ids:
             if content_id in ids_to_filter_out:
