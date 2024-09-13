@@ -22,7 +22,7 @@ class ExampleFilter(AbstractFilter):
             ids_to_filter_out = set(
                 map(lambda x: x[0], 
                     filter(
-                        lambda x: x[1] / max(x[2], 1) > 1.2
+                        lambda x: x[1] / max(x[2], 1) > 1.2,
                         ids_to_filter_out
                     )
                 )
