@@ -45,6 +45,10 @@ const NavBar = (props) => {
             Feed
           </Link>
           <br />
+          <Link to="/poll" className="navbar-item" data-testid="nav-poll">
+            Poll
+          </Link>
+          <br />
           <span
             // eslint-disable-next-line react/jsx-handler-names
             onClick={props.logoutUser}

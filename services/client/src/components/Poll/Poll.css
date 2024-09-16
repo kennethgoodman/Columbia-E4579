@@ -1,0 +1,109 @@
+/* Poll.css */
+
+.poll-container {
+  padding: 30px 40px; 
+  border-radius: 10px;  
+  margin-bottom: 30px;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition for themes */
+}
+
+.poll-container.dark {
+  background-color: #242526;
+  color: #e9edef;
+}
+
+.poll-question {
+  font-size: 2em;
+  margin-bottom: 25px;
+  font-weight: 600; /* Slightly bolder question */
+}
+
+.poll-choices {
+  list-style: none;
+  padding: 0;
+}
+
+.poll-choice {
+  margin-bottom: 15px;
+  display: flex; 
+  align-items: center;
+}
+
+.poll-choice input[type="radio"] {
+  display: none; /* Hide default radio button */
+}
+
+.poll-choice label {
+  margin-left: 15px; 
+  cursor: pointer; 
+  position: relative;
+  padding-left: 30px; 
+}
+
+.poll-choice label::before { 
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  border-radius: 50%; 
+  border: 2px solid #7e95be; 
+  transition: background-color 0.3s ease;
+}
+
+.poll-choice input[type="radio"]:checked + label::before {
+  background-color: #7e95be;
+}
+
+.poll-choice input[type="radio"]:checked + label::after { /* Checkmark on selection */
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 6px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0; 
+  transform: translate(-50%, -60%) rotate(45deg);
+}
+
+.poll-submit button {
+  padding: 12px 30px; 
+  border: none;
+  border-radius: 25px; /* Rounded button */
+  background-color: #7e95be; 
+  color: white;
+  cursor: pointer;
+  font-weight: 500; /* Slightly bolder text */
+  transition: background-color 0.3s ease; /* Smooth hover effect */
+}
+
+.poll-submit button:hover {
+  background-color: #637aa4; 
+}
+
+.poll-submit button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.error-message,
+.success-message {
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+.error-message {
+  background-color: #fdd;
+  color: #a00;
+}
+
+.success-message {
+  background-color: #dfd;
+  color: #0a0;
+}

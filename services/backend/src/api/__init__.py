@@ -4,6 +4,7 @@ from src.api.content.views import content_namespace
 from src.api.engagement.views import engagement_namespace
 from src.api.ping import ping_namespace
 from src.api.metrics.models import Metric
+from src.api.polls.views import polls_namespace
 
 api = Api(version="1.0", title="Users API", doc="/doc")
 
@@ -11,3 +12,4 @@ api.add_namespace(ping_namespace, path="/ping")
 api.add_namespace(auth_namespace, path="/api/auth")
 api.add_namespace(content_namespace, path="/api/content")
 api.add_namespace(engagement_namespace, path="/api/engagement")
+api.add_namespace(polls_namespace, path='/api/polls')

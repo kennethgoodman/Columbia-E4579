@@ -13,6 +13,7 @@ user = auth_namespace.model(
     "User",
     {
         "username": fields.String(required=True),
+        "is_admin": fields.Boolean(required=True),
     },
 )
 
@@ -127,7 +128,10 @@ class Status(Resource):
         if exception_message:
             auth_namespace.abort(status_code, exception_message)
         user = get_user_by_id(user_id)
-        return user, 200
+        return {
+            'username': user.username,
+            'is_admin': user.id == 1
+        }, 200
 
 
 auth_namespace.add_resource(Register, "/register")

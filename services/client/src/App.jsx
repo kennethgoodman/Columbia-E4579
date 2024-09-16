@@ -7,6 +7,7 @@ import LoginForm from "./components/Routes/LoginForm";
 import Message from "./components/Routes/Message";
 import NavBar from "./components/Navbar";
 import RegisterForm from "./components/Routes/RegisterForm";
+import PollContainer from './components/Poll'; 
 import {
   getRefreshTokenIfExists,
   setRefreshToken,
@@ -136,6 +137,7 @@ const App = () => {
         <Route exact path="/feed" element={<Feed seed={state.seed} />} />
         <Route />
         <Route exact path="/about" element={<About />} />
+        <Route exact path="/poll" element={<PollContainer />} />
         <Route
           exact
           path="/register"
