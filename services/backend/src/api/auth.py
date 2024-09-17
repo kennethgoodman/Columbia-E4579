@@ -13,7 +13,7 @@ user = auth_namespace.model(
     "User",
     {
         "username": fields.String(required=True),
-        "is_admin": fields.Boolean(required=True),
+        "is_admin": fields.Boolean(required=False),
     },
 )
 
