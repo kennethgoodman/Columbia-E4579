@@ -1,5 +1,6 @@
 from sqlalchemy.sql import text
 from src import db
+from src.api.engagement.models import Engagement
 
 from .AbstractFilter import AbstractFilter
 
