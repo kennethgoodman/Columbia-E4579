@@ -58,6 +58,10 @@ class ExampleFilterWithExploration(AbstractFilter):
                 and content_id in ({','.join(map(str, content_ids))})
             GROUP BY content_id
         """)
+        engaged_content_ids = Engagement.query.with_entities(Engagement.content_id).filter(
+              Engagement.user_id == user_id, 
+              Engagement.content_id.in_(content_ids)  
+        ).distinct().all()
         import random
         ids_to_filter_out = []
         with db.engine.connect() as con:
@@ -80,6 +84,8 @@ class ExampleFilterWithExploration(AbstractFilter):
             )
         filtered_content_ids = []
         for content_id in content_ids:
+            if content_id in engaged_content_ids:
+                continue
             if content_id in ids_to_filter_out and random.random() > 0.5:
                 continue
             filtered_content_ids.append(content_id)

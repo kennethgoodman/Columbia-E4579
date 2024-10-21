@@ -49,7 +49,7 @@ class ExampleGeneratorTextPct(AbstractGenerator):
                 .filter(Engagement.engagement_type == EngagementType.Like)
                 .group_by(Engagement.content_id)
                 .order_by(func.count().desc())
-                .limit(int(limit * 0.2)) 
+                .limit(int(limit * 0.0)) 
                 .offset(offset)
                 .all()
         )
