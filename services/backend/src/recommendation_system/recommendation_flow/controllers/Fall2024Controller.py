@@ -5,10 +5,10 @@ from src.recommendation_system.recommendation_flow.controllers.AbstractControlle
     AbstractController,
 )
 from src.recommendation_system.recommendation_flow.filtering.ExampleFilter import (
-    ExampleFilter,
+    ExampleFilterWithExploration,
 )
 from src.recommendation_system.recommendation_flow.model_prediction.ExampleModel import (
-    ExampleModel,
+    ExampleModelWithForcedText,
 )
 from src.recommendation_system.recommendation_flow.ranking.ExampleRanker import (
     ExampleRanker,
@@ -24,10 +24,10 @@ class Fall2024Controller(AbstractController):
             TeamName.Example,
             user_id, candidates_limit, offset, seed, starting_point
         )
-        filtered_candidates = ExampleFilter().filter_ids(
+        filtered_candidates = ExampleFilterWithExploration().filter_ids(
             TeamName.Example,  user_id, candidates, seed, starting_point
         )
-        predictions = ExampleModel().predict_probabilities(
+        predictions = ExampleModelWithForcedText().predict_probabilities(
             TeamName.Example,
             filtered_candidates,
             user_id,
