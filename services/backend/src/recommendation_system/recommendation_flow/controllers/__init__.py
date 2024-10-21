@@ -16,3 +16,6 @@ from src.recommendation_system.recommendation_flow.controllers.StaticController 
 from src.recommendation_system.recommendation_flow.controllers.ExampleController import (
     ExampleController,
 )
+from src.recommendation_system.recommendation_flow.controllers.Fall2024Controller import (
+    Fall2024Controller,
+)

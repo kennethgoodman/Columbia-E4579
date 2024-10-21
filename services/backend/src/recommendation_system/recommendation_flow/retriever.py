@@ -13,7 +13,8 @@ from src.recommendation_system.recommendation_flow.controllers import (
     RandomImageController,
     ExampleController,
     EngagementTimeController,
-    StaticController
+    StaticController,
+    Fall2024Controller
 )
 
 from src.api.metrics.models import MetricFunnelType, MetricType, TeamName
@@ -22,9 +23,10 @@ from src.api.metrics.crud import add_metric
 
 class ControllerEnum(Enum):
     RANDOM = RandomController
-    RANDOM_TEXT = RandomTextController
-    RANDOM_IMAGE = RandomImageController
-    POPULAR = ExampleController
+    # RANDOM_TEXT = RandomTextController
+    # RANDOM_IMAGE = RandomImageController
+    # POPULAR = ExampleController
+    FALL_2024 = Fall2024Controller
     # ENGAGEMENT_TIME = EngagementTimeController
     # STATIC = StaticController
 
@@ -48,11 +50,12 @@ class ControllerEnum(Enum):
     def controller_to_team_name(controller):
         return {
             ControllerEnum.RANDOM: TeamName.Random,
-            ControllerEnum.POPULAR: TeamName.Example,
+            # ControllerEnum.POPULAR: TeamName.Example,
             # ControllerEnum.ENGAGEMENT_TIME: TeamName.EngagementTime,
             # ControllerEnum.STATIC: TeamName.Static,
-            ControllerEnum.RANDOM_TEXT: TeamName.Random,
-            ControllerEnum.RANDOM_IMAGE: TeamName.Random,
+            # ControllerEnum.RANDOM_TEXT: TeamName.Random,
+            # ControllerEnum.RANDOM_IMAGE: TeamName.Random,
+            ControllerEnum.FALL_2024: TeamName.Random
         }[controller]
 
 
