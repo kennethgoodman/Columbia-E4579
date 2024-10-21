@@ -1,6 +1,9 @@
 from src.recommendation_system.recommendation_flow.candidate_generators.ExampleGenerator import (
     ExampleGeneratorTextPct,
 )
+from src.recommendation_system.recommendation_flow.candidate_generators.RandomGenerator import (
+    RandomGeneratorText
+)
 from src.recommendation_system.recommendation_flow.controllers.AbstractController import (
     AbstractController,
 )
@@ -20,10 +23,16 @@ class Fall2024Controller(AbstractController):
         candidates_limit = (
             limit * 10 * 10
         )  # 10% gets filtered out and take top 10% of rank
-        candidates, scores = ExampleGeneratorTextPct().get_content_ids(
+        candidatesEx, scoresEx = ExampleGeneratorTextPct().get_content_ids(
             TeamName.Example,
             user_id, candidates_limit, offset, seed, starting_point
         )
+        random_candidatesText, random_scoresText = RandomGeneratorText().get_content_ids(
+            TeamName.Random,
+            user_id, int(candidates_limit * 0.15), offset, seed, starting_point
+        )
+        candidates = candidatesEx + random_candidatesText
+        scores = scoresEx + random_scoresText
         filtered_candidates = ExampleFilterWithExploration().filter_ids(
             TeamName.Example,  user_id, candidates, seed, starting_point
         )
