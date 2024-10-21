@@ -32,38 +32,26 @@ class ExampleGenerator(AbstractGenerator):
 class ExampleGeneratorTextPct(AbstractGenerator):
     def _get_content_ids(self, _, limit, offset, _seed, starting_point):
         results_1 = (
-            Engagement.query.with_entities(
-                Engagement.content_id, func.count()
-            )
-            .filter_by(
-                media_type=MediaType.Text,
-            )
-            .filter(func.mod(func.rand(seed + Content.id), 10) < 1)
-            .filter_by(
-                engagement_type=EngagementType.Like,
-            )
-            .group_by(Engagement.content_id)
-            .order_by(func.count().desc())
-            .limit(int(limit * 0.8))
-            .offset(offset)
-            .all()
+            Engagement.query.with_entities(Engagement.content_id, func.count())
+                .join(Content)
+                .filter(Content.media_type == MediaType.Text)
+                .filter(Engagement.engagement_type == EngagementType.Like)
+                .group_by(Engagement.content_id)
+                .order_by(func.count().desc())
+                .limit(int(limit * 0.8)) 
+                .offset(offset)
+                .all()
         )
         results_2 = (
-            Engagement.query.with_entities(
-                Engagement.content_id, func.count()
-            )
-            .filter_by(
-                media_type=MediaType.Image,
-            )
-            .filter(func.mod(func.rand(seed + Content.id), 10) < 1)
-            .filter_by(
-                engagement_type=EngagementType.Like,
-            )
-            .group_by(Engagement.content_id)
-            .order_by(func.count().desc())
-            .limit(int(limit * 0.2))
-            .offset(offset)
-            .all()
+            Engagement.query.with_entities(Engagement.content_id, func.count())
+                .join(Content)
+                .filter(Content.media_type == MediaType.Image)
+                .filter(Engagement.engagement_type == EngagementType.Like)
+                .group_by(Engagement.content_id)
+                .order_by(func.count().desc())
+                .limit(int(limit * 0.8)) 
+                .offset(offset)
+                .all()
         )
         return list(map(lambda x: x[0], results_1)) + list(map(lambda x: x[0], results_2)), list(map(lambda x: x[1], results_1)) + list(map(lambda x: x[1], results_2))
     
