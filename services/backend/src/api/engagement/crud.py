@@ -62,7 +62,7 @@ def get_engagement_by_content_and_user_and_type(user_id, content_id, engagement_
 
 def get_time_engaged_by_user_and_controller(user_id: int, controller: str) -> int:
     # Define the time in EST
-    time_in_est = datetime(2023, 12, 4, 23, 59, tzinfo=timezone(timedelta(hours=-5)))
+    time_in_est = datetime(2024, 12, 1, 23, 59, tzinfo=timezone(timedelta(hours=-5)))
 
     # Convert EST time to UTC
     time_in_utc = time_in_est.astimezone(timezone.utc)
