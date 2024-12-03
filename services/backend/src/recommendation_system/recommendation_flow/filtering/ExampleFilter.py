@@ -88,8 +88,8 @@ class ExampleFilterWithExploration(AbstractFilter):
         for content_id in content_ids:
             if content_id in engaged_content_ids:
                 continue
-            if content_id in ids_to_filter_out and random.random() > 0.5:
-                continue
+            # if content_id in ids_to_filter_out and random.random() > 0.5:
+                # continue
             filtered_content_ids.append(content_id)
         return filtered_content_ids
 
