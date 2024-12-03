@@ -1,6 +1,6 @@
 from sqlalchemy.sql import text
 from src import db
-from src.api.engagement.models import Engagement
+from src.api.engagement.models import Engagement, EngagementType
 
 from .AbstractFilter import AbstractFilter
 
@@ -61,7 +61,8 @@ class ExampleFilterWithExploration(AbstractFilter):
         """)
         engaged_content_ids = Engagement.query.with_entities(Engagement.content_id).filter(
               Engagement.user_id == user_id, 
-              Engagement.content_id.in_(content_ids)  
+              Engagement.content_id.in_(content_ids),
+              Engagement.engagement_type == EngagementType.Like
         ).distinct().all()
         import random
         ids_to_filter_out = []
